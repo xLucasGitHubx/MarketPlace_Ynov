@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Secrets
+.env
+*.env
+!.env.example
+
+# Modèles et artefacts lourds (régénérés par scripts/)
+models/
+*.onnx
+*.bin
+*.safetensors
+
+# MLflow
+mlruns/
+mlflow.db
+mlartifacts/
+
+# Données de test (photos) : non versionnées sauf le manifeste
+data/test_set/**/*.jpg
+data/test_set/**/*.jpeg
+data/test_set/**/*.png
+data/test_set/**/*.webp
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
