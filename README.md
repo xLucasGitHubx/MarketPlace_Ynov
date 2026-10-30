@@ -30,7 +30,7 @@ Microservice de vision pour une marketplace type Leboncoin. Le vendeur prend une
 | Optimisation | modèle ÷ 3,9 (97,7 → 24,9 Mo), latence p50 −80 %, −0,5 point d'accuracy |
 | Image Docker | 551 Mo (contre 2,04 Go en PyTorch), prête en 1,6 s, tourne en lecture seule |
 | Charge | 10 req/s pendant 5 min : p95 de 51 ms, 0 erreur ; saturation ≈ 48 req/s sur 2 vCPU |
-| Coût | 1,55 à 3,05 $ pour 1 M d'images/mois sur Cloud Run, 0 $ avec l'offre gratuite ([FINOPS.md](FINOPS.md)) |
+| Coût | Azure Container Apps : 0 $ pendant le projet (offre gratuite), ≈ 25 $/mois pour 1 M d'images, ≈ 1,8 $ par million à fort volume ([FINOPS.md](FINOPS.md)) |
 
 ## Architecture
 
@@ -61,8 +61,9 @@ scripts/
   evaluate.py          accuracy, latence, balayage du seuil → MLflow
   benchmark_clip.py    benchmark CLIP zero-shot (comparaison)
   load_test.py         test de charge asyncio + httpx (paliers ou débit constant)
-  deploy_cloudrun.sh   déploiement Google Cloud Run
+  deploy_azure.sh      déploiement Azure Container Apps
 tests/              48 tests pytest (aucun téléchargement de modèle nécessaire)
+.github/workflows/  CI : tests + image ONNX publiée sur GHCR à chaque push sur main
 docs/               spécifications, sujet, preuves par itération, LLM Council
 Dockerfile          multi-stage, cibles runtime-onnx (défaut) et runtime-pytorch
 docker-compose.yml  API + serveur MLflow
@@ -142,22 +143,25 @@ python scripts/load_test.py --mode ramp --users 1,2,5,10,20,40 --step 30
 python scripts/load_test.py --mode rate --rate 10 --duration 300
 ```
 
-## Déploiement cloud (Google Cloud Run)
+## Déploiement cloud (Azure Container Apps)
+
+1. **Image** : chaque push sur `main` déclenche la CI GitHub Actions, qui lance les tests, construit l'image ONNX, la publie sur `ghcr.io/xlucasgithubx/marketplace_ynov` et la teste (401 sans token, 200 avec).
+2. **Déploiement**, depuis [Azure Cloud Shell](https://shell.azure.com) (bash, `az` déjà connecté) :
 
 ```bash
-export PROJECT_ID=mon-projet-gcp
-export API_TOKEN=$(python -c "import secrets; print(secrets.token_urlsafe(32))")
-./scripts/deploy_cloudrun.sh      # Artifact Registry + Secret Manager + Cloud Run (1 vCPU, 1 Gio, scale à zéro)
+git clone https://github.com/xLucasGitHubx/MarketPlace_Ynov.git && cd MarketPlace_Ynov
+export API_TOKEN=$(python3 -c "import secrets; print(secrets.token_urlsafe(32))")
+./scripts/deploy_azure.sh        # Container Apps : 1 vCPU, 2 Gio, scale à zéro, HTTPS public
 ```
 
-Le token est stocké dans Secret Manager et injecté en variable d'environnement ; il n'est jamais dans l'image. Pour la soutenance, `MIN_INSTANCES=1` supprime le démarrage à froid (≈ 13 $/mois, voir [FINOPS.md](FINOPS.md)).
+Le token est stocké comme secret Container Apps et injecté en variable d'environnement : il n'est jamais dans l'image. Pour la soutenance, `MIN_REPLICAS=1 ./scripts/deploy_azure.sh` supprime le démarrage à froid (0,78 $/jour). En fin de projet : `az group delete --name rg-marketplace-ynov --yes`. Détails et pièges (régions autorisées pour un abonnement étudiant, paquet GHCR privé) : [it7-azure.md](docs/preuves/it7-azure.md).
 
 ## RGPD et sécurité
 
 - L'image n'est jamais écrite sur disque : traitement en mémoire, conteneur en lecture seule, et un test vérifie qu'aucun fichier temporaire n'est créé.
 - Les logs et MLflow ne contiennent rien de personnel : ni l'image, ni le nom du fichier, uniquement des métriques.
 - Une requête sans token ou trop lourde est refusée avant d'être lue, ce qui protège les ressources.
-- Les secrets passent par des variables d'environnement, Secret Manager ou des secrets de build Docker ; `.env` est ignoré par Git.
+- Les secrets passent par des variables d'environnement (secret Container Apps en production) ; `.env` est ignoré par Git et aucun secret n'est nécessaire au build.
 
 ## Preuves par itération
 
@@ -169,7 +173,7 @@ Le token est stocké dans Secret Manager et injecté en variable d'environnement
 | 4. Optimisation | ONNX int8 | [it4-optimisation.md](docs/preuves/it4-optimisation.md) |
 | 5. Flux | Test de charge | [it5-charge.md](docs/preuves/it5-charge.md) |
 | 6. Barrière | Token + aucune image conservée | [it6-securite.md](docs/preuves/it6-securite.md) |
-| 7. Grand saut | Script Cloud Run (déploiement à lancer avec un compte GCP) | [deploy_cloudrun.sh](scripts/deploy_cloudrun.sh) |
+| 7. Grand saut | Azure Container Apps (image publiée par la CI sur GHCR) | [it7-azure.md](docs/preuves/it7-azure.md) |
 | 8. Rétroviseur | Dashboard MLflow | [it8-mlflow.md](docs/preuves/it8-mlflow.md) |
 | 9. Facture | FinOps + README | [FINOPS.md](FINOPS.md) |
 

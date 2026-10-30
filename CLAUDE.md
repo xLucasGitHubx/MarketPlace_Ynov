@@ -34,7 +34,7 @@ python scripts/benchmark_clip.py [--vocab generique] --mlflow   # benchmark CLIP
 mlflow server --backend-store-uri sqlite:///mlflow.db --port 5000
 docker compose up -d --build                         # API (ONNX) + MLflow ; requêtes journalisées
 python scripts/load_test.py --mode rate --rate 10 --duration 300   # test de charge (critère spec)
-PROJECT_ID=... API_TOKEN=... ./scripts/deploy_cloudrun.sh         # déploiement Cloud Run
+API_TOKEN=... ./scripts/deploy_azure.sh             # déploiement Azure Container Apps (depuis Azure Cloud Shell)
 ```
 
 Variables utiles : `API_TOKEN` (obligatoire, sinon 401 partout), `MODEL_BACKEND` (pytorch|onnx), `ONNX_MODEL_PATH` (défaut `models/onnx/resnet50-int8-static.onnx`), `MODEL_CACHE_DIR` (cache HF, ex. `models/hf`), `CONFIDENCE_THRESHOLD`, `TOP_K`, `HF_TOKEN`, `MLFLOW_TRACKING_URI` (vide = suivi désactivé ; http(s) = REST sans dépendance).
@@ -54,12 +54,15 @@ app/
 scripts/           # export_onnx.py, evaluate.py, load_test.py
 tests/             # pytest
 docs/llm-council/  # rapports et transcripts des LLM Council (décisions structurantes)
+.github/workflows/ci.yml  # tests + build/push image ONNX sur GHCR + smoke test
+scripts/deploy_azure.sh   # déploiement Azure Container Apps
 ```
 
 ## Décisions structurantes
 
 | Date | Décision | Source |
 | --- | --- | --- |
+| 2026-10-30 | Cloud = **Azure Container Apps** (crédit Azure for Students de Lucas) au lieu de Cloud Run. Image construite par GitHub Actions et publiée sur GHCR (ACR Tasks bloqué sur les abonnements étudiants, ACR Basic ≈ 5 $/mois). Dockerfile sans syntaxe BuildKit (portable). | demande de Lucas |
 | 2026-10-30 | ResNet-50 = chemin de production (it. 1→6). Interface `Predictor` commune pour brancher CLIP plus tard. Seuil de confiance par backend. Accuracy mesurée dès l'it. 2 sur un jeu proxy public. CLIP = benchmark séparé, principal seulement si la mesure le justifie. | `docs/llm-council/council-transcript-2026-10-30-modele.md` |
 
 ## Avancement des itérations
@@ -75,8 +78,8 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 | 4. Optimisation | ✅ fait | `docs/preuves/it4-optimisation.md` — int8 statique : ÷3,9 taille, −80 % latence, −0,5 pt |
 | 8. Rétroviseur | ✅ fait | `docs/preuves/it8-mlflow.md` — 6 runs comparés + suivi de chaque requête API |
 | 5. Flux | ✅ fait | `docs/preuves/it5-charge.md` — p95 51 ms à 10 req/s / 5 min, 0 erreur ; 23 req/s par vCPU |
-| 7. Grand saut | 🟡 script prêt | `scripts/deploy_cloudrun.sh` — à lancer par Lucas avec son projet GCP |
-| 9. Facture | ✅ fait | `FINOPS.md` (1,55–3,05 $ / 1 M images) + `README.md` final |
+| 7. Grand saut | 🟡 script prêt | `scripts/deploy_azure.sh` + CI GHCR — à lancer par Lucas (Azure for Students) |
+| 9. Facture | ✅ fait | `FINOPS.md` (Azure : 0 $ en phase projet, ≈ 25 $/mois à 1 M images) + `README.md` final |
 
 ## Mesures clés
 
@@ -94,7 +97,9 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 - Tester l'API sans `with TestClient(app)` : le lifespan (chargement du modèle) ne tourne pas, on injecte `app.state.predictor` (voir `tests/conftest.py`).
 - Ne jamais ajuster `data/imagenet_mapping.tsv` en regardant les erreurs du jeu de test (surapprentissage du mapping) : seulement des oublis manifestes, documentés.
 - Docker Hub peut renvoyer 429 (rate limit) : tirer `mirror.gcr.io/library/python:3.11-slim` puis `docker tag` en `python:3.11-slim`, ou `--build-arg BASE_IMAGE=...`.
-- Derrière un proxy TLS : `docker build --network host --secret id=ca_bundle,src=<ca.crt> ...`.
+- Derrière un proxy TLS : `docker build --network host --build-arg EXTRA_CA_CERT_B64="$(base64 -w0 proxy-ca.pem)" ...` (le bundle complet dépasse la limite de 128 Ko d'un argument : ne passer que le CA du proxy).
+- Azure for Students : pas d'ACR Tasks (`TasksOperationsNotAllowed`), régions limitées par policy (`RequestDisallowedByPolicy`).
+- Container Apps : une réplique à `min=0` reste facturée au tarif actif 300 s après la dernière requête ; à trafic continu, `min=1` (tarif repos) coûte moins cher.
 - Starlette écrit sur disque les uploads > 1 Mo (SpooledTemporaryFile) : réglé par `keep_uploads_in_memory()` dans `app/security.py` ; ne pas retirer.
 - Les tests fixent `API_TOKEN` dans `tests/conftest.py` AVANT d'importer l'app (Settings en cache).
 - Quantization dynamique = mauvaise idée pour un CNN (ConvInteger) : utiliser la statique QDQ calibrée hors jeu de test.
@@ -112,6 +117,6 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 ## Points ouverts
 
 - Lucas : créer le repo GitHub vide `xLucasGitHubx/MarketPlace_Ynov` → pousser `main` + branches, passer en PR pour la suite.
-- Lucas : lancer `scripts/deploy_cloudrun.sh` avec son projet GCP (it. 7), puis ajouter l'URL publique au README.
+- Lucas : lancer `scripts/deploy_azure.sh` depuis Azure Cloud Shell (it. 7), puis ajouter l'URL publique au README et à `docs/preuves/it7-azure.md`.
 - Lucas : mail au formateur pour valider ResNet pré-entraîné sans fine-tuning + CLIP en comparaison.
 - Lucas : photos réelles d'objets (vélo, chaise, téléphone…) pour compléter le jeu de test proxy.

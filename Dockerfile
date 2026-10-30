@@ -1,59 +1,51 @@
-# syntax=docker/dockerfile:1.7
 # Image de l'API Marketplace — build multi-stage, deux cibles :
 #   docker build --target runtime-onnx    -t marketplace-api:onnx .     (défaut, optimisée : it. 4)
 #   docker build --target runtime-pytorch -t marketplace-api:pytorch .  (référence : it. 3)
 #
-# Secrets de build optionnels (jamais écrits dans une couche) :
-#   --secret id=hf_token,env=HF_TOKEN       token Hugging Face (inutile : modèle public)
-#   --secret id=ca_bundle,src=ca.crt        certificat d'un proxy d'entreprise (TLS intercepté)
+# Dockerfile « portable » : aucune syntaxe BuildKit (pas de RUN --mount), il se construit
+# aussi bien avec Docker local qu'avec `az acr build` (Azure) ou Podman.
+#
+# Build derrière un proxy d'entreprise qui intercepte le TLS (optionnel) :
+#   --build-arg EXTRA_CA_CERT_B64="$(base64 -w0 proxy-ca.pem)"
+# Le certificat ne sert qu'aux étapes de build : il n'est pas copié dans l'image finale.
 ARG BASE_IMAGE=python:3.11-slim
 
 # ---------- Dépendances de l'API (communes) ----------
 FROM ${BASE_IMAGE} AS deps-base
-ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1 PATH=/opt/venv/bin:$PATH
+ARG EXTRA_CA_CERT_B64=""
+RUN cp /etc/ssl/certs/ca-certificates.crt /opt/build-ca.pem \
+ && if [ -n "$EXTRA_CA_CERT_B64" ]; then echo "$EXTRA_CA_CERT_B64" | base64 -d >> /opt/build-ca.pem; fi
+ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1 PATH=/opt/venv/bin:$PATH \
+    PIP_CERT=/opt/build-ca.pem REQUESTS_CA_BUNDLE=/opt/build-ca.pem SSL_CERT_FILE=/opt/build-ca.pem
 RUN python -m venv /opt/venv
 COPY requirements.txt /tmp/
-RUN --mount=type=secret,id=ca_bundle,required=false \
-    if [ -f /run/secrets/ca_bundle ]; then export PIP_CERT=/run/secrets/ca_bundle; fi \
- && pip install -r /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
 
 # ---------- Runtime ONNX : + onnxruntime uniquement ----------
 FROM deps-base AS deps-onnx
 COPY requirements-onnx.txt /tmp/
-RUN --mount=type=secret,id=ca_bundle,required=false \
-    if [ -f /run/secrets/ca_bundle ]; then export PIP_CERT=/run/secrets/ca_bundle; fi \
- && pip install -r /tmp/requirements-onnx.txt
+RUN pip install -r /tmp/requirements-onnx.txt
 
 # ---------- PyTorch + transformers (référence et export) ----------
 FROM deps-base AS deps-torch
-RUN --mount=type=secret,id=ca_bundle,required=false \
-    if [ -f /run/secrets/ca_bundle ]; then export PIP_CERT=/run/secrets/ca_bundle; fi \
- && pip install --index-url https://download.pytorch.org/whl/cpu "torch==2.*" \
+RUN pip install --index-url https://download.pytorch.org/whl/cpu "torch==2.*" \
  && pip install "transformers>=4.44,<5"
 
-# ---------- Téléchargement du modèle Hugging Face ----------
+# ---------- Téléchargement du modèle Hugging Face (public : aucun token nécessaire) ----------
 FROM deps-torch AS model-hf
 COPY scripts/download_model.py /tmp/
-RUN --mount=type=secret,id=hf_token,required=false \
-    --mount=type=secret,id=ca_bundle,required=false \
-    if [ -f /run/secrets/ca_bundle ]; then export REQUESTS_CA_BUNDLE=/run/secrets/ca_bundle SSL_CERT_FILE=/run/secrets/ca_bundle; fi \
- && HF_TOKEN="$(cat /run/secrets/hf_token 2>/dev/null || true)" \
-    python /tmp/download_model.py --cache-dir /models
+RUN python /tmp/download_model.py --cache-dir /models
 
 # ---------- Export ONNX + quantization int8 statique ----------
 FROM model-hf AS model-onnx
 COPY requirements-export.txt /tmp/
-RUN --mount=type=secret,id=ca_bundle,required=false \
-    if [ -f /run/secrets/ca_bundle ]; then export PIP_CERT=/run/secrets/ca_bundle; fi \
- && pip install -r /tmp/requirements-export.txt pandas pyarrow
+RUN pip install -r /tmp/requirements-export.txt pandas pyarrow
 WORKDIR /build
 COPY app/ app/
 COPY scripts/export_onnx.py scripts/
 # Le manifeste du jeu de test sert à exclure ces images de la calibration
 COPY data/test_set/manifest.csv data/test_set/
-RUN --mount=type=secret,id=ca_bundle,required=false \
-    if [ -f /run/secrets/ca_bundle ]; then export REQUESTS_CA_BUNDLE=/run/secrets/ca_bundle SSL_CERT_FILE=/run/secrets/ca_bundle; fi \
- && HF_HUB_OFFLINE=1 python scripts/export_onnx.py --cache-dir /models \
+RUN HF_HUB_OFFLINE=1 python scripts/export_onnx.py --cache-dir /models \
  && cat models/onnx/export_report.json
 
 # ---------- Socle d'exécution commun ----------
