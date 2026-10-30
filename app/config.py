@@ -36,7 +36,7 @@ DEFAULT_THRESHOLDS = {
 @dataclass(frozen=True)
 class Settings:
     app_name: str = "Marketplace Vision API"
-    app_version: str = "0.4.0"
+    app_version: str = "0.5.0"
 
     # Upload
     max_upload_mb: float = field(default_factory=lambda: _env_float("MAX_UPLOAD_MB", 5))
