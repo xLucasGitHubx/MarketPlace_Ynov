@@ -33,6 +33,8 @@ python scripts/evaluate.py --backend onnx --onnx-path models/onnx/resnet50-int8-
 python scripts/benchmark_clip.py [--vocab generique] --mlflow   # benchmark CLIP zero-shot
 mlflow server --backend-store-uri sqlite:///mlflow.db --port 5000
 docker compose up -d --build                         # API (ONNX) + MLflow ; requêtes journalisées
+python scripts/load_test.py --mode rate --rate 10 --duration 300   # test de charge (critère spec)
+PROJECT_ID=... API_TOKEN=... ./scripts/deploy_cloudrun.sh         # déploiement Cloud Run
 ```
 
 Variables utiles : `API_TOKEN` (obligatoire, sinon 401 partout), `MODEL_BACKEND` (pytorch|onnx), `ONNX_MODEL_PATH` (défaut `models/onnx/resnet50-int8-static.onnx`), `MODEL_CACHE_DIR` (cache HF, ex. `models/hf`), `CONFIDENCE_THRESHOLD`, `TOP_K`, `HF_TOKEN`, `MLFLOW_TRACKING_URI` (vide = suivi désactivé ; http(s) = REST sans dépendance).
@@ -72,9 +74,9 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 | 6. Barrière | ✅ fait | `docs/preuves/it6-securite.md` — 401, conteneur `--read-only`, 0 image écrite |
 | 4. Optimisation | ✅ fait | `docs/preuves/it4-optimisation.md` — int8 statique : ÷3,9 taille, −80 % latence, −0,5 pt |
 | 8. Rétroviseur | ✅ fait | `docs/preuves/it8-mlflow.md` — 6 runs comparés + suivi de chaque requête API |
-| 5. Flux | à faire | — |
-| 7. Grand saut | à faire (si possible) | — |
-| 9. Facture | à faire | — |
+| 5. Flux | ✅ fait | `docs/preuves/it5-charge.md` — p95 51 ms à 10 req/s / 5 min, 0 erreur ; 23 req/s par vCPU |
+| 7. Grand saut | 🟡 script prêt | `scripts/deploy_cloudrun.sh` — à lancer par Lucas avec son projet GCP |
+| 9. Facture | ✅ fait | `FINOPS.md` (1,55–3,05 $ / 1 M images) + `README.md` final |
 
 ## Mesures clés
 
@@ -99,6 +101,8 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 - ONNX Runtime 1.31 refuse les modèles IR v14 (onnx 1.23 par défaut) : forcer `ir_version=9` si on construit un graphe à la main.
 - MLflow 3.x : l'UI s'ouvre en mode « GenAI » ; basculer sur « Model training » pour voir les runs. `mlflow server` exige `--allowed-hosts` pour être joint par un autre conteneur.
 - `pkill -f "uvicorn app.main"` dans un shell tue aussi le shell (le motif apparaît dans sa ligne de commande) : tuer par PID.
+- `.env` : jamais de commentaire en fin de ligne (`docker --env-file` les garde dans la valeur).
+- Mesures de latence : ±20 % d'une session à l'autre sur la machine de dev partagée ; comparer des runs d'une même session.
 - PyTorch a besoin d'un `/tmp` inscriptible au démarrage : `--read-only` doit s'accompagner de `--tmpfs /tmp`.
 
 ## Décision en attente (Lucas)
@@ -107,6 +111,7 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 
 ## Points ouverts
 
-- Lucas : créer le repo GitHub vide `xLucasGitHubx/MarketPlace_Ynov` pour passer en PR.
+- Lucas : créer le repo GitHub vide `xLucasGitHubx/MarketPlace_Ynov` → pousser `main` + branches, passer en PR pour la suite.
+- Lucas : lancer `scripts/deploy_cloudrun.sh` avec son projet GCP (it. 7), puis ajouter l'URL publique au README.
 - Lucas : mail au formateur pour valider ResNet pré-entraîné sans fine-tuning + CLIP en comparaison.
 - Lucas : photos réelles d'objets (vélo, chaise, téléphone…) pour compléter le jeu de test proxy.
