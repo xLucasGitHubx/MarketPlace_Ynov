@@ -34,6 +34,13 @@ docker run -d --read-only --tmpfs /tmp --env-file .env -p 8000:8000 marketplace-
 
 Le modèle est téléchargé (et, pour ONNX, exporté puis quantifié) au build : le conteneur démarre hors-ligne.
 
+## MLflow
+
+```bash
+docker compose up -d --build     # API ONNX sur :8000 + MLflow sur :5000 (chaque requête est journalisée)
+python scripts/evaluate.py --backend onnx --onnx-path models/onnx/resnet50-int8-static.onnx --mlflow
+```
+
 ## Documentation
 
 - [Spécifications](docs/SPECIFICATIONS.md)

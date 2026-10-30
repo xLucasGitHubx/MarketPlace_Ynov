@@ -29,10 +29,13 @@ python scripts/build_categories.py                   # régénère app/categorie
 python scripts/build_test_set.py                     # télécharge le jeu de test proxy (200 photos, non versionnées)
 python scripts/evaluate.py --backend pytorch         # accuracy + latence + balayage du seuil
 python scripts/export_onnx.py                        # export ONNX fp32 + int8 dynamique + int8 statique (models/onnx/)
-python scripts/evaluate.py --backend onnx --onnx-path models/onnx/resnet50-int8-static.onnx
+python scripts/evaluate.py --backend onnx --onnx-path models/onnx/resnet50-int8-static.onnx --mlflow
+python scripts/benchmark_clip.py [--vocab generique] --mlflow   # benchmark CLIP zero-shot
+mlflow server --backend-store-uri sqlite:///mlflow.db --port 5000
+docker compose up -d --build                         # API (ONNX) + MLflow ; requêtes journalisées
 ```
 
-Variables utiles : `API_TOKEN` (obligatoire, sinon 401 partout), `MODEL_BACKEND` (pytorch|onnx), `ONNX_MODEL_PATH` (défaut `models/onnx/resnet50-int8-static.onnx`), `MODEL_CACHE_DIR` (cache HF, ex. `models/hf`), `CONFIDENCE_THRESHOLD`, `TOP_K`, `HF_TOKEN`.
+Variables utiles : `API_TOKEN` (obligatoire, sinon 401 partout), `MODEL_BACKEND` (pytorch|onnx), `ONNX_MODEL_PATH` (défaut `models/onnx/resnet50-int8-static.onnx`), `MODEL_CACHE_DIR` (cache HF, ex. `models/hf`), `CONFIDENCE_THRESHOLD`, `TOP_K`, `HF_TOKEN`, `MLFLOW_TRACKING_URI` (vide = suivi désactivé ; http(s) = REST sans dépendance).
 
 ## Architecture
 
@@ -68,7 +71,7 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 | 3. Isolement | ✅ fait | `docs/preuves/it3-docker.md` — image PyTorch 2,04 Go |
 | 6. Barrière | ✅ fait | `docs/preuves/it6-securite.md` — 401, conteneur `--read-only`, 0 image écrite |
 | 4. Optimisation | ✅ fait | `docs/preuves/it4-optimisation.md` — int8 statique : ÷3,9 taille, −80 % latence, −0,5 pt |
-| 8. Rétroviseur | à faire | — |
+| 8. Rétroviseur | ✅ fait | `docs/preuves/it8-mlflow.md` — 6 runs comparés + suivi de chaque requête API |
 | 5. Flux | à faire | — |
 | 7. Grand saut | à faire (si possible) | — |
 | 9. Facture | à faire | — |
@@ -81,6 +84,8 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 | 2026-10-30 | resnet50-onnx-fp32 | 69,0 % | 56 / 73 ms | export seul : latence ÷2 |
 | 2026-10-30 | resnet50-onnx-int8-dynamic | 62,0 % | 359 / 443 ms | piège : ConvInteger lent sur CPU |
 | 2026-10-30 | **resnet50-onnx-int8-static** (prod) | 68,5 % | 21,5 / 28,6 ms | 24,9 Mo, image Docker 551 Mo |
+| 2026-10-30 | clip-vit-b32 zero-shot, vocab détaillé | 88,5 % | 88 / 122 ms | 577 Mo ; borne optimiste (vocab écrit en connaissant les classes sources) |
+| 2026-10-30 | clip-vit-b32 zero-shot, vocab générique | 76,5 % | 83 / 114 ms | contrôle « aveugle » |
 
 ## Pièges connus
 
@@ -92,7 +97,13 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 - Les tests fixent `API_TOKEN` dans `tests/conftest.py` AVANT d'importer l'app (Settings en cache).
 - Quantization dynamique = mauvaise idée pour un CNN (ConvInteger) : utiliser la statique QDQ calibrée hors jeu de test.
 - ONNX Runtime 1.31 refuse les modèles IR v14 (onnx 1.23 par défaut) : forcer `ir_version=9` si on construit un graphe à la main.
+- MLflow 3.x : l'UI s'ouvre en mode « GenAI » ; basculer sur « Model training » pour voir les runs. `mlflow server` exige `--allowed-hosts` pour être joint par un autre conteneur.
+- `pkill -f "uvicorn app.main"` dans un shell tue aussi le shell (le motif apparaît dans sa ligne de commande) : tuer par PID.
 - PyTorch a besoin d'un `/tmp` inscriptible au démarrage : `--read-only` doit s'accompagner de `--tmpfs /tmp`.
+
+## Décision en attente (Lucas)
+
+- **Basculer sur CLIP ?** CLIP zero-shot dépasse 80 % avec le vocabulaire détaillé (88,5 %) mais ce chiffre est optimiste ; le contrôle « aveugle » donne 76,5 %. Avant de basculer : mesurer sur ~100 photos réelles indépendantes (`data/test_set/real/`), puis exporter l'encodeur image CLIP en ONNX int8. Tant que ce n'est pas tranché, ResNet-50 int8 reste en production.
 
 ## Points ouverts
 
