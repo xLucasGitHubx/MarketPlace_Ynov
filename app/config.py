@@ -36,11 +36,16 @@ DEFAULT_THRESHOLDS = {
 @dataclass(frozen=True)
 class Settings:
     app_name: str = "Marketplace Vision API"
-    app_version: str = "0.2.0"
+    app_version: str = "0.3.0"
 
     # Upload
     max_upload_mb: float = field(default_factory=lambda: _env_float("MAX_UPLOAD_MB", 5))
     allowed_mime_types: tuple[str, ...] = ("image/jpeg", "image/png", "image/webp")
+
+    # Sécurité : un ou plusieurs tokens séparés par des virgules (rotation sans coupure)
+    api_tokens: tuple[str, ...] = field(
+        default_factory=lambda: tuple(t.strip() for t in os.getenv("API_TOKEN", "").split(",") if t.strip())
+    )
 
     # Modèle
     model_backend: str = field(default_factory=lambda: os.getenv("MODEL_BACKEND", "pytorch").lower())
