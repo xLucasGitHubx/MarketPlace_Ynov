@@ -1,0 +1,4 @@
+# Outils d'export / quantization (build uniquement, jamais dans l'image finale)
+onnx>=1.16
+onnxscript>=0.1
+onnxruntime==1.*

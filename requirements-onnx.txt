@@ -1,0 +1,2 @@
+# Runtime du backend optimisé (itération 4) : ONNX Runtime seul, sans PyTorch
+onnxruntime==1.*
