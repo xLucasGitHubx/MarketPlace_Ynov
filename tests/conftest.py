@@ -3,8 +3,14 @@
 from __future__ import annotations
 
 import io
+import os
 
 import pytest
+
+# Token de test, défini AVANT l'import de l'app (Settings est mis en cache)
+TEST_TOKEN = "test-token-0123456789"
+os.environ["API_TOKEN"] = TEST_TOKEN
+AUTH = {"Authorization": f"Bearer {TEST_TOKEN}"}
 from PIL import Image
 
 
@@ -74,9 +80,9 @@ class FailingPredictor:
 def make_client():
     from app.main import app
 
-    def _make(predictor=None):
+    def _make(predictor=None, auth: bool = True):
         app.state.predictor = predictor or FakePredictor()
-        return TestClient(app)
+        return TestClient(app, headers=AUTH if auth else None)
 
     yield _make
     app.state.predictor = None

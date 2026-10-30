@@ -30,7 +30,7 @@ python scripts/build_test_set.py                     # télécharge le jeu de te
 python scripts/evaluate.py --backend pytorch         # accuracy + latence + balayage du seuil
 ```
 
-Variables utiles : `MODEL_BACKEND` (pytorch|onnx), `MODEL_CACHE_DIR` (cache HF, ex. `models/hf`), `CONFIDENCE_THRESHOLD`, `TOP_K`, `HF_TOKEN`.
+Variables utiles : `API_TOKEN` (obligatoire, sinon 401 partout), `MODEL_BACKEND` (pytorch|onnx), `MODEL_CACHE_DIR` (cache HF, ex. `models/hf`), `CONFIDENCE_THRESHOLD`, `TOP_K`, `HF_TOKEN`.
 
 ## Architecture
 
@@ -64,7 +64,7 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 | 1. Squelette | ✅ fait | `docs/preuves/it1-squelette.md` |
 | 2. Cerveau | ✅ fait | `docs/preuves/it2-cerveau.md` — accuracy 69 % (ResNet-50, 200 photos) |
 | 3. Isolement | ✅ fait | `docs/preuves/it3-docker.md` — image PyTorch 2,04 Go |
-| 6. Barrière | à faire | — |
+| 6. Barrière | ✅ fait | `docs/preuves/it6-securite.md` — 401, conteneur `--read-only`, 0 image écrite |
 | 4. Optimisation | à faire | — |
 | 8. Rétroviseur | à faire | — |
 | 5. Flux | à faire | — |
@@ -83,7 +83,9 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 - Ne jamais ajuster `data/imagenet_mapping.tsv` en regardant les erreurs du jeu de test (surapprentissage du mapping) : seulement des oublis manifestes, documentés.
 - Docker Hub peut renvoyer 429 (rate limit) : tirer `mirror.gcr.io/library/python:3.11-slim` puis `docker tag` en `python:3.11-slim`, ou `--build-arg BASE_IMAGE=...`.
 - Derrière un proxy TLS : `docker build --network host --secret id=ca_bundle,src=<ca.crt> ...`.
-- Starlette écrit sur disque les uploads > 1 Mo (SpooledTemporaryFile) : à traiter à l'itération 6.
+- Starlette écrit sur disque les uploads > 1 Mo (SpooledTemporaryFile) : réglé par `keep_uploads_in_memory()` dans `app/security.py` ; ne pas retirer.
+- Les tests fixent `API_TOKEN` dans `tests/conftest.py` AVANT d'importer l'app (Settings en cache).
+- PyTorch a besoin d'un `/tmp` inscriptible au démarrage : `--read-only` doit s'accompagner de `--tmpfs /tmp`.
 
 ## Points ouverts
 
