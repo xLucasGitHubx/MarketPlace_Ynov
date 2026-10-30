@@ -1,0 +1,17 @@
+# Seul le nécessaire entre dans le contexte de build
+.git
+.venv
+venv
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.env
+*.env
+models/
+mlruns/
+mlflow.db
+data/
+docs/
+tests/
+*.md
+!README.md
