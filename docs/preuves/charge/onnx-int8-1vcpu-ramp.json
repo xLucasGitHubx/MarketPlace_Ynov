@@ -1,0 +1,57 @@
+[
+  {
+    "palier": "1 utilisateur",
+    "requetes": 357,
+    "debit_req_s": 17.87,
+    "p50_ms": 67.9,
+    "p95_ms": 90.3,
+    "p99_ms": 130.7,
+    "moy_ms": 56.2,
+    "erreurs": 0,
+    "taux_erreur_pct": 0.0
+  },
+  {
+    "palier": "2 utilisateurs",
+    "requetes": 423,
+    "debit_req_s": 21.23,
+    "p50_ms": 93.9,
+    "p95_ms": 161.5,
+    "p99_ms": 177.2,
+    "moy_ms": 94.8,
+    "erreurs": 0,
+    "taux_erreur_pct": 0.0
+  },
+  {
+    "palier": "4 utilisateurs",
+    "requetes": 454,
+    "debit_req_s": 22.77,
+    "p50_ms": 177.5,
+    "p95_ms": 283.4,
+    "p99_ms": 372.4,
+    "moy_ms": 176.4,
+    "erreurs": 0,
+    "taux_erreur_pct": 0.0
+  },
+  {
+    "palier": "8 utilisateurs",
+    "requetes": 482,
+    "debit_req_s": 24.13,
+    "p50_ms": 321.6,
+    "p95_ms": 495.0,
+    "p99_ms": 575.1,
+    "moy_ms": 335.7,
+    "erreurs": 0,
+    "taux_erreur_pct": 0.0
+  },
+  {
+    "palier": "16 utilisateurs",
+    "requetes": 551,
+    "debit_req_s": 28.17,
+    "p50_ms": 586.2,
+    "p95_ms": 802.0,
+    "p99_ms": 923.8,
+    "moy_ms": 583.3,
+    "erreurs": 0,
+    "taux_erreur_pct": 0.0
+  }
+]
