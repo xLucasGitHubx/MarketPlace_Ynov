@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Council modèle</title>
+<style>
+:root{--bg:#fff;--fg:#1d1d1f;--muted:#6e6e73;--line:#e5e5ea;--acc:#2f6fdf;--ok:#2e7d4f;--warn:#b26a00;--card:#fafafc}
+@media (prefers-color-scheme:dark){:root{--bg:#141416;--fg:#ececf0;--muted:#a1a1a8;--line:#2c2c31;--acc:#7aa7ff;--ok:#6fcf97;--warn:#f2b45a;--card:#1c1c20}}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:18px;margin:28px 0 8px}
+.sub{color:var(--muted);margin:0 0 24px}
+.verdict{border:1px solid var(--line);border-left:4px solid var(--acc);background:var(--card);padding:16px 20px;border-radius:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:8px}
+.adv{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--card)}
+.adv b{display:block}.tag{font-size:12px;padding:2px 8px;border-radius:99px;display:inline-block;margin-top:6px}
+.c{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.b{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+details{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:8px 0;background:var(--card)}
+summary{cursor:pointer;font-weight:600}
+footer{color:var(--muted);font-size:13px;margin-top:40px;border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body><main>
+<h1>LLM Council : quel cœur de modèle pour le MVP ?</h1>
+<p class="sub">ResNet-50 + mapping ImageNet (spec) · CLIP zero-shot · hybride — API de catégorisation Marketplace (Ynov)</p>
+
+<div class="verdict">
+<h2 style="margin-top:0">Verdict : option C, séquencée</h2>
+<p>ResNet-50 reste le chemin de production pour les itérations 1 → 6. Le code est construit autour d'une interface <code>Predictor</code> commune et d'un seuil par modèle pour brancher CLIP sans réécriture. L'accuracy est mesurée dès l'itération 2 sur un jeu de test proxy public, puis sur des photos réelles. CLIP devient principal seulement si la mesure le justifie (ResNet &lt; 80 %, CLIP ≥ 80 % avec p95 &lt; 500 ms). Le critère 80 % est conservé.</p>
+<p><b>Première action :</b> constituer le jeu d'évaluation étiqueté et mesurer ResNet dès que l'itération 2 tourne.</p>
+</div>
+
+<h2>Positions des conseillers</h2>
+<div class="grid">
+<div class="adv"><b>Executor</b>C, ResNet d'abord, CLIP en benchmark<br><span class="tag c">jugé le plus solide (5/5)</span></div>
+<div class="adv"><b>Expansionist</b>C, CLIP comme argument de soutenance<br><span class="tag c">aligné</span></div>
+<div class="adv"><b>Contrarian</b>Spike CLIP 2 h, puis B seul si ≥ 80 %<br><span class="tag c">aligné sur « mesurer d'abord »</span></div>
+<div class="adv"><b>First Principles</b>Mauvaise question ; remplacer le critère 80 %<br><span class="tag b">angle mort (1/5)</span></div>
+<div class="adv"><b>Outsider</b>CLIP principal, ResNet baseline<br><span class="tag b">angle mort (4/5)</span></div>
+</div>
+
+<h2>Où le conseil est d'accord</h2>
+<ul>
+<li>Le module note l'industrialisation : la chaîne complète passe avant le choix du modèle.</li>
+<li>ResNet + mapping manuel risque de rater 80 % (vêtements, meubles, électroménager mal couverts).</li>
+<li>Mesurer tôt, ne jamais trancher à l'aveugle.</li>
+<li>Pour CLIP : n'exporter que l'encodeur image, embeddings texte pré-calculés.</li>
+</ul>
+
+<h2>Angles morts relevés en revue croisée</h2>
+<ul>
+<li>Biais d'un jeu de test étiqueté par l'étudiant lui-même.</li>
+<li>Valider la déviation avec le formateur (un mail suffit).</li>
+<li>Le seuil 0,6 n'est pas transposable d'un modèle à l'autre : il faut un seuil par modèle.</li>
+<li>Latence p95 et taille Docker de CLIP non chiffrées.</li>
+<li>Troisième voie : classifieur à vocabulaire plus riche (ImageNet-21k, ConvNeXt/ViT).</li>
+</ul>
+
+<details><summary>Executor</summary><p>Option C avec ordre strict : itérations 1-3 avec ResNet, 100 photos étiquetées tout de suite, mesure immédiate ; CLIP en PyTorch pur après l'itération 6 ; tableau MLflow à trois lignes. Garde-fou : abandon de CLIP si plus d'une semaine de retard.</p></details>
+<details><summary>Expansionist</summary><p>CLIP comme argument de soutenance : arbitrage précision vs coût dans MLflow, « coût par point d'accuracy » en FinOps, ajout d'une catégorie en direct via un JSON.</p></details>
+<details><summary>Contrarian</summary><p>Le critère 80 % condamne l'option A ; la cohérence avec une spec qu'on a rédigée soi-même est un faux argument ; C double le travail. Spike de 2 h sur CLIP avant de trancher.</p></details>
+<details><summary>First Principles</summary><p>Le modèle n'est que la charge utile. Remplacer « 80 % » par « perte ≤ 2 pts entre lourd et optimisé ». CLIP s'exporte simplement si on ne garde que l'encodeur image.</p></details>
+<details><summary>Outsider</summary><p>Un juré voit « Autre » sur un canapé et conclut que ça ne marche pas. CLIP principal, ResNet baseline, décision présentée comme une mesure d'ingénieur.</p></details>
+
+<footer>Conseil tenu le 30/10/2026 · 5 conseillers, 5 revues anonymes, synthèse du chairman · transcript complet : council-transcript-2026-10-30-modele.md</footer>
+</main></body></html>
