@@ -56,7 +56,7 @@ def main() -> None:
         classes.append({"id": idx, "label": label, "categorie": category, "titre": title})
 
     payload = {
-        "version": "1.0",
+        "version": "1.1",
         "source": "ImageNet-1k (microsoft/resnet-50) — mapping manuel data/imagenet_mapping.tsv",
         "categories": list(CODES.values()) + [OTHER],
         "classes": classes,

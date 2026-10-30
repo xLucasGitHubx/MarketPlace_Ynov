@@ -33,7 +33,7 @@
 440	M	Bouteille en verre
 441	M	Verre à bière
 443	V	Bavoir
-444	S	Tandem
+444	S	Vélo
 445	V	Bikini
 446	L	Classeur
 447	E	Jumelles
@@ -388,3 +388,22 @@
 921	L	Livre
 923	M	Assiette
 968	M	Tasse
+# --- v1.1 : audit systématique des classes restées en « Autre » (oublis manifestes uniquement) ---
+416	S	Poutre de gymnastique
+439	V	Toque en fourrure
+454	L	Livres
+465	V	Gilet
+489	B	Grillage
+581	H	Calandre
+624	L	Livres
+701	S	Parachute
+779	H	Bus
+780	H	Voilier
+788	V	Chaussures
+789	M	Paravent
+799	B	Porte coulissante
+803	H	Chasse-neige
+865	J	Jouets
+904	B	Moustiquaire de fenêtre
+912	B	Clôture
+999	M	Papier toilette
