@@ -23,8 +23,14 @@ Specs de référence : `docs/SPECIFICATIONS.md`. Consignes du sujet : `docs/SUJE
 python -m venv .venv && source .venv/bin/activate   # Windows : .venv\Scripts\activate
 pip install -r requirements-dev.txt
 uvicorn app.main:app --reload                        # Swagger : http://localhost:8000/docs
-pytest -q
+pytest -q                                            # tests rapides (faux modèle, pas de téléchargement)
+
+python scripts/build_categories.py                   # régénère app/categories.json depuis data/imagenet_mapping.tsv
+python scripts/build_test_set.py                     # télécharge le jeu de test proxy (200 photos, non versionnées)
+python scripts/evaluate.py --backend pytorch         # accuracy + latence + balayage du seuil
 ```
+
+Variables utiles : `MODEL_BACKEND` (pytorch|onnx), `MODEL_CACHE_DIR` (cache HF, ex. `models/hf`), `CONFIDENCE_THRESHOLD`, `TOP_K`, `HF_TOKEN`.
 
 ## Architecture
 
@@ -55,8 +61,8 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 
 | It. | Statut | Preuve |
 | --- | --- | --- |
-| 1. Squelette | en cours | — |
-| 2. Cerveau | à faire | — |
+| 1. Squelette | ✅ fait | `docs/preuves/it1-squelette.md` |
+| 2. Cerveau | ✅ fait | `docs/preuves/it2-cerveau.md` — accuracy 69 % (ResNet-50, 200 photos) |
 | 3. Isolement | à faire | — |
 | 6. Barrière | à faire | — |
 | 4. Optimisation | à faire | — |
@@ -64,6 +70,18 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 | 5. Flux | à faire | — |
 | 7. Grand saut | à faire (si possible) | — |
 | 9. Facture | à faire | — |
+
+## Mesures clés
+
+| Date | Modèle | Accuracy (200 photos) | p50 / p95 CPU | Note |
+| --- | --- | --- | --- | --- |
+| 2026-10-30 | resnet50-pytorch-fp32, mapping v1.1 | 69,0 % | 102 / 120 ms | Jeux et jouets 25 %, Électroménager 55 % (pas de bouilloire dans ImageNet) |
+
+## Pièges connus
+
+- Tester l'API sans `with TestClient(app)` : le lifespan (chargement du modèle) ne tourne pas, on injecte `app.state.predictor` (voir `tests/conftest.py`).
+- Ne jamais ajuster `data/imagenet_mapping.tsv` en regardant les erreurs du jeu de test (surapprentissage du mapping) : seulement des oublis manifestes, documentés.
+- Starlette écrit sur disque les uploads > 1 Mo (SpooledTemporaryFile) : à traiter à l'itération 6.
 
 ## Points ouverts
 

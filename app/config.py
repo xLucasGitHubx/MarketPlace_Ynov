@@ -18,18 +18,51 @@ def _env_float(name: str, default: float) -> float:
         return default
 
 
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int(os.getenv(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+# Seuil de confiance par défaut pour chaque backend (calibré après mesure,
+# voir docs/preuves). Surchargé globalement par CONFIDENCE_THRESHOLD.
+DEFAULT_THRESHOLDS = {
+    "pytorch": 0.6,
+    "onnx": 0.6,
+}
+
+
 @dataclass(frozen=True)
 class Settings:
     app_name: str = "Marketplace Vision API"
-    app_version: str = "0.1.0"
+    app_version: str = "0.2.0"
 
     # Upload
     max_upload_mb: float = field(default_factory=lambda: _env_float("MAX_UPLOAD_MB", 5))
     allowed_mime_types: tuple[str, ...] = ("image/jpeg", "image/png", "image/webp")
 
+    # Modèle
+    model_backend: str = field(default_factory=lambda: os.getenv("MODEL_BACKEND", "pytorch").lower())
+    model_cache_dir: str | None = field(default_factory=lambda: os.getenv("MODEL_CACHE_DIR") or None)
+    hf_token: str | None = field(default_factory=lambda: os.getenv("HF_TOKEN") or None)
+
+    # Logique métier
+    top_k: int = field(default_factory=lambda: _env_int("TOP_K", 5))
+    _threshold_override: str | None = field(default_factory=lambda: os.getenv("CONFIDENCE_THRESHOLD") or None)
+
     @property
     def max_upload_bytes(self) -> int:
         return int(self.max_upload_mb * 1024 * 1024)
+
+    @property
+    def confidence_threshold(self) -> float:
+        if self._threshold_override is not None:
+            try:
+                return float(self._threshold_override)
+            except ValueError:
+                pass
+        return DEFAULT_THRESHOLDS.get(self.model_backend, 0.6)
 
 
 @lru_cache
