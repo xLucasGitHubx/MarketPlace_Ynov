@@ -51,6 +51,7 @@ class Settings:
     model_backend: str = field(default_factory=lambda: os.getenv("MODEL_BACKEND", "pytorch").lower())
     model_cache_dir: str | None = field(default_factory=lambda: os.getenv("MODEL_CACHE_DIR") or None)
     hf_token: str | None = field(default_factory=lambda: os.getenv("HF_TOKEN") or None)
+    onnx_model_path: str | None = field(default_factory=lambda: os.getenv("ONNX_MODEL_PATH") or None)
 
     # Logique métier
     top_k: int = field(default_factory=lambda: _env_int("TOP_K", 5))
