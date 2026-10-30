@@ -1,0 +1,7 @@
+# Backend PyTorch (modèle de référence, itération 2) + outils d'évaluation
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.*
+transformers>=4.44,<5
+numpy>=1.26,<3
+pandas>=2.2
+pyarrow>=15
