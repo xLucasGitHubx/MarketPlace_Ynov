@@ -36,7 +36,7 @@ DEFAULT_THRESHOLDS = {
 @dataclass(frozen=True)
 class Settings:
     app_name: str = "Marketplace Vision API"
-    app_version: str = "0.3.0"
+    app_version: str = "0.4.0"
 
     # Upload
     max_upload_mb: float = field(default_factory=lambda: _env_float("MAX_UPLOAD_MB", 5))
@@ -52,6 +52,9 @@ class Settings:
     model_cache_dir: str | None = field(default_factory=lambda: os.getenv("MODEL_CACHE_DIR") or None)
     hf_token: str | None = field(default_factory=lambda: os.getenv("HF_TOKEN") or None)
     onnx_model_path: str | None = field(default_factory=lambda: os.getenv("ONNX_MODEL_PATH") or None)
+
+    # MLOps : suivi des requêtes dans MLflow (désactivé si vide)
+    mlflow_tracking_uri: str | None = field(default_factory=lambda: os.getenv("MLFLOW_TRACKING_URI") or None)
 
     # Logique métier
     top_k: int = field(default_factory=lambda: _env_int("TOP_K", 5))

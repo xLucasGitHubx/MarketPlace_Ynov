@@ -12,6 +12,7 @@ from fastapi.concurrency import run_in_threadpool
 from app.business import suggest
 from app.config import get_settings
 from app.model import load_predictor
+from app.monitoring import NullTracker, create_tracker
 from app.preprocessing import ImageValidationError, validate_image
 from app.schemas import ErrorResponse, HealthResponse, PredictionResponse
 from app.security import UploadGuardMiddleware, keep_uploads_in_memory, require_token
@@ -33,7 +34,12 @@ async def lifespan(app: FastAPI):
             settings.model_backend, cache_dir=settings.model_cache_dir, hf_token=settings.hf_token,
             onnx_path=settings.onnx_model_path
         )
+    if getattr(app.state, "tracker", None) is None:
+        app.state.tracker = create_tracker(
+            settings.mlflow_tracking_uri, app.state.predictor.name, settings.app_version
+        )
     yield
+    app.state.tracker.close()
 
 
 app = FastAPI(
@@ -107,6 +113,8 @@ async def predict(
         del validated
     latency_ms = round((time.perf_counter() - start) * 1000, 1)
 
+    tracker = getattr(request.app.state, "tracker", None) or NullTracker()
+    tracker.record(latency_ms, result.confidence, result.category, result.status)  # étape 9 : MLflow
     logger.info(
         "prediction categorie=%s confiance=%.3f statut=%s latence_ms=%.1f modele=%s",
         result.category, result.confidence, result.status, latency_ms, predictor.name,
