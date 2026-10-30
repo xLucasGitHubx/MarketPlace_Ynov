@@ -30,7 +30,8 @@ async def lifespan(app: FastAPI):
         logger.warning("API_TOKEN non défini : toutes les requêtes /predict seront refusées (401).")
     if getattr(app.state, "predictor", None) is None:
         app.state.predictor = load_predictor(
-            settings.model_backend, cache_dir=settings.model_cache_dir, hf_token=settings.hf_token
+            settings.model_backend, cache_dir=settings.model_cache_dir, hf_token=settings.hf_token,
+            onnx_path=settings.onnx_model_path
         )
     yield
 

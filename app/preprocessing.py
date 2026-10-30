@@ -84,3 +84,31 @@ def validate_image(data: bytes, max_bytes: int, allowed_mime: tuple[str, ...]) -
         probe.close()
 
     return ValidatedImage(image=rgb, mime_type=mime, size_bytes=size, width=rgb.width, height=rgb.height)
+
+
+# --- Prétraitement sans PyTorch (backend ONNX) --------------------------------
+# Reproduit exactement l'AutoImageProcessor de microsoft/resnet-50
+# (ConvNextImageProcessor, shortest_edge=224, crop_pct=0.875) :
+# redimensionnement du petit côté à 256 (bicubique), recadrage central 224×224,
+# mise à l'échelle [0, 1], normalisation ImageNet, format NCHW float32.
+
+IMAGENET_MEAN = (0.485, 0.456, 0.406)
+IMAGENET_STD = (0.229, 0.224, 0.225)
+
+
+def to_model_input(image: Image.Image, size: int = 224, crop_pct: float = 0.875):
+    import numpy as np
+
+    resize_to = int(size / crop_pct)  # 256
+    w, h = image.size
+    if w <= h:
+        new_w, new_h = resize_to, int(resize_to * h / w)
+    else:
+        new_w, new_h = int(resize_to * w / h), resize_to
+    resized = image.resize((new_w, new_h), resample=Image.Resampling.BICUBIC)
+    left, top = (new_w - size) // 2, (new_h - size) // 2
+    cropped = resized.crop((left, top, left + size, top + size))
+
+    arr = np.asarray(cropped, dtype=np.float32) / 255.0
+    arr = (arr - np.array(IMAGENET_MEAN, dtype=np.float32)) / np.array(IMAGENET_STD, dtype=np.float32)
+    return np.ascontiguousarray(arr.transpose(2, 0, 1)[None, ...])  # (1, 3, 224, 224)

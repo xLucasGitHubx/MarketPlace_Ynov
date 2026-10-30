@@ -44,9 +44,11 @@ def load_manifest(test_dir: Path) -> list[dict]:
         return list(csv.DictReader(f))
 
 
-def evaluate(backend: str, test_dir: Path = TEST_DIR, top_k: int = 5, warmup: int = 3) -> dict:
+def evaluate(backend: str, test_dir: Path = TEST_DIR, top_k: int = 5, warmup: int = 3,
+             onnx_path: str | None = None) -> dict:
     settings = get_settings()
-    predictor = load_predictor(backend, cache_dir=settings.model_cache_dir, hf_token=settings.hf_token)
+    onnx_path = onnx_path or settings.onnx_model_path
+    predictor = load_predictor(backend, cache_dir=settings.model_cache_dir, hf_token=settings.hf_token, onnx_path=onnx_path)
     rows = load_manifest(test_dir)
 
     images = [Image.open(test_dir / r["fichier"]).convert("RGB") for r in rows]
@@ -116,10 +118,11 @@ def main() -> None:
     ap.add_argument("--backend", default=get_settings().model_backend)
     ap.add_argument("--test-dir", type=Path, default=TEST_DIR)
     ap.add_argument("--top-k", type=int, default=get_settings().top_k)
+    ap.add_argument("--onnx-path", default=None, help="modèle ONNX à évaluer (backend onnx)")
     ap.add_argument("--out", type=Path, default=None, help="fichier JSON de résultats")
     args = ap.parse_args()
 
-    res = evaluate(args.backend, args.test_dir, args.top_k)
+    res = evaluate(args.backend, args.test_dir, args.top_k, onnx_path=args.onnx_path)
     summary = {k: v for k, v in res.items() if k != "erreurs"}
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     print(f"\n{len(res['erreurs'])} erreurs (détail dans --out)")
