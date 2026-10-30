@@ -1,0 +1,390 @@
+# Mapping manuel ImageNet-1k -> catégories d'annonce. Format : index<TAB>code<TAB>titre suggéré (FR)
+# Codes : E=Électronique M=Maison et meubles A=Électroménager V=Vêtements et accessoires S=Sport et loisirs
+#         J=Jeux et jouets H=Véhicules et pièces B=Bricolage et jardin L=Livres et musique
+# Toute classe absente de ce fichier est classée « Autre ».
+398	J	Boulier
+399	V	Abaya
+400	V	Toge universitaire
+401	L	Accordéon
+402	L	Guitare acoustique
+407	H	Ambulance
+408	H	Véhicule amphibie
+409	M	Horloge murale
+411	V	Tablier
+412	B	Poubelle
+414	V	Sac à dos
+417	J	Ballon de baudruche
+418	L	Stylo bille
+420	L	Banjo
+422	S	Barre de musculation
+423	M	Fauteuil de barbier
+426	M	Baromètre
+427	B	Tonneau
+428	B	Brouette
+429	S	Balle de baseball
+430	S	Ballon de basket
+431	M	Berceau
+432	L	Basson
+433	V	Bonnet de bain
+434	M	Serviette de bain
+435	M	Baignoire
+436	H	Break
+438	M	Bécher
+440	M	Bouteille en verre
+441	M	Verre à bière
+443	V	Bavoir
+444	S	Tandem
+445	V	Bikini
+446	L	Classeur
+447	E	Jumelles
+448	B	Nichoir
+450	S	Luge bobsleigh
+451	V	Cravate bolo
+452	V	Bonnet
+453	M	Bibliothèque
+455	M	Capsule de bouteille
+456	S	Arc
+457	V	Nœud papillon
+458	M	Applique murale en laiton
+459	V	Soutien-gorge
+462	M	Balai
+463	B	Seau
+464	V	Boucle de ceinture
+467	M	Billot de boucher
+468	H	Taxi
+469	M	Chaudron
+470	M	Bougie
+472	S	Canoë
+473	M	Ouvre-boîte
+474	V	Cardigan
+475	H	Rétroviseur
+477	B	Caisse à outils
+478	M	Carton
+479	H	Roue de voiture
+481	L	Cassette audio
+482	E	Lecteur de cassettes
+484	H	Catamaran
+485	E	Lecteur CD
+486	L	Violoncelle
+487	E	Smartphone
+488	B	Chaîne
+491	B	Tronçonneuse
+492	M	Coffre
+493	M	Chiffonnier
+494	M	Carillon
+495	M	Vaisselier
+496	M	Chaussette de Noël
+499	M	Couperet de cuisine
+501	V	Cape
+502	V	Sabots
+503	M	Shaker à cocktail
+504	M	Mug
+505	M	Cafetière
+507	B	Cadenas à code
+508	E	Clavier d'ordinateur
+511	H	Cabriolet
+512	M	Tire-bouchon
+513	L	Cornet
+514	V	Bottes de cowboy
+515	V	Chapeau de cowboy
+516	M	Berceau à bascule
+518	H	Casque de moto
+519	M	Caisse en bois
+520	M	Lit bébé
+521	A	Mijoteuse électrique
+522	S	Boule de croquet
+523	M	Béquille
+526	M	Bureau
+527	E	Ordinateur de bureau
+528	E	Téléphone à cadran
+530	E	Réveil digital
+531	V	Montre digitale
+532	M	Table à manger
+533	M	Torchon
+534	A	Lave-vaisselle
+535	H	Disque de frein
+539	M	Paillasson
+541	L	Batterie (instrument)
+542	L	Baguettes de batterie
+543	S	Haltère
+544	M	Cocotte en fonte
+545	A	Ventilateur
+546	L	Guitare électrique
+548	M	Meuble TV
+549	L	Enveloppe
+550	A	Machine à expresso
+551	V	Poudre pour le visage
+552	V	Boa en plumes
+553	B	Lime
+555	H	Camion de pompiers
+556	M	Pare-feu de cheminée
+558	L	Flûte
+559	M	Chaise pliante
+560	S	Casque de football américain
+561	H	Chariot élévateur
+563	L	Stylo plume
+564	M	Lit à baldaquin
+566	L	Cor d'harmonie
+567	M	Poêle
+568	V	Manteau de fourrure
+569	H	Camion benne
+571	H	Pompe à essence
+572	M	Verre à pied
+573	S	Kart
+574	S	Balle de golf
+575	H	Voiturette de golf
+577	L	Gong
+578	V	Robe longue
+579	L	Piano à queue
+580	B	Serre de jardin
+584	V	Barrette à cheveux
+585	V	Laque
+587	B	Marteau
+588	M	Panier à linge
+589	A	Sèche-cheveux
+590	E	Assistant personnel (PDA)
+591	V	Mouchoir en tissu
+592	E	Disque dur
+593	L	Harmonica
+594	L	Harpe
+595	H	Moissonneuse
+596	B	Hachette
+597	V	Étui de ceinture
+598	E	Home cinéma
+600	B	Crochet
+601	V	Jupon à cerceaux
+602	S	Barre fixe
+604	M	Sablier
+605	E	Baladeur MP3
+606	A	Fer à repasser
+607	M	Citrouille d'Halloween
+608	V	Jean
+609	H	4x4
+610	V	Maillot
+611	J	Puzzle
+613	E	Manette de jeu
+614	V	Kimono
+615	S	Genouillère
+617	V	Blouse
+618	M	Louche
+619	M	Abat-jour
+620	E	Ordinateur portable
+621	B	Tondeuse à gazon
+622	E	Bouchon d'objectif
+623	M	Coupe-papier
+626	M	Briquet
+627	H	Limousine
+629	V	Rouge à lèvres
+630	V	Mocassins
+631	V	Lotion
+632	E	Enceinte
+633	E	Loupe
+635	S	Boussole
+636	V	Sacoche
+637	B	Boîte aux lettres
+638	V	Maillot de bain
+639	V	Maillot de bain
+641	L	Maracas
+642	L	Marimba
+643	J	Masque
+644	M	Allumettes
+647	M	Verre doseur
+648	M	Armoire à pharmacie
+650	E	Microphone
+651	A	Micro-ondes
+652	V	Uniforme militaire
+653	M	Bidon à lait
+654	H	Minibus
+655	V	Minijupe
+656	H	Monospace
+658	V	Moufles
+659	M	Saladier
+660	H	Mobil-home
+661	H	Voiture de collection
+662	E	Modem
+664	E	Écran d'ordinateur
+665	H	Cyclomoteur
+666	M	Mortier
+667	V	Chapeau de diplômé
+669	M	Moustiquaire
+670	H	Scooter
+671	S	VTT
+672	S	Tente de camping
+673	E	Souris d'ordinateur
+674	B	Piège à souris
+675	H	Camion de déménagement
+676	S	Muselière
+677	B	Clous
+678	M	Minerve
+679	V	Collier
+680	M	Biberon
+681	E	Ordinateur portable
+683	L	Hautbois
+684	L	Ocarina
+685	H	Compteur kilométrique
+686	H	Filtre à huile
+687	L	Orgue
+688	E	Oscilloscope
+689	V	Surjupe
+691	M	Masque à oxygène
+693	S	Pagaie
+695	B	Cadenas
+696	B	Pinceau
+697	V	Pyjama
+699	L	Flûte de pan
+700	M	Essuie-tout
+702	S	Barres parallèles
+703	B	Banc de jardin
+706	B	Salon de jardin
+709	L	Trousse
+710	L	Taille-crayon
+711	V	Parfum
+713	E	Photocopieuse
+714	B	Pioche
+716	B	Clôture en bois
+717	H	Pick-up
+719	J	Tirelire
+720	M	Flacon de médicaments
+721	M	Oreiller
+722	S	Balle de ping-pong
+723	J	Moulin à vent
+725	M	Pichet
+726	B	Rabot
+728	M	Sac plastique
+729	M	Égouttoir à vaisselle
+731	B	Ventouse
+732	E	Appareil photo instantané
+734	H	Fourgon
+735	V	Poncho
+736	S	Billard
+737	M	Bouteille de soda
+738	B	Pot de fleurs
+740	B	Perceuse
+741	M	Tapis
+742	E	Imprimante
+745	E	Vidéoprojecteur
+746	S	Palet de hockey
+747	S	Sac de frappe
+748	V	Sac à main
+749	L	Plume d'écriture
+750	M	Couette
+751	H	Voiture de course
+752	S	Raquette
+753	M	Radiateur
+754	E	Radio
+756	B	Récupérateur d'eau
+757	H	Camping-car
+758	S	Moulinet de pêche
+759	E	Appareil photo reflex
+760	A	Réfrigérateur
+761	E	Télécommande
+765	M	Fauteuil à bascule
+766	A	Rôtissoire
+767	L	Gomme
+768	S	Ballon de rugby
+769	B	Règle
+770	V	Baskets
+771	M	Coffre-fort
+772	V	Épingle à nourrice
+773	M	Salière
+774	V	Sandales
+775	V	Paréo
+776	L	Saxophone
+778	A	Balance
+782	E	Écran
+783	B	Vis
+784	B	Tournevis
+785	H	Ceinture de sécurité
+786	A	Machine à coudre
+790	M	Panier
+791	M	Chariot de courses
+792	B	Pelle
+793	V	Bonnet de douche
+794	M	Rideau de douche
+795	S	Skis
+796	V	Cagoule
+797	S	Sac de couchage
+798	L	Règle à calcul
+801	S	Tuba
+802	H	Motoneige
+804	M	Distributeur de savon
+805	S	Ballon de football
+806	V	Chaussettes
+808	V	Sombrero
+809	M	Bol
+810	E	Barre d'espace (clavier)
+811	A	Chauffage d'appoint
+813	M	Spatule
+814	H	Bateau à moteur
+816	M	Fuseau
+817	H	Voiture de sport
+818	M	Projecteur
+822	L	Steel drum
+823	M	Stéthoscope
+824	V	Étole
+826	S	Chronomètre
+827	A	Cuisinière
+828	M	Passoire
+831	M	Canapé
+834	V	Costume
+836	V	Lunettes de soleil
+837	V	Lunettes de soleil
+838	V	Crème solaire
+841	V	Sweat-shirt
+842	V	Short de bain
+843	B	Balançoire
+844	B	Interrupteur
+846	M	Lampe de bureau
+848	E	Lecteur de cassettes
+849	M	Théière
+850	J	Peluche
+851	E	Télévision
+852	S	Balle de tennis
+855	M	Dé à coudre
+857	M	Fauteuil
+859	A	Grille-pain
+861	M	Abattant de WC
+862	B	Lampe torche
+864	H	Dépanneuse
+866	H	Tracteur
+867	H	Semi-remorque
+868	M	Plateau
+869	V	Trench-coat
+870	J	Tricycle
+871	H	Trimaran
+872	E	Trépied
+875	L	Trombone
+876	M	Bassine
+878	E	Machine à écrire
+879	V	Parapluie
+880	S	Monocycle
+881	L	Piano droit
+882	A	Aspirateur
+883	M	Vase
+885	V	Velours
+887	V	Vêtement liturgique
+889	L	Violon
+890	S	Ballon de volley
+891	A	Gaufrier
+892	M	Horloge murale
+893	V	Portefeuille
+894	M	Armoire
+896	M	Lavabo
+897	A	Lave-linge
+898	S	Gourde
+899	M	Carafe
+901	M	Cruche
+902	S	Sifflet
+903	V	Perruque
+905	M	Store
+906	V	Cravate
+907	M	Bouteille de vin
+909	M	Wok
+910	M	Cuillère en bois
+911	V	Pelote de laine
+914	H	Voilier
+917	L	Bande dessinée
+918	L	Mots croisés
+921	L	Livre
+923	M	Assiette
+968	M	Tasse
