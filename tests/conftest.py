@@ -38,3 +38,50 @@ def gif_bytes() -> bytes:
 @pytest.fixture
 def pdf_bytes() -> bytes:
     return b"%PDF-1.4\n1 0 obj << /Type /Catalog >> endobj\ntrailer << /Root 1 0 R >>\n%%EOF\n"
+
+
+# --- Faux modèle : teste l'API sans télécharger ResNet-50 -------------------
+
+import numpy as np  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
+
+
+class FakePredictor:
+    """Renvoie une distribution fixe : 'laptop' (620) très probable par défaut."""
+
+    name = "fake-predictor"
+
+    def __init__(self, peaks: dict[int, float] | None = None):
+        self.peaks = peaks or {620: 0.92, 681: 0.05, 526: 0.01}
+
+    def predict_proba(self, image):
+        probs = np.full(1000, 0.0)
+        for idx, p in self.peaks.items():
+            probs[idx] = p
+        rest = 1.0 - probs.sum()
+        probs[probs == 0] = rest / (probs == 0).sum()
+        return probs
+
+
+class FailingPredictor:
+    name = "failing-predictor"
+
+    def predict_proba(self, image):
+        raise RuntimeError("boom secret interne")
+
+
+@pytest.fixture
+def make_client():
+    from app.main import app
+
+    def _make(predictor=None):
+        app.state.predictor = predictor or FakePredictor()
+        return TestClient(app)
+
+    yield _make
+    app.state.predictor = None
+
+
+@pytest.fixture
+def client(make_client):
+    return make_client()
