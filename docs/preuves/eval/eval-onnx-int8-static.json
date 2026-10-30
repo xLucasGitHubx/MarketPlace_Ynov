@@ -1,0 +1,505 @@
+{
+  "backend": "onnx",
+  "modele": "resnet50-onnx-int8-static",
+  "n_images": 200,
+  "top_k": 5,
+  "accuracy": 0.685,
+  "taux_auto": 0.78,
+  "precision_auto": 0.7756,
+  "seuil": 0.6,
+  "latence_p50_ms": 21.5,
+  "latence_p95_ms": 28.6,
+  "latence_moy_ms": 22.3,
+  "par_categorie": {
+    "Autre": 0.7,
+    "Bricolage et jardin": 0.6,
+    "Jeux et jouets": 0.2,
+    "Livres et musique": 0.8,
+    "Maison et meubles": 0.85,
+    "Sport et loisirs": 0.55,
+    "Véhicules et pièces": 0.95,
+    "Vêtements et accessoires": 0.8,
+    "Électroménager": 0.55,
+    "Électronique": 0.85
+  },
+  "balayage_seuil": [
+    {
+      "seuil": 0.3,
+      "taux_auto": 0.95,
+      "precision_auto": 0.7053
+    },
+    {
+      "seuil": 0.4,
+      "taux_auto": 0.915,
+      "precision_auto": 0.7049
+    },
+    {
+      "seuil": 0.5,
+      "taux_auto": 0.845,
+      "precision_auto": 0.7396
+    },
+    {
+      "seuil": 0.6,
+      "taux_auto": 0.78,
+      "precision_auto": 0.7756
+    },
+    {
+      "seuil": 0.7,
+      "taux_auto": 0.695,
+      "precision_auto": 0.8058
+    },
+    {
+      "seuil": 0.8,
+      "taux_auto": 0.625,
+      "precision_auto": 0.84
+    },
+    {
+      "seuil": 0.9,
+      "taux_auto": 0.565,
+      "precision_auto": 0.8584
+    }
+  ],
+  "erreurs": [
+    {
+      "fichier": "electronique/caltech_joy-stick_1606.jpg",
+      "attendu": "Électronique",
+      "predit": "Autre",
+      "confiance": 0.7365,
+      "top1": "web site"
+    },
+    {
+      "fichier": "electronique/caltech_computer-mouse_1702.jpg",
+      "attendu": "Électronique",
+      "predit": "Bricolage et jardin",
+      "confiance": 0.5268,
+      "top1": "pick"
+    },
+    {
+      "fichier": "electronique/caltech_head-phones_222.jpg",
+      "attendu": "Électronique",
+      "predit": "Autre",
+      "confiance": 0.5691,
+      "top1": "gasmask"
+    },
+    {
+      "fichier": "maison-et-meubles/sop_281443378512_0.jpg",
+      "attendu": "Maison et meubles",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.1741,
+      "top1": "bib"
+    },
+    {
+      "fichier": "maison-et-meubles/sop_251961499285_0.jpg",
+      "attendu": "Maison et meubles",
+      "predit": "Bricolage et jardin",
+      "confiance": 0.2791,
+      "top1": "paintbrush"
+    },
+    {
+      "fichier": "maison-et-meubles/sop_331178740604_0.jpg",
+      "attendu": "Maison et meubles",
+      "predit": "Bricolage et jardin",
+      "confiance": 0.3775,
+      "top1": "hook"
+    },
+    {
+      "fichier": "electromenager/sop_261799291430_0.jpg",
+      "attendu": "Électroménager",
+      "predit": "Maison et meubles",
+      "confiance": 0.5991,
+      "top1": "coffeepot"
+    },
+    {
+      "fichier": "electromenager/sop_271957718827_0.jpg",
+      "attendu": "Électroménager",
+      "predit": "Maison et meubles",
+      "confiance": 0.9639,
+      "top1": "teapot"
+    },
+    {
+      "fichier": "electromenager/sop_301714422125_0.jpg",
+      "attendu": "Électroménager",
+      "predit": "Sport et loisirs",
+      "confiance": 0.6047,
+      "top1": "water bottle"
+    },
+    {
+      "fichier": "electromenager/caltech_washing-machine_2316.jpg",
+      "attendu": "Électroménager",
+      "predit": "Électronique",
+      "confiance": 0.9722,
+      "top1": "photocopier"
+    },
+    {
+      "fichier": "electromenager/sop_281757305864_0.jpg",
+      "attendu": "Électroménager",
+      "predit": "Électronique",
+      "confiance": 0.5624,
+      "top1": "cellular telephone"
+    },
+    {
+      "fichier": "electromenager/sop_261744068353_0.jpg",
+      "attendu": "Électroménager",
+      "predit": "Maison et meubles",
+      "confiance": 0.9718,
+      "top1": "water jug"
+    },
+    {
+      "fichier": "electromenager/sop_400963292806_0.jpg",
+      "attendu": "Électroménager",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.936,
+      "top1": "feather boa"
+    },
+    {
+      "fichier": "electromenager/caltech_breadmaker_2646.jpg",
+      "attendu": "Électroménager",
+      "predit": "Électronique",
+      "confiance": 0.9932,
+      "top1": "printer"
+    },
+    {
+      "fichier": "electromenager/sop_271959412254_0.jpg",
+      "attendu": "Électroménager",
+      "predit": "Maison et meubles",
+      "confiance": 0.939,
+      "top1": "whiskey jug"
+    },
+    {
+      "fichier": "vetements-et-accessoires/caltech_top-hat_2941.jpg",
+      "attendu": "Vêtements et accessoires",
+      "predit": "Maison et meubles",
+      "confiance": 0.8475,
+      "top1": "hamper"
+    },
+    {
+      "fichier": "vetements-et-accessoires/caltech_socks_888.jpg",
+      "attendu": "Vêtements et accessoires",
+      "predit": "Maison et meubles",
+      "confiance": 0.1328,
+      "top1": "crutch"
+    },
+    {
+      "fichier": "vetements-et-accessoires/caltech_necktie_1202.jpg",
+      "attendu": "Vêtements et accessoires",
+      "predit": "Maison et meubles",
+      "confiance": 0.9949,
+      "top1": "prayer rug"
+    },
+    {
+      "fichier": "vetements-et-accessoires/caltech_watch-101_708.jpg",
+      "attendu": "Vêtements et accessoires",
+      "predit": "Sport et loisirs",
+      "confiance": 0.5055,
+      "top1": "stopwatch"
+    },
+    {
+      "fichier": "sport-et-loisirs/caltech_baseball-bat_2348.jpg",
+      "attendu": "Sport et loisirs",
+      "predit": "Livres et musique",
+      "confiance": 0.6865,
+      "top1": "drumstick"
+    },
+    {
+      "fichier": "sport-et-loisirs/caltech_baseball-glove_1807.jpg",
+      "attendu": "Sport et loisirs",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.5612,
+      "top1": "cowboy boot"
+    },
+    {
+      "fichier": "sport-et-loisirs/caltech_bowling-ball_319.jpg",
+      "attendu": "Sport et loisirs",
+      "predit": "Autre",
+      "confiance": 0.6531,
+      "top1": "head cabbage"
+    },
+    {
+      "fichier": "sport-et-loisirs/caltech_boxing-glove_1075.jpg",
+      "attendu": "Sport et loisirs",
+      "predit": "Maison et meubles",
+      "confiance": 0.421,
+      "top1": "barber chair"
+    },
+    {
+      "fichier": "sport-et-loisirs/caltech_dumb-bell_671.jpg",
+      "attendu": "Sport et loisirs",
+      "predit": "Maison et meubles",
+      "confiance": 0.4567,
+      "top1": "dumbbell"
+    },
+    {
+      "fichier": "sport-et-loisirs/caltech_skateboard_1571.jpg",
+      "attendu": "Sport et loisirs",
+      "predit": "Maison et meubles",
+      "confiance": 0.7431,
+      "top1": "tub"
+    },
+    {
+      "fichier": "sport-et-loisirs/caltech_kayak_2576.jpg",
+      "attendu": "Sport et loisirs",
+      "predit": "Autre",
+      "confiance": 0.9736,
+      "top1": "grey whale"
+    },
+    {
+      "fichier": "sport-et-loisirs/sop_301688006620_0.jpg",
+      "attendu": "Sport et loisirs",
+      "predit": "Jeux et jouets",
+      "confiance": 0.7606,
+      "top1": "tricycle"
+    },
+    {
+      "fichier": "sport-et-loisirs/caltech_bowling-ball_2118.jpg",
+      "attendu": "Sport et loisirs",
+      "predit": "Livres et musique",
+      "confiance": 1.0,
+      "top1": "ocarina"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_chess-board_1527.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.5247,
+      "top1": "bookcase"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_dice_308.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.5722,
+      "top1": "harmonica"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_playing-card_234.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Bricolage et jardin",
+      "confiance": 0.654,
+      "top1": "rule"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_yo-yo_1378.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.6773,
+      "top1": "slot"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_pez-dispenser_2236.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.983,
+      "top1": "rubber eraser"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_chess-board_850.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Électroménager",
+      "confiance": 0.9976,
+      "top1": "waffle iron"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_dice_716.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.8721,
+      "top1": "rubber eraser"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_playing-card_1212.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.5028,
+      "top1": "Band Aid"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_yo-yo_921.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.4164,
+      "top1": "ladle"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_pez-dispenser_1230.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.9726,
+      "top1": "cloak"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_chess-board_303.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.965,
+      "top1": "thimble"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_dice_321.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.6562,
+      "top1": "buckle"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_playing-card_131.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.7067,
+      "top1": "envelope"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_yo-yo_311.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Électronique",
+      "confiance": 0.62,
+      "top1": "joystick"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_pez-dispenser_832.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.3836,
+      "top1": "letter opener"
+    },
+    {
+      "fichier": "jeux-et-jouets/caltech_chess-board_1380.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.9589,
+      "top1": "prayer rug"
+    },
+    {
+      "fichier": "vehicules-et-pieces/caltech_steering-wheel_1266.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Électroménager",
+      "confiance": 0.9851,
+      "top1": "electric fan"
+    },
+    {
+      "fichier": "bricolage-et-jardin/caltech_ladder_1635.jpg",
+      "attendu": "Bricolage et jardin",
+      "predit": "Électronique",
+      "confiance": 0.2326,
+      "top1": "tripod"
+    },
+    {
+      "fichier": "bricolage-et-jardin/caltech_flashlight_1227.jpg",
+      "attendu": "Bricolage et jardin",
+      "predit": "Autre",
+      "confiance": 0.4289,
+      "top1": "rifle"
+    },
+    {
+      "fichier": "bricolage-et-jardin/caltech_welding-mask_1272.jpg",
+      "attendu": "Bricolage et jardin",
+      "predit": "Sport et loisirs",
+      "confiance": 0.8711,
+      "top1": "knee pad"
+    },
+    {
+      "fichier": "bricolage-et-jardin/caltech_birdbath_2387.jpg",
+      "attendu": "Bricolage et jardin",
+      "predit": "Sport et loisirs",
+      "confiance": 0.7156,
+      "top1": "racket"
+    },
+    {
+      "fichier": "bricolage-et-jardin/caltech_ladder_968.jpg",
+      "attendu": "Bricolage et jardin",
+      "predit": "Autre",
+      "confiance": 0.6855,
+      "top1": "groenendael"
+    },
+    {
+      "fichier": "bricolage-et-jardin/caltech_flashlight_760.jpg",
+      "attendu": "Bricolage et jardin",
+      "predit": "Maison et meubles",
+      "confiance": 0.4235,
+      "top1": "saltshaker"
+    },
+    {
+      "fichier": "bricolage-et-jardin/caltech_welding-mask_193.jpg",
+      "attendu": "Bricolage et jardin",
+      "predit": "Livres et musique",
+      "confiance": 0.4896,
+      "top1": "ocarina"
+    },
+    {
+      "fichier": "bricolage-et-jardin/caltech_birdbath_2007.jpg",
+      "attendu": "Bricolage et jardin",
+      "predit": "Maison et meubles",
+      "confiance": 0.8486,
+      "top1": "washbasin"
+    },
+    {
+      "fichier": "livres-et-musique/caltech_tambourine_1270.jpg",
+      "attendu": "Livres et musique",
+      "predit": "Sport et loisirs",
+      "confiance": 0.7842,
+      "top1": "bow"
+    },
+    {
+      "fichier": "livres-et-musique/caltech_cd_1382.jpg",
+      "attendu": "Livres et musique",
+      "predit": "Électronique",
+      "confiance": 0.4818,
+      "top1": "cassette player"
+    },
+    {
+      "fichier": "livres-et-musique/caltech_tambourine_2886.jpg",
+      "attendu": "Livres et musique",
+      "predit": "Sport et loisirs",
+      "confiance": 0.1537,
+      "top1": "face powder"
+    },
+    {
+      "fichier": "livres-et-musique/caltech_cd_2924.jpg",
+      "attendu": "Livres et musique",
+      "predit": "Véhicules et pièces",
+      "confiance": 0.4273,
+      "top1": "oil filter"
+    },
+    {
+      "fichier": "autre/caltech_dog_215.jpg",
+      "attendu": "Autre",
+      "predit": "Maison et meubles",
+      "confiance": 0.4841,
+      "top1": "doormat"
+    },
+    {
+      "fichier": "autre/caltech_pyramid_272.jpg",
+      "attendu": "Autre",
+      "predit": "Livres et musique",
+      "confiance": 0.1938,
+      "top1": "rubber eraser"
+    },
+    {
+      "fichier": "autre/caltech_horse_1590.jpg",
+      "attendu": "Autre",
+      "predit": "Maison et meubles",
+      "confiance": 0.706,
+      "top1": "stethoscope"
+    },
+    {
+      "fichier": "autre/caltech_pyramid_1497.jpg",
+      "attendu": "Autre",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.9897,
+      "top1": "Windsor tie"
+    },
+    {
+      "fichier": "autre/caltech_sushi_2717.jpg",
+      "attendu": "Autre",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.1759,
+      "top1": "apron"
+    },
+    {
+      "fichier": "autre/caltech_cake_2810.jpg",
+      "attendu": "Autre",
+      "predit": "Maison et meubles",
+      "confiance": 0.4779,
+      "top1": "candle"
+    }
+  ]
+}

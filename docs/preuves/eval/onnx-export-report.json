@@ -1,0 +1,17 @@
+{
+  "resnet50-fp32.onnx": {
+    "taille_mo": 97.4,
+    "ecart_max_logits": 0.0,
+    "top1_identique": 1.0
+  },
+  "resnet50-int8-dynamic.onnx": {
+    "taille_mo": 24.6,
+    "ecart_max_logits": 13.3747,
+    "top1_identique": 0.375
+  },
+  "resnet50-int8-static.onnx": {
+    "taille_mo": 24.9,
+    "ecart_max_logits": 2.6176,
+    "top1_identique": 0.875
+  }
+}

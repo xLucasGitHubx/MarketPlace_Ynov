@@ -28,9 +28,11 @@ pytest -q                                            # tests rapides (faux modè
 python scripts/build_categories.py                   # régénère app/categories.json depuis data/imagenet_mapping.tsv
 python scripts/build_test_set.py                     # télécharge le jeu de test proxy (200 photos, non versionnées)
 python scripts/evaluate.py --backend pytorch         # accuracy + latence + balayage du seuil
+python scripts/export_onnx.py                        # export ONNX fp32 + int8 dynamique + int8 statique (models/onnx/)
+python scripts/evaluate.py --backend onnx --onnx-path models/onnx/resnet50-int8-static.onnx
 ```
 
-Variables utiles : `API_TOKEN` (obligatoire, sinon 401 partout), `MODEL_BACKEND` (pytorch|onnx), `MODEL_CACHE_DIR` (cache HF, ex. `models/hf`), `CONFIDENCE_THRESHOLD`, `TOP_K`, `HF_TOKEN`.
+Variables utiles : `API_TOKEN` (obligatoire, sinon 401 partout), `MODEL_BACKEND` (pytorch|onnx), `ONNX_MODEL_PATH` (défaut `models/onnx/resnet50-int8-static.onnx`), `MODEL_CACHE_DIR` (cache HF, ex. `models/hf`), `CONFIDENCE_THRESHOLD`, `TOP_K`, `HF_TOKEN`.
 
 ## Architecture
 
@@ -65,7 +67,7 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 | 2. Cerveau | ✅ fait | `docs/preuves/it2-cerveau.md` — accuracy 69 % (ResNet-50, 200 photos) |
 | 3. Isolement | ✅ fait | `docs/preuves/it3-docker.md` — image PyTorch 2,04 Go |
 | 6. Barrière | ✅ fait | `docs/preuves/it6-securite.md` — 401, conteneur `--read-only`, 0 image écrite |
-| 4. Optimisation | à faire | — |
+| 4. Optimisation | ✅ fait | `docs/preuves/it4-optimisation.md` — int8 statique : ÷3,9 taille, −80 % latence, −0,5 pt |
 | 8. Rétroviseur | à faire | — |
 | 5. Flux | à faire | — |
 | 7. Grand saut | à faire (si possible) | — |
@@ -75,7 +77,10 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 
 | Date | Modèle | Accuracy (200 photos) | p50 / p95 CPU | Note |
 | --- | --- | --- | --- | --- |
-| 2026-10-30 | resnet50-pytorch-fp32, mapping v1.1 | 69,0 % | 102 / 120 ms | Jeux et jouets 25 %, Électroménager 55 % (pas de bouilloire dans ImageNet) |
+| 2026-10-30 | resnet50-pytorch-fp32, mapping v1.1 | 69,0 % | 105 / 142 ms | Jeux et jouets 25 %, Électroménager 55 % (pas de bouilloire dans ImageNet) |
+| 2026-10-30 | resnet50-onnx-fp32 | 69,0 % | 56 / 73 ms | export seul : latence ÷2 |
+| 2026-10-30 | resnet50-onnx-int8-dynamic | 62,0 % | 359 / 443 ms | piège : ConvInteger lent sur CPU |
+| 2026-10-30 | **resnet50-onnx-int8-static** (prod) | 68,5 % | 21,5 / 28,6 ms | 24,9 Mo, image Docker 551 Mo |
 
 ## Pièges connus
 
@@ -85,6 +90,8 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 - Derrière un proxy TLS : `docker build --network host --secret id=ca_bundle,src=<ca.crt> ...`.
 - Starlette écrit sur disque les uploads > 1 Mo (SpooledTemporaryFile) : réglé par `keep_uploads_in_memory()` dans `app/security.py` ; ne pas retirer.
 - Les tests fixent `API_TOKEN` dans `tests/conftest.py` AVANT d'importer l'app (Settings en cache).
+- Quantization dynamique = mauvaise idée pour un CNN (ConvInteger) : utiliser la statique QDQ calibrée hors jeu de test.
+- ONNX Runtime 1.31 refuse les modèles IR v14 (onnx 1.23 par défaut) : forcer `ir_version=9` si on construit un graphe à la main.
 - PyTorch a besoin d'un `/tmp` inscriptible au démarrage : `--read-only` doit s'accompagner de `--tmpfs /tmp`.
 
 ## Points ouverts

@@ -23,11 +23,16 @@ curl -H "Authorization: Bearer $API_TOKEN" -F file=@photo.jpg http://localhost:8
 ## Docker
 
 ```bash
-docker build -t marketplace-api:pytorch .
+# Image optimisée (défaut) : ONNX Runtime int8, 551 Mo, sans PyTorch
+docker build --target runtime-onnx -t marketplace-api:onnx .
+docker run -d --read-only --env-file .env -p 8000:8000 marketplace-api:onnx
+
+# Image de référence : PyTorch fp32, 2 Go
+docker build --target runtime-pytorch -t marketplace-api:pytorch .
 docker run -d --read-only --tmpfs /tmp --env-file .env -p 8000:8000 marketplace-api:pytorch
 ```
 
-Le modèle est téléchargé au build : le conteneur démarre hors-ligne.
+Le modèle est téléchargé (et, pour ONNX, exporté puis quantifié) au build : le conteneur démarre hors-ligne.
 
 ## Documentation
 
