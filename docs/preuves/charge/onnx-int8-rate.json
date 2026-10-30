@@ -1,0 +1,13 @@
+[
+  {
+    "palier": "10 req/s",
+    "requetes": 3000,
+    "debit_req_s": 10.0,
+    "p50_ms": 30.9,
+    "p95_ms": 50.9,
+    "p99_ms": 81.8,
+    "moy_ms": 33.5,
+    "erreurs": 0,
+    "taux_erreur_pct": 0.0
+  }
+]
