@@ -10,7 +10,10 @@ venv
 models/
 mlruns/
 mlflow.db
-data/
+data/*
+!data/test_set/
+data/test_set/*
+!data/test_set/manifest.csv
 docs/
 tests/
 *.md
