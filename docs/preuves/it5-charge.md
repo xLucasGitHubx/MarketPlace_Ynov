@@ -34,9 +34,9 @@ Le débit plafonne vers **48 req/s** : au-delà, les requêtes font la queue (la
 
 ![Montée en charge 2 vCPU](charge/onnx-int8-ramp.png)
 
-## Dimensionnement pour le cloud : 1 vCPU (configuration Cloud Run)
+## Dimensionnement pour le cloud : 1 vCPU (une réplique Azure Container Apps)
 
-Conteneurs limités à 1 vCPU (`docker run --cpus=1`), comme une instance Cloud Run :
+Conteneurs limités à 1 vCPU (`docker run --cpus=1`), comme une réplique 1 vCPU / 2 Gio de Container Apps :
 
 | Simultanés | ONNX int8 (1 Gio) : débit / p50 / p95 | PyTorch fp32 (2 Gio) : débit / p50 / p95 |
 | --- | --- | --- |
@@ -50,7 +50,7 @@ Mémoire en charge : 260 Mo (ONNX) contre 533 Mo (PyTorch).
 
 **Conséquences :**
 - Une instance 1 vCPU ONNX absorbe **≈ 23 req/s**, soit **≈ 0,043 vCPU-seconde par image** ; PyTorch ≈ 0,22 vCPU-s, **5× plus cher en calcul**. Ces chiffres alimentent [FINOPS.md](../../FINOPS.md).
-- `--concurrency 4` sur Cloud Run (p95 ≈ 280 ms) : au-delà, mieux vaut ajouter une instance que laisser la file s'allonger.
+- Règle de scale HTTP à 4 requêtes simultanées sur Container Apps (p95 ≈ 280 ms) : au-delà, mieux vaut ajouter une réplique que laisser la file s'allonger.
 
 ```bash
 python scripts/load_test.py --token $API_TOKEN --mode rate --rate 10 --duration 300 --label onnx-int8

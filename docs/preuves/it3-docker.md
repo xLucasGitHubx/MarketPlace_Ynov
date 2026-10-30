@@ -25,11 +25,9 @@ $ docker exec mkt id
 uid=1000(appuser) gid=1000(appuser)
 
 $ docker history --no-trunc marketplace-api:pytorch | grep -ciE "proxy|token="
-0        # aucun secret dans les couches (token HF passé en secret de build)
+0        # aucun secret dans les couches
 ```
 
 **Constat :** l'image PyTorch pèse 2.04GB, dont 1,3 Go pour torch. C'est le problème que l'itération 4 traite : l'image ONNX n'embarque que ONNX Runtime.
 
-Secrets de build optionnels :
-- `--secret id=hf_token,env=HF_TOKEN` : token Hugging Face (inutile pour `microsoft/resnet-50`, public) ;
-- `--secret id=ca_bundle,src=ca.crt` : certificat d'un proxy d'entreprise qui intercepte le TLS.
+Mise à jour (it. 7) : le Dockerfile n'utilise plus de syntaxe BuildKit (`RUN --mount=type=secret`) pour pouvoir être construit partout (Docker, GitHub Actions, Podman). Le modèle est public, aucun token n'est nécessaire. Seul argument optionnel : `--build-arg EXTRA_CA_CERT_B64=...`, le certificat d'un proxy d'entreprise qui intercepte le TLS, utilisé uniquement aux étapes de build.

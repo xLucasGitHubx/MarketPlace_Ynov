@@ -57,7 +57,7 @@ Catégories : Électronique, Maison et meubles, Électroménager, Vêtements et 
 
 ## Stack technique
 
-FastAPI + Uvicorn · `microsoft/resnet-50` (alternative `google/vit-base-patch16-224`) · Pillow + `AutoImageProcessor` · `optimum` + ONNX Runtime int8 dynamique · Docker `python:3.11-slim` multi-stage · Bearer token en variable d'env · Locust ou `asyncio` + `httpx` · MLflow · Google Cloud Run.
+FastAPI + Uvicorn · `microsoft/resnet-50` (alternative `google/vit-base-patch16-224`) · Pillow + `AutoImageProcessor` · `optimum` + ONNX Runtime int8 dynamique · Docker `python:3.11-slim` multi-stage · Bearer token en variable d'env · Locust ou `asyncio` + `httpx` · MLflow · Azure Container Apps (abonnement Azure for Students ; image publiée sur GHCR par GitHub Actions).
 
 ## Critères de réussite
 
@@ -82,4 +82,4 @@ P0 : it. 1, 2, 3, 6, 9 · P1 : it. 4, 8 · P2 : it. 5, 7. Ordre : 1 → 2 → 3 
 
 ## Risques principaux
 
-ImageNet colle mal aux catégories (→ mapping soigné, seuil, `a_confirmer`, mesure) · pas de jeu de test étiqueté · image Docker trop lourde (→ ONNX Runtime seul en prod) · cold start Cloud Run · quantization qui dégrade (→ repli ONNX fp32) · secret commité · réseau absent le jour J (→ vidéo + Docker local).
+ImageNet colle mal aux catégories (→ mapping soigné, seuil, `a_confirmer`, mesure) · pas de jeu de test étiqueté · image Docker trop lourde (→ ONNX Runtime seul en prod) · démarrage à froid (scale à zéro) · quantization qui dégrade (→ repli ONNX fp32) · secret commité · réseau absent le jour J (→ vidéo + Docker local).

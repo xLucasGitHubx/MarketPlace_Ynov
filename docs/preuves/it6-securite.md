@@ -9,7 +9,7 @@
 | Swagger | `/docs` et `/health` restent publics ; `/predict` affiche le cadenas « Authorize ». |
 | Aucune image sur disque | Starlette écrit normalement les uploads > 1 Mo dans un fichier temporaire : le seuil est relevé au-dessus de la taille max acceptée, donc l'image reste en RAM. Les octets, l'image PIL et les tenseurs sont libérés après inférence (`del`, `close`). |
 | Logs sans données personnelles | Seules les métadonnées sont loguées (catégorie, confiance, statut, latence, modèle). Ni l'image, ni le nom du fichier (qui peut contenir un nom de personne). |
-| Secrets | `API_TOKEN` et `HF_TOKEN` en variables d'environnement (`.env` ignoré par Git, `.env.example` versionné) ; token HF passé en secret de build Docker. |
+| Secrets | `API_TOKEN` et `HF_TOKEN` en variables d'environnement (`.env` ignoré par Git, `.env.example` versionné) ; le build Docker n'a besoin d'aucun secret (modèle public). En production : secret Container Apps (`secretref:`). |
 
 Tests : `tests/test_it6_security.py` (401 sans token / mauvais schéma / mauvais token, 401 avant 413, fail closed, rotation, **aucun `rollover` du fichier temporaire pour une image de 4,5 Mo**, logs sans nom de fichier).
 
