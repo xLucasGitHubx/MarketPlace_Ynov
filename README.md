@@ -14,6 +14,15 @@ uvicorn app.main:app --reload
 
 Swagger : http://localhost:8000/docs
 
+## Docker
+
+```bash
+docker build -t marketplace-api:pytorch .
+docker run -d -p 8000:8000 marketplace-api:pytorch
+```
+
+Le modèle est téléchargé au build : le conteneur démarre hors-ligne.
+
 ## Documentation
 
 - [Spécifications](docs/SPECIFICATIONS.md)

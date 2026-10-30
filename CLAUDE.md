@@ -63,7 +63,7 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 | --- | --- | --- |
 | 1. Squelette | ✅ fait | `docs/preuves/it1-squelette.md` |
 | 2. Cerveau | ✅ fait | `docs/preuves/it2-cerveau.md` — accuracy 69 % (ResNet-50, 200 photos) |
-| 3. Isolement | à faire | — |
+| 3. Isolement | ✅ fait | `docs/preuves/it3-docker.md` — image PyTorch 2,04 Go |
 | 6. Barrière | à faire | — |
 | 4. Optimisation | à faire | — |
 | 8. Rétroviseur | à faire | — |
@@ -81,6 +81,8 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 
 - Tester l'API sans `with TestClient(app)` : le lifespan (chargement du modèle) ne tourne pas, on injecte `app.state.predictor` (voir `tests/conftest.py`).
 - Ne jamais ajuster `data/imagenet_mapping.tsv` en regardant les erreurs du jeu de test (surapprentissage du mapping) : seulement des oublis manifestes, documentés.
+- Docker Hub peut renvoyer 429 (rate limit) : tirer `mirror.gcr.io/library/python:3.11-slim` puis `docker tag` en `python:3.11-slim`, ou `--build-arg BASE_IMAGE=...`.
+- Derrière un proxy TLS : `docker build --network host --secret id=ca_bundle,src=<ca.crt> ...`.
 - Starlette écrit sur disque les uploads > 1 Mo (SpooledTemporaryFile) : à traiter à l'itération 6.
 
 ## Points ouverts
