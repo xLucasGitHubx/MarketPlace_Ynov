@@ -1,0 +1,41 @@
+# Démo locale complète : API optimisée (ONNX) + serveur MLflow qui reçoit les métriques de chaque requête.
+#   cp .env.example .env   (renseigner API_TOKEN)
+#   docker compose up -d --build
+#   API : http://localhost:8000/docs   ·   MLflow : http://localhost:5000
+services:
+  api:
+    build:
+      context: .
+      target: runtime-onnx
+    image: marketplace-api:onnx
+    env_file: .env
+    environment:
+      MODEL_BACKEND: onnx
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    ports:
+      - "8000:8000"
+    read_only: true          # RGPD : aucun fichier ne peut être écrit dans le conteneur
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v3.5.0
+    command: >
+      mlflow server --backend-store-uri sqlite:////mlflow/mlflow.db
+      --default-artifact-root /mlflow/artifacts --host 0.0.0.0 --port 5000
+      --allowed-hosts "mlflow:5000,localhost:5000,127.0.0.1:5000"
+    volumes:
+      - mlflow-data:/mlflow
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  mlflow-data:
