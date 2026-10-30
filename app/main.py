@@ -6,7 +6,7 @@ import logging
 import time
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, File, HTTPException, Request, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.concurrency import run_in_threadpool
 
 from app.business import suggest
@@ -14,16 +14,20 @@ from app.config import get_settings
 from app.model import load_predictor
 from app.preprocessing import ImageValidationError, validate_image
 from app.schemas import ErrorResponse, HealthResponse, PredictionResponse
+from app.security import UploadGuardMiddleware, keep_uploads_in_memory, require_token
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 logger = logging.getLogger("app")
 settings = get_settings()
+keep_uploads_in_memory(settings)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Le modèle est chargé une seule fois au démarrage (pas à chaque requête).
     # Les tests peuvent injecter un faux modèle via app.state.predictor.
+    if not settings.api_tokens:
+        logger.warning("API_TOKEN non défini : toutes les requêtes /predict seront refusées (401).")
     if getattr(app.state, "predictor", None) is None:
         app.state.predictor = load_predictor(
             settings.model_backend, cache_dir=settings.model_cache_dir, hf_token=settings.hf_token
@@ -40,8 +44,10 @@ app = FastAPI(
     ),
     lifespan=lifespan,
 )
+app.add_middleware(UploadGuardMiddleware, settings=settings)
 
 ERROR_RESPONSES = {
+    401: {"model": ErrorResponse, "description": "Token manquant ou invalide"},
     413: {"model": ErrorResponse, "description": "Fichier trop volumineux"},
     415: {"model": ErrorResponse, "description": "Format non supporté"},
     422: {"model": ErrorResponse, "description": "Image illisible"},
@@ -61,13 +67,24 @@ def health(request: Request) -> HealthResponse:
     )
 
 
-@app.post("/predict", response_model=PredictionResponse, responses=ERROR_RESPONSES, tags=["prediction"])
+@app.post(
+    "/predict",
+    response_model=PredictionResponse,
+    responses=ERROR_RESPONSES,
+    tags=["prediction"],
+    dependencies=[Depends(require_token)],
+)
 async def predict(
     request: Request,
     file: UploadFile = File(..., description="Photo de l'objet (JPEG, PNG ou WebP, 5 Mo max)"),
 ):
-    """Catégorise la photo d'un objet et renvoie une suggestion d'annonce."""
+    """Catégorise la photo d'un objet et renvoie une suggestion d'annonce.
+
+    L'image est traitée uniquement en mémoire puis libérée : rien n'est écrit sur disque
+    et ni l'image ni son nom de fichier n'apparaissent dans les logs.
+    """
     data = await file.read()
+    await file.close()
     try:
         validated = validate_image(data, settings.max_upload_bytes, settings.allowed_mime_types)
     except ImageValidationError as exc:
