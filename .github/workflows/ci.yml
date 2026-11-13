@@ -61,9 +61,17 @@ jobs:
       - name: Smoke test de l'image
         if: github.event_name != 'pull_request'
         run: |
-          docker run -d --name api --read-only -e API_TOKEN=ci-token -p 8000:8000 ${{ steps.meta.outputs.image }}:${{ github.sha }}
+          docker run -d --name api --read-only \
+            -e API_TOKEN=ci-token \
+            -e MODEL_BACKEND=onnx \
+            -e ONNX_MODELS_DIR=/models \
+            -e AZURE_RUNTIME=true \
+            -p 8000:8000 ${{ steps.meta.outputs.image }}:${{ github.sha }}
           for i in $(seq 1 30); do curl -sf localhost:8000/health && break; sleep 1; done
+          # SPA embarquée (index.html)
+          test "$(curl -s -o /dev/null -w '%{http_code}' localhost:8000/)" = "200"
+          curl -sf localhost:8000/api/models >/dev/null
           python3 -c "from PIL import Image" 2>/dev/null || pip install -q pillow
           python3 -c "from PIL import Image; Image.new('RGB',(320,240),(200,30,30)).save('t.jpg')"
-          test "$(curl -s -o /dev/null -w '%{http_code}' -F file=@t.jpg localhost:8000/predict)" = "401"
-          test "$(curl -s -o /dev/null -w '%{http_code}' -H 'Authorization: Bearer ci-token' -F file=@t.jpg localhost:8000/predict)" = "200"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -F file=@t.jpg localhost:8000/api/predict)" = "401"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H 'Authorization: Bearer ci-token' -F file=@t.jpg localhost:8000/api/predict)" = "200"

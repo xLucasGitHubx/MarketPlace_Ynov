@@ -13,16 +13,19 @@
 #   ./scripts/deploy_azure.sh
 #
 # Variables optionnelles :
-#   LOCATION       région (défaut francecentral ; un abonnement étudiant n'autorise que certaines régions)
+#   LOCATION       région (défaut swedencentral ; un abonnement étudiant n'autorise que certaines régions)
 #   RG, ENV_NAME, APP     noms des ressources
 #   IMAGE          image à déployer (défaut : ghcr.io/xlucasgithubx/marketplace_ynov:latest)
 #   GHCR_USER / GHCR_TOKEN  si le paquet GHCR est privé (token GitHub avec read:packages)
 #   CPU / MEMORY   défaut 1.0 / 2.0Gi (mesures de docs/preuves/it5-charge.md) ; 0.5 / 1.0Gi divise le coût par 2
 #   MIN_REPLICAS   0 = scale à zéro (défaut) ; 1 = pas de démarrage à froid (≈ 23 $/mois au tarif « repos »)
+#
+# L'environnement Container Apps est créé avec --logs-destination none (pas de Log Analytics :
+# évite ResourceNotFound / policy sur Azure for Students). API_TOKEN reste un secret ACA.
 set -euo pipefail
 
 : "${API_TOKEN:?définir API_TOKEN (python3 -c \"import secrets; print(secrets.token_urlsafe(32))\")}"
-LOCATION="${LOCATION:-francecentral}"
+LOCATION="${LOCATION:-swedencentral}"
 RG="${RG:-rg-marketplace-ynov}"
 ENV_NAME="${ENV_NAME:-cae-marketplace}"
 APP="${APP:-marketplace-api}"
@@ -48,9 +51,10 @@ if ! az group create --name "$RG" --location "$LOCATION" -o none; then
   exit 1
 fi
 
-echo "==> Environnement Container Apps ${ENV_NAME} (crée aussi un espace Log Analytics)"
+echo "==> Environnement Container Apps ${ENV_NAME} (sans Log Analytics : évite les échecs policy / ResourceNotFound sur abonnements étudiants)"
 az containerapp env show --name "$ENV_NAME" --resource-group "$RG" -o none 2>/dev/null || \
-  az containerapp env create --name "$ENV_NAME" --resource-group "$RG" --location "$LOCATION" -o none
+  az containerapp env create --name "$ENV_NAME" --resource-group "$RG" --location "$LOCATION" \
+    --logs-destination none -o none
 
 REGISTRY_ARGS=()
 if [ -n "${GHCR_TOKEN:-}" ]; then
@@ -63,7 +67,13 @@ if az containerapp show --name "$APP" --resource-group "$RG" -o none 2>/dev/null
   az containerapp secret set --name "$APP" --resource-group "$RG" --secrets "api-token=${API_TOKEN}" -o none
   az containerapp update --name "$APP" --resource-group "$RG" --image "$IMAGE" \
     --cpu "$CPU" --memory "$MEMORY" --min-replicas "$MIN_REPLICAS" --max-replicas "$MAX_REPLICAS" \
-    --set-env-vars API_TOKEN=secretref:api-token MODEL_BACKEND=onnx \
+    --set-env-vars \
+      API_TOKEN=secretref:api-token \
+      MODEL_BACKEND=onnx \
+      ONNX_MODELS_DIR=/models \
+      ONNX_MODEL_PATH=/models/resnet50-int8-static.onnx \
+      DEFAULT_MODEL_ID=resnet50-onnx-int8 \
+      AZURE_RUNTIME=true \
     --revision-suffix "r$(date +%m%d%H%M)" -o none
 else
   echo "==> Création de ${APP} -> ${IMAGE}"
@@ -76,7 +86,14 @@ else
     --min-replicas "$MIN_REPLICAS" --max-replicas "$MAX_REPLICAS" \
     --scale-rule-name http-concurrency --scale-rule-type http --scale-rule-http-concurrency 4 \
     --secrets "api-token=${API_TOKEN}" \
-    --env-vars API_TOKEN=secretref:api-token MODEL_BACKEND=onnx -o none
+    --env-vars \
+      API_TOKEN=secretref:api-token \
+      MODEL_BACKEND=onnx \
+      ONNX_MODELS_DIR=/models \
+      ONNX_MODEL_PATH=/models/resnet50-int8-static.onnx \
+      DEFAULT_MODEL_ID=resnet50-onnx-int8 \
+      AZURE_RUNTIME=true \
+    -o none
 fi
 
 URL="https://$(az containerapp show --name "$APP" --resource-group "$RG" --query properties.configuration.ingress.fqdn -o tsv)"
@@ -88,7 +105,9 @@ done
 curl -s "${URL}/health"; echo
 echo
 echo "Déployé : ${URL}"
+echo "  SPA     : ${URL}/"
 echo "  Swagger : ${URL}/docs"
-echo "  curl -H \"Authorization: Bearer \$API_TOKEN\" -F file=@photo.jpg ${URL}/predict"
+echo "  Models  : ${URL}/api/models"
+echo "  curl -H \"Authorization: Bearer \$API_TOKEN\" -F file=@photo.jpg -F modele=resnet50-onnx-int8 ${URL}/api/predict"
 echo
 echo "Pour tout supprimer (et arrêter toute facturation) : az group delete --name ${RG} --yes --no-wait"

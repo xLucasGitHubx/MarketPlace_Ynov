@@ -2,7 +2,9 @@
 
 **Une photo d'objet → une catégorie d'annonce, un titre suggéré et un niveau de confiance.**
 
-Microservice de vision pour une marketplace type Leboncoin. Le vendeur prend une photo, l'API renvoie la catégorie de l'annonce en quelques dizaines de millisecondes. Quand la confiance est faible, elle propose 3 catégories au vendeur au lieu d'en imposer une. Projet Ynov, module « Industrialisation de l'IA dans le Cloud » (thème B, Marketplace).
+Microservice de vision pour une marketplace type Leboncoin, avec catalogue multi-modèles ONNX, garde-fous, et SPA React servie par le même FastAPI. Projet Ynov, module « Industrialisation de l'IA dans le Cloud » (thème B, Marketplace).
+
+**Prod Azure (live)** : [https://marketplace-api.whitepond-81c2f971.swedencentral.azurecontainerapps.io](https://marketplace-api.whitepond-81c2f971.swedencentral.azurecontainerapps.io) — image ONNX-only + SPA, Bearer `API_TOKEN`.
 
 ```json
 {
@@ -16,7 +18,7 @@ Microservice de vision pour une marketplace type Leboncoin. Le vendeur prend une
     {"label": "laptop", "categorie": "Électronique", "score": 0.2576}
   ],
   "propositions": [{"categorie": "Électronique", "score": 0.9313, "titre": "Ordinateur portable"}],
-  "modele": "resnet50-onnx-int8-static",
+  "modele": "resnet50-onnx-int8",
   "latence_ms": 32.1
 }
 ```
@@ -25,162 +27,134 @@ Microservice de vision pour une marketplace type Leboncoin. Le vendeur prend une
 
 | | |
 | --- | --- |
-| Modèle en production | ResNet-50 (Hugging Face) exporté en ONNX, quantifié en int8 statique |
-| Accuracy catégorie | 68,5 % sur 200 photos étiquetées par des tiers ; benchmark CLIP zero-shot : 76,5 à 88,5 % ([détail](docs/preuves/it8-mlflow.md)) |
-| Optimisation | modèle ÷ 3,9 (97,7 → 24,9 Mo), latence p50 −80 %, −0,5 point d'accuracy |
-| Image Docker | 551 Mo (contre 2,04 Go en PyTorch), prête en 1,6 s, tourne en lecture seule |
-| Charge | 10 req/s pendant 5 min : p95 de 51 ms, 0 erreur ; saturation ≈ 48 req/s sur 2 vCPU |
-| Coût | Azure Container Apps : 0 $ pendant le projet (offre gratuite), ≈ 25 $/mois pour 1 M d'images, ≈ 1,8 $ par million à fort volume ([FINOPS.md](FINOPS.md)) |
+| Modèle prod | ResNet-50 → ONNX int8 statique (`resnet50-onnx-int8`) |
+| Catalogue | EfficientNet-B0, MobileNetV3-Small, student KD (ONNX int8) ; CLIP = Space ZeroGPU `Lulu18` (`space_only`) |
+| Accuracy catégorie | 68,5 % (ResNet, 200 photos) ; CLIP bench 76,5–88,5 % |
+| Image Docker Azure | **ONNX-only** ≈ **≤ 551 Mo** (python:3.11-slim + onnxruntime + SPA) ; pas de PyTorch / CUDA |
+| Charge | 10 req/s × 5 min : p95 51 ms, 0 erreur |
+| Coût | 0 $ phase projet (offre gratuite ACA) ; ≈ 25 $/mois à 1 M images — [FINOPS.md](FINOPS.md) |
 
 ## Architecture
 
 ```
-photo ─► 1 Réception ─► 2 Auth Bearer ─► 3 Validation ──────────► 4 Prétraitement ─► 5 Inférence
-         multipart      vérifiée avant   type réel, ≤ 5 Mo,         224×224 (numpy)    ONNX int8
-         en mémoire     lecture du corps décodable (413/415/422)                          │
-                                                                                          ▼
-   9 Log MLflow ◄── 8 Purge mémoire ◄── 7 Réponse JSON ◄── 6 Logique métier : 1000 classes ImageNet
-   métriques seules    rien sur disque                       → 10 catégories, seuil 0,6 → auto / a_confirmer
+SPA (web/) ──► FastAPI (app/) ──► garde-fous ──► ModelRegistry ──► ONNX int8 locaux
+                                      │                              │
+                                 Bearer, MIME,                  /models catalogue
+                                 rate-limit, CORS                    │
+                                                          CLIP / lourds → Space Lulu18
 ```
 
 ```
-app/
-  main.py           routes FastAPI : POST /predict, GET /health, /docs
-  config.py         configuration par variables d'environnement
-  security.py       Bearer token + middleware de rejet avant lecture du corps (401/411/413)
-  preprocessing.py  validation de l'image (type réel, taille, décodage) + prétraitement numpy
-  model.py          interface Predictor : backends PyTorch (référence) et ONNX Runtime (prod)
-  business.py       mapping ImageNet → catégories, score cumulé, seuil, titre, propositions
-  monitoring.py     métriques de chaque requête vers MLflow (REST, asynchrone)
-  categories.json   1000 classes ImageNet → 10 catégories + titres FR (généré)
-scripts/
-  build_categories.py  data/imagenet_mapping.tsv → app/categories.json
-  build_test_set.py    jeu de test : 200 photos étiquetées (Stanford Online Products + Caltech-256)
-  download_model.py    téléchargement Hugging Face (build Docker)
-  export_onnx.py       export ONNX + quantization int8 dynamique et statique
-  evaluate.py          accuracy, latence, balayage du seuil → MLflow
-  benchmark_clip.py    benchmark CLIP zero-shot (comparaison)
-  load_test.py         test de charge asyncio + httpx (paliers ou débit constant)
-  deploy_azure.sh      déploiement Azure Container Apps
-tests/              48 tests pytest (aucun téléchargement de modèle nécessaire)
-.github/workflows/  CI : tests + image ONNX publiée sur GHCR à chaque push sur main
-docs/               spécifications, sujet, preuves par itération, LLM Council
-Dockerfile          multi-stage, cibles runtime-onnx (défaut) et runtime-pytorch
-docker-compose.yml  API + serveur MLflow
-FINOPS.md           estimation budgétaire
+app/            API FastAPI (/api/predict, /api/models, /api/health) + static SPA
+web/            SPA React + Vite (build → app/static/)
+artifacts/onnx/ *.onnx int8 catalogue pré-buildés copiés dans l'image Docker
+spaces/distill/ Space HF Lulu18 (distillation ZeroGPU, hors image Azure)
+scripts/        export_onnx, export_catalog, distill_student, evaluate*, deploy_azure.sh
+Dockerfile      multi-stage : node:22-alpine (SPA) + python:3.11-slim (ONNX-only)
 ```
 
 ## Installation et lancement (≈ 10 min)
 
-Prérequis : Python 3.11+, ~2 Go d'espace disque ; Docker en option.
+Prérequis : Python 3.11+, Node 22+ (SPA), ~2 Go disque ; Docker en option.
 
 ```bash
 git clone https://github.com/xLucasGitHubx/MarketPlace_Ynov.git && cd MarketPlace_Ynov
 python -m venv .venv && source .venv/bin/activate     # Windows : .venv\Scripts\activate
 pip install -r requirements-dev.txt
-pytest -q                                              # 48 tests, sans téléchargement
+pytest -q
 
 cp .env.example .env
-python -c "import secrets; print(secrets.token_urlsafe(32))"   # coller la valeur dans API_TOKEN du .env
-set -a; source .env; set +a                            # PowerShell : Get-Content .env | % { if ($_ -match '^(\w+)=(.*)$') { Set-Item "env:$($matches[1])" $matches[2] } }
+python -c "import secrets; print(secrets.token_urlsafe(32))"   # coller dans API_TOKEN
+set -a; source .env; set +a
 
-python scripts/export_onnx.py                          # télécharge ResNet-50, exporte et quantifie (≈ 1 min)
-MODEL_BACKEND=onnx uvicorn app.main:app                # Swagger : http://localhost:8000/docs
+python scripts/export_onnx.py                          # ResNet → models/onnx/*-int8-static.onnx
+MODEL_BACKEND=onnx uvicorn app.main:app                # API : http://localhost:8000/docs
+
+# SPA en dév (proxy /api → uvicorn)
+cd web && npm ci && npm run dev                        # http://localhost:5173
+# Prod locale SPA : npm run build && cp -r dist ../app/static
 ```
 
-Dans Swagger : bouton **Authorize**, coller le token, puis `POST /predict` → *Try it out* → choisir une photo.
-
 ```bash
-curl -H "Authorization: Bearer $API_TOKEN" -F file=@photo.jpg http://localhost:8000/predict
+curl -H "Authorization: Bearer $API_TOKEN" -F file=@photo.jpg -F modele=resnet50-onnx-int8 \
+  http://localhost:8000/api/predict
 ```
 
-### Avec Docker
+### Docker (image slim Azure)
 
 ```bash
-# Image optimisée (défaut) : ONNX Runtime int8, sans PyTorch ; le modèle est exporté au build
+# Build prod : SPA + ResNet int8 exporté au build ; torch n'est PAS dans l'image finale
 docker build --target runtime-onnx -t marketplace-api:onnx .
 docker run -d --read-only --env-file .env -p 8000:8000 marketplace-api:onnx
+# SPA : http://localhost:8000/   ·   API : /api/*   ·   Swagger : /docs
 
-# Image de référence : PyTorch fp32
-docker build --target runtime-pytorch -t marketplace-api:pytorch .
-docker run -d --read-only --tmpfs /tmp --env-file .env -p 8000:8000 marketplace-api:pytorch
+# Ajouter EfficientNet / MobileNet / student à l'image (fichiers pré-exportés) :
+python scripts/export_catalog.py
+cp models/onnx/efficientnet-b0-int8-static.onnx \
+   models/onnx/mobilenet-v3-small-int8-static.onnx \
+   artifacts/onnx/   # optionnel : student-kd-*.onnx
+docker build --target runtime-onnx -t marketplace-api:onnx .
+# ou : --build-arg PREBUILT_ONNX_DIR=models/onnx  (si le contexte inclut ce dossier)
 
-# API + MLflow (chaque requête est journalisée) : API sur :8000, MLflow sur :5000
+# API + MLflow
 docker compose up -d --build
 ```
+
+Stratégie taille : rester près de **≤ 551 Mo**. Le catalogue n'ajoute que de petits int8 (quelques Mo chacun). CLIP et PyTorch restent hors runtime Azure (export hors image finale / Space).
 
 ## API
 
 | Endpoint | Auth | Rôle |
 | --- | --- | --- |
-| `POST /predict` (multipart, champ `file`) | Bearer | Catégorise la photo |
-| `GET /health` | — | API et modèle chargés |
-| `GET /docs` | — | Swagger |
-
-Formats acceptés : JPEG, PNG, WebP, 5 Mo maximum. Codes d'erreur : `401` token absent ou invalide · `411` Content-Length manquant · `413` fichier trop lourd · `415` format non supporté (y compris un PDF renommé en .jpg) · `422` image illisible · `500` erreur d'inférence (sans stack trace).
+| `POST /api/predict` (`file`, `modele`) | Bearer | Catégorise la photo |
+| `GET /api/models` | — | Catalogue (accuracy, p95, $/M, statut) |
+| `GET /api/health` | — | Santé + modèles chargés |
+| `GET /` | — | SPA (si `app/static/index.html` présent) |
+| Alias | | `/predict`, `/models`, `/health` |
 
 | Variable | Défaut | Rôle |
 | --- | --- | --- |
-| `API_TOKEN` | *(vide : tout est refusé)* | Token(s) d'accès, séparés par des virgules pour permettre une rotation |
-| `MODEL_BACKEND` | `pytorch` en local, `onnx` en Docker | Modèle de référence ou optimisé |
-| `ONNX_MODEL_PATH` | `models/onnx/resnet50-int8-static.onnx` | Variante ONNX (la version fp32 sert de repli) |
-| `CONFIDENCE_THRESHOLD` | `0.6` | Seuil `auto` / `a_confirmer` |
-| `TOP_K` | `5` | Nombre de classes cumulées pour le score de catégorie |
-| `MAX_UPLOAD_MB` | `5` | Taille maximale d'une photo |
-| `MLFLOW_TRACKING_URI` | *(vide : désactivé)* | Suivi des requêtes dans MLflow |
-| `MODEL_CACHE_DIR`, `HF_TOKEN` | — | Cache et token Hugging Face (backend PyTorch) |
+| `API_TOKEN` | *(vide → 401)* | Token(s), virgules pour rotation |
+| `MODEL_BACKEND` | `pytorch` local / `onnx` Docker | Backend |
+| `ONNX_MODELS_DIR` | `models/onnx` | Dossier catalogue ONNX |
+| `DEFAULT_MODEL_ID` | `resnet50-onnx-int8` | Modèle par défaut |
+| `AZURE_RUNTIME` | `false` | Ignore les modèles `space_only` |
+| `RATE_LIMIT_PER_MINUTE` | `60` | Rate-limit mémoire |
+| `CORS_ORIGINS` | localhost:5173 | Origines SPA dév |
+| `MLFLOW_TRACKING_URI` | *(vide)* | Suivi requêtes |
 
-## Évaluation, MLOps et charge
+## Distillation (Space Lulu18)
+
+Jobs GPU (KD ResNet → MobileNet, CLIP lourd) : Space Hugging Face **Lulu18** ZeroGPU (40 min/jour), pas dans l'image ACA. Voir [docs/preuves/it-hf-space.md](docs/preuves/it-hf-space.md) et `spaces/distill/`.
 
 ```bash
-python scripts/build_test_set.py                       # 200 photos étiquetées (non versionnées)
-python scripts/evaluate.py --backend pytorch --mlflow
-python scripts/evaluate.py --backend onnx --onnx-path models/onnx/resnet50-int8-static.onnx --mlflow
-python scripts/benchmark_clip.py --mlflow
-mlflow server --backend-store-uri sqlite:///mlflow.db --port 5000
-
-python scripts/load_test.py --mode ramp --users 1,2,5,10,20,40 --step 30
-python scripts/load_test.py --mode rate --rate 10 --duration 300
+python scripts/distill_student.py   # local ou Space ; artifact → models/onnx/ puis artifacts/onnx/
 ```
 
-## Déploiement cloud (Azure Container Apps)
+## Déploiement Azure Container Apps
 
-1. **Image** : chaque push sur `main` déclenche la CI GitHub Actions, qui lance les tests, construit l'image ONNX, la publie sur `ghcr.io/xlucasgithubx/marketplace_ynov` et la teste (401 sans token, 200 avec).
-2. **Déploiement**, depuis [Azure Cloud Shell](https://shell.azure.com) (bash, `az` déjà connecté) :
+1. CI sur `main` : tests + build `runtime-onnx` → `ghcr.io/xlucasgithubx/marketplace_ynov`.
+2. Cloud Shell :
 
 ```bash
-git clone https://github.com/xLucasGitHubx/MarketPlace_Ynov.git && cd MarketPlace_Ynov
 export API_TOKEN=$(python3 -c "import secrets; print(secrets.token_urlsafe(32))")
-./scripts/deploy_azure.sh        # Container Apps : 1 vCPU, 2 Gio, scale à zéro, HTTPS public
+LOCATION=swedencentral ./scripts/deploy_azure.sh
 ```
 
-Le token est stocké comme secret Container Apps et injecté en variable d'environnement : il n'est jamais dans l'image. Pour la soutenance, `MIN_REPLICAS=1 ./scripts/deploy_azure.sh` supprime le démarrage à froid (0,78 $/jour). En fin de projet : `az group delete --name rg-marketplace-ynov --yes`. Détails et pièges (régions autorisées pour un abonnement étudiant, paquet GHCR privé) : [it7-azure.md](docs/preuves/it7-azure.md).
+L'env ACA est créé avec `--logs-destination none` ; `API_TOKEN` est un secret Container Apps ; `AZURE_RUNTIME=true`. Preuve : [docs/preuves/it7-azure.md](docs/preuves/it7-azure.md).
 
 ## RGPD et sécurité
 
-- L'image n'est jamais écrite sur disque : traitement en mémoire, conteneur en lecture seule, et un test vérifie qu'aucun fichier temporaire n'est créé.
-- Les logs et MLflow ne contiennent rien de personnel : ni l'image, ni le nom du fichier, uniquement des métriques.
-- Une requête sans token ou trop lourde est refusée avant d'être lue, ce qui protège les ressources.
-- Les secrets passent par des variables d'environnement (secret Container Apps en production) ; `.env` est ignoré par Git et aucun secret n'est nécessaire au build.
+- Image jamais écrite sur disque ; conteneur `--read-only` ; uploads en mémoire.
+- Allowlist des IDs modèle, rate-limit, rejet images non-objet / trop petites.
+- Secrets uniquement via l'environnement (jamais dans l'image ni le dépôt).
 
 ## Preuves par itération
 
 | It. | Livrable | Preuve |
 | --- | --- | --- |
-| 1. Squelette | FastAPI + Swagger | [it1-squelette.md](docs/preuves/it1-squelette.md) |
-| 2. Cerveau | ResNet-50 + logique métier | [it2-cerveau.md](docs/preuves/it2-cerveau.md) |
-| 3. Isolement | Dockerfile multi-stage | [it3-docker.md](docs/preuves/it3-docker.md) |
-| 4. Optimisation | ONNX int8 | [it4-optimisation.md](docs/preuves/it4-optimisation.md) |
-| 5. Flux | Test de charge | [it5-charge.md](docs/preuves/it5-charge.md) |
-| 6. Barrière | Token + aucune image conservée | [it6-securite.md](docs/preuves/it6-securite.md) |
-| 7. Grand saut | Azure Container Apps (image publiée par la CI sur GHCR) | [it7-azure.md](docs/preuves/it7-azure.md) |
-| 8. Rétroviseur | Dashboard MLflow | [it8-mlflow.md](docs/preuves/it8-mlflow.md) |
-| 9. Facture | FinOps + README | [FINOPS.md](FINOPS.md) |
+| 1–6, 8–9 | Squelette → sécurité, ONNX, charge, MLflow, FinOps | [docs/preuves/](docs/preuves/) |
+| 7. Grand saut | **Azure live** (Sweden Central) | [it7-azure.md](docs/preuves/it7-azure.md) |
+| HF Space | Distillation ZeroGPU Lulu18 | [it-hf-space.md](docs/preuves/it-hf-space.md) |
 
-Décisions d'architecture : [LLM Council](docs/llm-council/) · Spécifications : [docs/SPECIFICATIONS.md](docs/SPECIFICATIONS.md) · Sujet : [docs/SUJET.md](docs/SUJET.md)
-
-## Limites connues
-
-- ResNet-50 ImageNet plafonne à ~69 %, sous la cible de 80 %, car ImageNet n'a ni bouilloire électrique, ni dés, ni cartes à jouer. CLIP zero-shot fait mieux (76,5 à 88,5 % selon le vocabulaire), mais il faut le confirmer sur de vraies photos de vendeurs avant de basculer.
-- Le jeu de test est un proxy public (photos eBay + Caltech-256), pas des photos Leboncoin.
-- Une seule photo et un seul objet par requête (pas de détection multi-objets).
+Décisions : [LLM Council](docs/llm-council/) · Specs : [docs/SPECIFICATIONS.md](docs/SPECIFICATIONS.md) · Design SPA : [DESIGN.md](DESIGN.md)
