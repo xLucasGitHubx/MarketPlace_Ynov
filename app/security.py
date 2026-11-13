@@ -1,11 +1,13 @@
-"""Sécurité de l'API : authentification Bearer et barrière d'upload.
+"""Sécurité de l'API : authentification Bearer, barrière d'upload et rate-limit.
 
-Deux niveaux :
+Deux niveaux d'auth :
 1. `UploadGuardMiddleware` (ASGI) : vérifie le token et la taille annoncée AVANT
    que le corps de la requête soit lu. Une requête sans token ou trop lourde ne
    coûte donc ni lecture réseau complète, ni mémoire, ni inférence.
 2. `require_token` (dépendance FastAPI) : seconde vérification au niveau de la
    route, qui sert aussi à afficher le bouton « Authorize » dans Swagger.
+
+Rate-limit : compteur en mémoire par token (N requêtes / minute glissante).
 
 RGPD : aucune image n'est écrite sur disque. Starlette bascule normalement les
 uploads de plus de 1 Mo dans un fichier temporaire ; on relève ce seuil au-dessus
@@ -17,8 +19,11 @@ from __future__ import annotations
 import json
 import logging
 import secrets
+import threading
+import time
+from collections import defaultdict, deque
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from starlette.formparsers import MultiPartParser
 from starlette.types import ASGIApp, Receive, Scope, Send
@@ -29,7 +34,8 @@ logger = logging.getLogger(__name__)
 
 # Marge pour l'enveloppe multipart (boundaries, en-têtes de la partie)
 MULTIPART_OVERHEAD = 64 * 1024
-PROTECTED_PATHS = ("/predict",)
+# Alias /api/* pour la future SPA ; /predict conservé pour compatibilité.
+PROTECTED_PATHS = ("/predict", "/api/predict")
 
 
 def keep_uploads_in_memory(settings: Settings) -> None:
@@ -59,13 +65,58 @@ bearer_scheme = HTTPBearer(auto_error=False, description="Token d'API (variable 
 def require_token(
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     settings: Settings = Depends(get_settings),
-) -> None:
+) -> str:
     token = credentials.credentials if credentials else None
     if not is_valid_token(token, settings):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token d'authentification manquant ou invalide.",
             headers={"WWW-Authenticate": "Bearer"},
+        )
+    return token or ""
+
+
+class RateLimiter:
+    """Limite glissante en mémoire : N requêtes par fenêtre d'une minute, par clé (token)."""
+
+    def __init__(self, max_per_minute: int = 60, window_seconds: float = 60.0):
+        self.max_per_minute = max(1, max_per_minute)
+        self.window_seconds = window_seconds
+        self._hits: dict[str, deque[float]] = defaultdict(deque)
+        self._lock = threading.Lock()
+
+    def allow(self, key: str) -> bool:
+        now = time.monotonic()
+        with self._lock:
+            q = self._hits[key]
+            cutoff = now - self.window_seconds
+            while q and q[0] < cutoff:
+                q.popleft()
+            if len(q) >= self.max_per_minute:
+                return False
+            q.append(now)
+            return True
+
+    def reset(self) -> None:
+        with self._lock:
+            self._hits.clear()
+
+
+def check_rate_limit(
+    request: Request,
+    token: str = Depends(require_token),
+    settings: Settings = Depends(get_settings),
+) -> None:
+    """Dépendance FastAPI : 429 si le token dépasse le quota minute."""
+    limiter: RateLimiter | None = getattr(request.app.state, "rate_limiter", None)
+    if limiter is None:
+        return
+    if not limiter.allow(token):
+        logger.warning("rate_limit_depasse limite=%s", settings.rate_limit_per_minute)
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Trop de requêtes. Limite : {settings.rate_limit_per_minute} par minute.",
+            headers={"Retry-After": "60"},
         )
 
 
