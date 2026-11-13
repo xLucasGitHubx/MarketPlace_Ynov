@@ -88,10 +88,21 @@ Il est déjà (ou sera) un secret de la Container App (`api-token`). Le job `dep
 | `AZURE_RESOURCE_GROUP` | `rg-marketplace-ynov` | Groupe de ressources |
 | `AZURE_CONTAINER_APP` | `marketplace-api` | Nom de l’app |
 
-### 4. Commandes `az` à coller une fois dans Azure Cloud Shell
+### 4. Subject OIDC GitHub — deux formes possibles
 
-Remplace `OWNER` et `REPO` si besoin (`xLucasGitHubx` / `MarketPlace_Ynov`).  
-Le subject OIDC pour les pushes sur `main` est `repo:OWNER/REPO:ref:refs/heads/main`.
+Entra ID exige un **match exact** du claim `sub` (sinon `AADSTS700213`). GitHub peut envoyer l’une ou l’autre forme :
+
+| Forme | Subject (push `main`) |
+| --- | --- |
+| Classique (noms seuls) | `repo:xLucasGitHubx/MarketPlace_Ynov:ref:refs/heads/main` |
+| Immutable (noms + IDs) | `repo:xLucasGitHubx@130939836/MarketPlace_Ynov@1439514548:ref:refs/heads/main` |
+
+Ce dépôt présente actuellement la forme **immutable** (owner id `130939836`, repo id `1439514548`).  
+Source de vérité : le `subject claim` affiché dans le log `azure/login` / l’erreur `AADSTS700213` — coller **exactement** cette chaîne dans le federated credential.
+
+### 4bis. Commandes `az` à coller une fois dans Azure Cloud Shell
+
+Remplace `OWNER` / `REPO` / le subject si besoin. Création initiale (subject = ce que GitHub envoie vraiment) :
 
 ```bash
 # --- Identifiants abonnement ---
@@ -109,14 +120,14 @@ echo "AZURE_CLIENT_ID=$APP_ID"
 az ad sp create --id "$APP_ID" -o none
 
 # --- Credential fédéré GitHub Actions (OIDC, push main) ---
-# Issuer + audience standard GitHub ; subject = branche main uniquement.
+# Subject = forme exacte présentée par GitHub (ici immutable @ids).
 cat > /tmp/github-oidc-federated.json <<EOF
 {
   "name": "github-main",
   "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:xLucasGitHubx/MarketPlace_Ynov:ref:refs/heads/main",
+  "subject": "repo:xLucasGitHubx@130939836/MarketPlace_Ynov@1439514548:ref:refs/heads/main",
   "audiences": ["api://AzureADTokenExchange"],
-  "description": "GitHub Actions CD push main MarketPlace_Ynov"
+  "description": "GitHub Actions CD push main MarketPlace_Ynov (subject immutable)"
 }
 EOF
 az ad app federated-credential create --id "$APP_ID" --parameters @/tmp/github-oidc-federated.json
@@ -137,7 +148,46 @@ echo "  AZURE_TENANT_ID       = $TENANT_ID"
 echo "  AZURE_SUBSCRIPTION_ID = $SUBSCRIPTION_ID"
 ```
 
-Si tu déploies aussi depuis `workflow_dispatch` sur une autre ref, ajoute un second federated credential avec le subject correspondant (ex. `repo:…:environment:production` si tu utilises un Environment GitHub).
+#### Correctif `AADSTS700213` (subject classique déjà créé → remplacer)
+
+Si le credential existant a encore le subject **classique** alors que GitHub envoie la forme **immutable**, supprimer l’ancien et recréer avec le subject exact du log Actions :
+
+```bash
+APP_ID=$(az ad app list --display-name github-marketplace-ynov-cd --query '[0].appId' -o tsv)
+echo "APP_ID=$APP_ID"
+
+# Lister (name + subject + id GUID)
+az ad app federated-credential list --id "$APP_ID" \
+  --query '[].{name:name, subject:subject, id:id}' -o table
+
+# Supprimer l'ancien : --federated-credential-id accepte le nom OU le GUID
+# (préférer le nom si c'est github-main ; sinon coller l'id de la liste)
+az ad app federated-credential delete --id "$APP_ID" --federated-credential-id github-main
+
+# Recréer avec le subject exact présenté par GitHub
+cat > /tmp/github-oidc-federated.json <<EOF
+{
+  "name": "github-main",
+  "issuer": "https://token.actions.githubusercontent.com",
+  "subject": "repo:xLucasGitHubx@130939836/MarketPlace_Ynov@1439514548:ref:refs/heads/main",
+  "audiences": ["api://AzureADTokenExchange"],
+  "description": "GitHub Actions CD push main — subject immutable (fix AADSTS700213)"
+}
+EOF
+az ad app federated-credential create --id "$APP_ID" --parameters @/tmp/github-oidc-federated.json
+
+az ad app federated-credential list --id "$APP_ID" \
+  --query '[].{name:name, subject:subject}' -o table
+```
+
+Si `delete` avec le nom échoue, reprendre l’`id` GUID de la liste :
+
+```bash
+FIC_ID=$(az ad app federated-credential list --id "$APP_ID" --query "[?name=='github-main'].id | [0]" -o tsv)
+az ad app federated-credential delete --id "$APP_ID" --federated-credential-id "$FIC_ID"
+```
+
+Si tu déploies aussi depuis `workflow_dispatch` sur une autre ref, ajoute un second federated credential avec le subject correspondant (ex. `repo:…:environment:production` si tu utilises un Environment GitHub) — **même forme** (classique ou immutable) que celle que GitHub présente.
 
 ### 5. Paquet GHCR public ou privé
 
