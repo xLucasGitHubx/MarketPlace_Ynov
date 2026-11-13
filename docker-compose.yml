@@ -1,7 +1,8 @@
-# Démo locale complète : API optimisée (ONNX) + serveur MLflow qui reçoit les métriques de chaque requête.
+# Démo locale : API ONNX + SPA (build multi-stage) + serveur MLflow.
 #   cp .env.example .env   (renseigner API_TOKEN)
+#   # Optionnel catalogue : placer les *.onnx int8 dans artifacts/onnx/ avant le build
 #   docker compose up -d --build
-#   API : http://localhost:8000/docs   ·   MLflow : http://localhost:5000
+#   SPA + API : http://localhost:8000/   ·   Swagger : /docs   ·   MLflow : :5000
 services:
   api:
     build:
@@ -11,7 +12,12 @@ services:
     env_file: .env
     environment:
       MODEL_BACKEND: onnx
+      ONNX_MODELS_DIR: /models
+      ONNX_MODEL_PATH: /models/resnet50-int8-static.onnx
+      DEFAULT_MODEL_ID: resnet50-onnx-int8
       MLFLOW_TRACKING_URI: http://mlflow:5000
+      # Origine same-origin (SPA servie par FastAPI) ; laisser vide ou localhost pour le dév Vite
+      CORS_ORIGINS: http://localhost:8000,http://127.0.0.1:8000,http://localhost:5173,http://127.0.0.1:5173
     ports:
       - "8000:8000"
     read_only: true          # RGPD : aucun fichier ne peut être écrit dans le conteneur

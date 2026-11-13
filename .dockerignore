@@ -7,14 +7,38 @@ venv
 .pytest_cache
 .env
 *.env
-models/
 mlruns/
 mlflow.db
+
+# Cache HF / exports locaux hors artefacts Docker
+models/
+# Pré-buildés catalogue optionnels (EfficientNet, MobileNet, KD…) : artifacts/onnx/*.onnx
+!artifacts/
+!artifacts/onnx/
+!artifacts/onnx/**
+
 data/*
 !data/test_set/
 data/test_set/*
 !data/test_set/manifest.csv
+
+# Docs : uniquement les métriques catalogue consommées au runtime
 docs/
+!docs/preuves/
+!docs/preuves/eval/
+!docs/preuves/eval/catalog_metrics.json
+
 tests/
 *.md
 !README.md
+!DESIGN.md
+
+# SPA : sources + lockfile ; pas de node_modules ni dist local
+web/node_modules
+web/dist
+web/playwright-report
+web/test-results
+web/blob-report
+
+spaces/
+.github/
