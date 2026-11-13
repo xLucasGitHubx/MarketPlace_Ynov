@@ -139,6 +139,8 @@ python scripts/distill_student.py   # local ou Space ; puis copier l'artifact da
 2. Ensuite : `git push` sur `main` → Actions → jobs `tests` → `image` → `deploy`.
 3. Première création de l’app (ou autre région) uniquement : Cloud Shell + `scripts/deploy_azure.sh` (pose `API_TOKEN` en secret ACA).
 
+**OIDC / `AADSTS700213`** : le subject Entra doit matcher **exactement** le `sub` GitHub. Deux formes existent — classique `repo:OWNER/REPO:ref:…` ou immutable `repo:OWNER@OWNER_ID/REPO@REPO_ID:ref:…` (ce dépôt : `repo:xLucasGitHubx@130939836/MarketPlace_Ynov@1439514548:ref:refs/heads/main`). Si le CD échoue, supprimer/recréer le federated credential avec le subject du log Actions — snippet Cloud Shell dans [it7-azure.md](docs/preuves/it7-azure.md) (§4bis).
+
 `API_TOKEN` reste un **secret Azure Container Apps** (jamais écrasé par le CD). `AZURE_RUNTIME=true`, `MODEL_BACKEND=onnx`. Preuve / OIDC : [docs/preuves/it7-azure.md](docs/preuves/it7-azure.md).
 
 ## RGPD et sécurité
