@@ -97,8 +97,8 @@ hf upload Lulu18/MarketPlaceYnov spaces/marketplace-ynov . --repo-type=space
 
 1. Ouvrir l'onglet **App**.
 2. Cliquer **Dry-run (sans GPU)** → doit afficher le plan JSON + `distill_meta.json` **sans** consommer le quota.
-3. Laisser les défauts sûrs : epochs **2**, images **3000**, max minutes **35**, batch **32**.
-4. Cliquer **Lancer la distillation (ZeroGPU)** — compter **jusqu'à ~35 min**.
+3. Laisser les défauts sûrs : epochs **2**, images **2000**, max minutes **35**, batch **32**, reprise **vide**.
+4. Cliquer **Lancer la distillation (ZeroGPU)** — le statut doit passer *file ZeroGPU → GPU alloué → logs* (jamais silencieux) ; compter **jusqu'à ~35 min**.
 5. Si le log indique un arrêt sur budget (`timed_out`) : le lendemain, renseigner `models/distill/last.pt` et relancer.
 6. Quand un `best.pt` existe : cocher export + quantize, ou utiliser **Export seul (CPU)**.
 7. Télécharger les fichiers listés sous **Artefacts téléchargeables**.

@@ -42,7 +42,7 @@ Quota Academia / PRO : **≈ 40 min GPU / jour**. Viser **≤ 35 min** par sessi
 ## Usage UI
 
 1. **Dry-run** — plan + chemins d'artefacts, **sans GPU** ni téléchargement.
-2. **Lancer la distillation** — défauts sûrs : 2 epochs, 3000 images, **max 35 min**.
+2. **Lancer la distillation** — défauts sûrs : 2 epochs, **2000** images, batch **32**, **max 35 min**, reprise **vide** au 1er run.
 3. Si timeout : relancer avec reprise `models/distill/last.pt` le lendemain.
 4. **Export ONNX + int8** — produit `student-kd-mobilenet-int8-static.onnx`.
 5. Télécharger l'artefact depuis l'UI → copier dans le build Azure / `artifacts/onnx/`.
@@ -53,7 +53,7 @@ Quota Academia / PRO : **≈ 40 min GPU / jour**. Viser **≤ 35 min** par sessi
 python distill_student.py --dry-run
 
 python distill_student.py \
-  --epochs 2 --max-images 3000 --max-minutes 35 \
+  --epochs 2 --max-images 2000 --max-minutes 35 \
   --checkpoint-dir models/distill --cache-dir /data/hf
 
 python distill_student.py --resume models/distill/best.pt \
