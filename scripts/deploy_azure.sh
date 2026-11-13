@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-# Itération 7 — déploiement sur Azure Container Apps (abonnement Azure for Students).
+# Itération 7 — création / re-provisionnement Azure Container Apps (Azure for Students).
+#
+# Les mises à jour quotidiennes passent par le CD GitHub Actions (job deploy dans
+# .github/workflows/ci.yml) : OIDC + az containerapp update avec le tag SHA.
+# Ce script reste pour la création initiale (env, secrets, ingress) ou un autre RG.
 #
 # L'image n'est PAS construite dans Azure : les abonnements gratuits/étudiants ne
 # peuvent pas utiliser ACR Tasks (`az acr build` -> TasksOperationsNotAllowed), et un
@@ -11,6 +15,7 @@
 #   git clone https://github.com/xLucasGitHubx/MarketPlace_Ynov.git && cd MarketPlace_Ynov
 #   export API_TOKEN=$(python3 -c "import secrets; print(secrets.token_urlsafe(32))")
 #   ./scripts/deploy_azure.sh
+# Puis configurer OIDC (docs/preuves/it7-azure.md) pour ne plus relancer ce script.
 #
 # Variables optionnelles :
 #   LOCATION       région (défaut swedencentral ; un abonnement étudiant n'autorise que certaines régions)

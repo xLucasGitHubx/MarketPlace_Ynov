@@ -95,7 +95,7 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 | 4. Optimisation | ✅ | `docs/preuves/it4-optimisation.md` — int8, image ≈ 551 Mo |
 | 8. Rétroviseur | ✅ | `docs/preuves/it8-mlflow.md` |
 | 5. Flux | ✅ | `docs/preuves/it5-charge.md` |
-| 7. Grand saut | ✅ **déployé** | `docs/preuves/it7-azure.md` — URL Sweden Central |
+| 7. Grand saut | ✅ **déployé** + CD OIDC | `docs/preuves/it7-azure.md` — URL Sweden Central ; job `deploy` après `image` sur `main` |
 | 9. Facture | ✅ | `FINOPS.md` + README |
 | HF Space / KD | ✅ script + Gradio ZeroGPU | `docs/preuves/it-hf-space.md`, `spaces/marketplace-ynov/` (legacy Docker : `spaces/distill/`) |
 

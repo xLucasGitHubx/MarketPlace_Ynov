@@ -133,15 +133,13 @@ python scripts/distill_student.py   # local ou Space ; puis copier l'artifact da
 
 ## Déploiement Azure Container Apps
 
-1. CI sur `main` : tests + build `runtime-onnx` → `ghcr.io/xlucasgithubx/marketplace_ynov`.
-2. Cloud Shell :
+**CD automatique** : chaque push sur `main` qui passe tests + build/smoke GHCR déploie le tag SHA vers Container Apps (job `deploy`, login Azure **OIDC** — pas de secret client long-lived).
 
-```bash
-export API_TOKEN=$(python3 -c "import secrets; print(secrets.token_urlsafe(32))")
-LOCATION=swedencentral ./scripts/deploy_azure.sh
-```
+1. Une fois : créer l’App Registration + credential fédéré + rôle sur le RG, coller les 3 secrets GitHub (checklist complète dans [docs/preuves/it7-azure.md](docs/preuves/it7-azure.md)).
+2. Ensuite : `git push` sur `main` → Actions → jobs `tests` → `image` → `deploy`.
+3. Première création de l’app (ou autre région) uniquement : Cloud Shell + `scripts/deploy_azure.sh` (pose `API_TOKEN` en secret ACA).
 
-L'env ACA est créé avec `--logs-destination none` ; `API_TOKEN` est un secret Container Apps ; `AZURE_RUNTIME=true`. Preuve : [docs/preuves/it7-azure.md](docs/preuves/it7-azure.md).
+`API_TOKEN` reste un **secret Azure Container Apps** (jamais écrasé par le CD). `AZURE_RUNTIME=true`, `MODEL_BACKEND=onnx`. Preuve / OIDC : [docs/preuves/it7-azure.md](docs/preuves/it7-azure.md).
 
 ## RGPD et sécurité
 
