@@ -86,6 +86,60 @@ def validate_image(data: bytes, max_bytes: int, allowed_mime: tuple[str, ...]) -
     return ValidatedImage(image=rgb, mime_type=mime, size_bytes=size, width=rgb.width, height=rgb.height)
 
 
+def reject_non_object_image(
+    image: Image.Image,
+    *,
+    min_side: int = 64,
+    min_std: float = 8.0,
+) -> None:
+    """Heuristique basique : refuse images trop petites, quasi-uniformes ou sans structure.
+
+    Lève ImageValidationError (422) si l'image ne ressemble pas à une photo d'objet.
+    La variance est mesurée en luminance (pas sur les 3 canaux RGB empilés) pour
+    bien détecter un aplats coloré du type (200, 30, 30).
+    """
+    width, height = image.size
+    if width < min_side or height < min_side:
+        raise ImageValidationError(
+            422,
+            f"Image trop petite ({width}×{height}). Minimum : {min_side}×{min_side} pixels.",
+        )
+
+    import numpy as np
+
+    arr = np.asarray(image, dtype=np.float32)
+    gray = arr.mean(axis=2) if arr.ndim == 3 else arr
+    # Sous-échantillonnage de pixels (sans redimensionner : le resize lisse le bruit)
+    flat = gray.ravel()
+    if flat.size > 65_536:
+        idx = np.linspace(0, flat.size - 1, 65_536).astype(np.int64)
+        sample = flat[idx]
+    else:
+        sample = flat
+    std = float(sample.std())
+    if std < min_std:
+        raise ImageValidationError(
+            422,
+            "Image trop uniforme (fond uni ou quasi vide) : envoyez une photo d'objet contrastée.",
+        )
+
+    # Contours sur une miniature : aplats / flou extrême → peu de gradients
+    thumb = gray
+    if width > 128 or height > 128:
+        thumb_img = image.convert("L").resize(
+            (min(128, width), min(128, height)), resample=Image.Resampling.BILINEAR
+        )
+        thumb = np.asarray(thumb_img, dtype=np.float32)
+    gx = float(np.abs(np.diff(thumb, axis=1)).mean())
+    gy = float(np.abs(np.diff(thumb, axis=0)).mean())
+    edge = gx + gy
+    if edge < 1.5 and std < min_std * 1.25:
+        raise ImageValidationError(
+            422,
+            "Image sans structure détectable : envoyez une photo nette d'un objet.",
+        )
+
+
 # --- Prétraitement sans PyTorch (backend ONNX) --------------------------------
 # Reproduit exactement l'AutoImageProcessor de microsoft/resnet-50
 # (ConvNextImageProcessor, shortest_edge=224, crop_pct=0.875) :

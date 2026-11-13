@@ -61,13 +61,13 @@ class PytorchPredictor:
 
 
 class OnnxPredictor:
-    """Modèle optimisé : ResNet-50 exporté en ONNX (fp32 ou int8), exécuté par ONNX Runtime.
+    """Modèle optimisé : CNN ImageNet exporté en ONNX (fp32 ou int8), exécuté par ONNX Runtime.
 
     N'importe ni torch ni transformers : le prétraitement est fait en numpy
     (`to_model_input`, identique à l'AutoImageProcessor, vérifié par les tests).
     """
 
-    def __init__(self, model_path: str, num_threads: int | None = None):
+    def __init__(self, model_path: str, num_threads: int | None = None, name: str | None = None):
         import onnxruntime as ort
 
         from app.preprocessing import to_model_input
@@ -79,8 +79,11 @@ class OnnxPredictor:
             opts.intra_op_num_threads = num_threads
         self.session = ort.InferenceSession(model_path, sess_options=opts, providers=["CPUExecutionProvider"])
         self.input_name = self.session.get_inputs()[0].name
-        stem = Path(model_path).stem  # ex. resnet50-int8-static
-        self.name = stem.replace("resnet50-", "resnet50-onnx-")
+        if name:
+            self.name = name
+        else:
+            stem = Path(model_path).stem  # ex. resnet50-int8-static
+            self.name = stem.replace("resnet50-", "resnet50-onnx-")
         logger.info("Modèle ONNX chargé : %s (%s)", model_path, self.name)
 
     def predict_proba(self, image: Image.Image) -> np.ndarray:
