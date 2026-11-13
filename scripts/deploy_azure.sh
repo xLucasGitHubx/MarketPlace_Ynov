@@ -70,6 +70,12 @@ fi
 if az containerapp show --name "$APP" --resource-group "$RG" -o none 2>/dev/null; then
   echo "==> Mise à jour de ${APP} -> ${IMAGE}"
   az containerapp secret set --name "$APP" --resource-group "$RG" --secrets "api-token=${API_TOKEN}" -o none
+  # REVISION_SUFFIX optionnel : les envs Express rejettent --revision-suffix
+  # (ExpressRevisionSuffixNotSupported). Laisser vide par défaut.
+  REVISION_ARGS=()
+  if [ -n "${REVISION_SUFFIX:-}" ]; then
+    REVISION_ARGS=(--revision-suffix "$REVISION_SUFFIX")
+  fi
   az containerapp update --name "$APP" --resource-group "$RG" --image "$IMAGE" \
     --cpu "$CPU" --memory "$MEMORY" --min-replicas "$MIN_REPLICAS" --max-replicas "$MAX_REPLICAS" \
     --set-env-vars \
@@ -79,7 +85,7 @@ if az containerapp show --name "$APP" --resource-group "$RG" -o none 2>/dev/null
       ONNX_MODEL_PATH=/models/resnet50-int8-static.onnx \
       DEFAULT_MODEL_ID=resnet50-onnx-int8 \
       AZURE_RUNTIME=true \
-    --revision-suffix "r$(date +%m%d%H%M)" -o none
+    "${REVISION_ARGS[@]}" -o none
 else
   echo "==> Création de ${APP} -> ${IMAGE}"
   # concurrency 4 : sur 1 vCPU, p95 ≈ 280 ms à 4 requêtes simultanées (docs/preuves/it5-charge.md) ;

@@ -144,7 +144,6 @@ jobs:
       - name: Mettre à jour l'image Container Apps
         env:
           IMAGE: ${{ needs.image.outputs.image }}:${{ needs.image.outputs.tag }}
-          IMAGE_SHA: ${{ needs.image.outputs.tag }}
         run: |
           set -euo pipefail
           RG="${AZURE_RESOURCE_GROUP:-rg-marketplace-ynov}"
@@ -152,7 +151,8 @@ jobs:
           echo "Déploiement de ${IMAGE} → ${APP} (${RG})"
           # Ne touche PAS au secret api-token : seulement image + env runtime.
           # --set-env-vars conserve les variables non listées (dont API_TOKEN=secretref:api-token).
-          SUFFIX="gha${IMAGE_SHA:0:8}"
+          # Pas de --revision-suffix : les envs Express (ACA) rejettent
+          # ExpressRevisionSuffixNotSupported.
           az containerapp update \
             --name "$APP" \
             --resource-group "$RG" \
@@ -160,7 +160,6 @@ jobs:
             --set-env-vars \
               MODEL_BACKEND=onnx \
               AZURE_RUNTIME=true \
-            --revision-suffix "$SUFFIX" \
             -o none
 
           FQDN=$(az containerapp show \
