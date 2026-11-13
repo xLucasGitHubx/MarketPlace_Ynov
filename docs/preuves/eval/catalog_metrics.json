@@ -1,0 +1,68 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-11-13T00:00:00Z",
+  "source": "estimated",
+  "schema": {
+    "accuracy": "float 0–1, accuracy catégorie proxy (200 photos si measured)",
+    "p50_ms": "latence inférence p50 (ms)",
+    "p95_ms": "latence inférence p95 (ms)",
+    "size_mb": "taille fichier modèle (Mo)",
+    "cout_estime_usd_par_million": "USD / million d'images Azure CPU fort volume ; formule = 1.8 × (p95_ms / 28.6)",
+    "metric_source": "measured | estimated"
+  },
+  "finops": {
+    "baseline_model_id": "resnet50-onnx-int8",
+    "baseline_p95_ms": 28.6,
+    "baseline_usd_per_million": 1.8,
+    "formula": "cout = baseline_usd_per_million * (p95_ms / baseline_p95_ms)",
+    "zerogpu_note": "CLIP et jobs lourds : 0 $ crédits école ZeroGPU (40 min/j), coût d'opportunité = minutes GPU restantes, pas de $/M Azure"
+  },
+  "models": {
+    "resnet50-onnx-int8": {
+      "accuracy": 0.685,
+      "p50_ms": 21.5,
+      "p95_ms": 28.6,
+      "size_mb": 24.9,
+      "cout_estime_usd_par_million": 1.8,
+      "metric_source": "measured",
+      "notes": "Mesures it.4 (200 photos proxy) — prod référence"
+    },
+    "efficientnet-b0-onnx-int8": {
+      "accuracy": 0.66,
+      "p50_ms": 10.0,
+      "p95_ms": 13.0,
+      "size_mb": 5.5,
+      "cout_estime_usd_par_million": 0.82,
+      "metric_source": "estimated",
+      "notes": "Estimé : ~5,3 M params, int8 ≈ 5–6 Mo ; latence CPU ~0,45× ResNet-50 ; accuracy catégorie légèrement sous ResNet (−2 à −3 pts)"
+    },
+    "mobilenet-v3-small-onnx-int8": {
+      "accuracy": 0.6,
+      "p50_ms": 6.5,
+      "p95_ms": 9.0,
+      "size_mb": 2.5,
+      "cout_estime_usd_par_million": 0.57,
+      "metric_source": "estimated",
+      "notes": "Estimé : ~2,5 M params, int8 ≈ 2–3 Mo ; latence ~0,30× ResNet-50 ; accuracy proxy plus basse"
+    },
+    "student-kd-mobilenet-int8": {
+      "accuracy": 0.64,
+      "p50_ms": 7.0,
+      "p95_ms": 9.5,
+      "size_mb": 2.5,
+      "cout_estime_usd_par_million": 0.6,
+      "metric_source": "estimated",
+      "notes": "Estimé post-KD : latence type MobileNet ; accuracy entre MobileNet brut et ResNet (à remplacer après distill_student.py)"
+    },
+    "clip-vit-b32": {
+      "accuracy": 0.765,
+      "p50_ms": 83.0,
+      "p95_ms": 114.0,
+      "size_mb": 577.0,
+      "cout_estime_usd_par_million": 0.0,
+      "metric_source": "measured",
+      "notes": "Bench CLIP zero-shot vocab générique ; runtime Space ZeroGPU (pas Azure)",
+      "zerogpu_opportunity": true
+    }
+  }
+}

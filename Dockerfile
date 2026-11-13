@@ -65,7 +65,7 @@ COPY requirements-export.txt /tmp/
 RUN pip install -r /tmp/requirements-export.txt pandas pyarrow
 WORKDIR /build
 COPY app/ app/
-COPY scripts/export_onnx.py scripts/onnx_quant.py scripts/
+COPY scripts/export_onnx.py scripts/
 COPY data/test_set/manifest.csv data/test_set/
 RUN HF_HUB_OFFLINE=1 python scripts/export_onnx.py --cache-dir /models \
  && cat models/onnx/export_report.json
