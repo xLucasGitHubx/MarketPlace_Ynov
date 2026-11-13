@@ -1,0 +1,11 @@
+# ZeroGPU preinstalle gradio, spaces, huggingface_hub — ne pas les pinner.
+# Torch : laisser non piné (runtime ZeroGPU = 2.8+ CUDA).
+torch
+torchvision
+transformers>=4.44,<5
+Pillow>=10
+numpy>=1.26,<3
+pandas>=2.2
+pyarrow>=15
+onnx
+onnxruntime>=1.17,<2
