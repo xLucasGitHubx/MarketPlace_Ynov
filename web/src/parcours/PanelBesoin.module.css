@@ -1,0 +1,47 @@
+.panel {
+  margin: 0;
+  padding: 20px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.title {
+  margin: 0 0 14px;
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.line {
+  margin: 0 0 8px;
+  max-width: 62ch;
+  font-family: var(--font-sans);
+  font-size: 0.98rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.line code,
+.sources code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  color: var(--accent);
+  background: var(--mono-bg);
+  padding: 0.05em 0.35em;
+  border-radius: 4px;
+}
+
+.sources {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  max-width: 62ch;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--muted);
+}

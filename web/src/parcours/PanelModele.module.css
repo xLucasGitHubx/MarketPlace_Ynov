@@ -1,0 +1,138 @@
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 22px;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+}
+
+.title {
+  margin: 0 0 12px;
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.prose {
+  max-width: 62ch;
+}
+
+.prose p {
+  margin: 0 0 12px;
+}
+
+.action {
+  margin-bottom: 0;
+}
+
+.repo,
+.catalogId {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  font-weight: 400;
+  background: var(--mono-bg);
+  padding: 0.08em 0.35em;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.catalogId {
+  display: inline-block;
+  color: var(--ink);
+}
+
+.link,
+.internalLink {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 180ms ease;
+}
+
+.link:hover,
+.internalLink:hover {
+  color: var(--ink);
+}
+
+.internalLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.sources {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.sourcesTitle {
+  margin: 0 0 12px;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.list,
+.linkList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item + .item {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.note {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.linkList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.linkRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link,
+  .internalLink {
+    transition: none;
+  }
+}

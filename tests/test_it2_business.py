@@ -5,7 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from app.business import STATUS_AUTO, STATUS_TO_CONFIRM, load_category_map, suggest
+from app.business import STATUS_AUTO, STATUS_TO_CONFIRM, load_category_map, suggest, suggested_description
 from tests.conftest import FailingPredictor, FakePredictor
 
 
@@ -61,6 +61,26 @@ def test_seuil_configurable():
 def test_vecteur_de_mauvaise_taille():
     with pytest.raises(ValueError):
         suggest(np.ones(10) / 10, threshold=0.6)
+
+
+def test_suggested_description_follows_status(client, jpeg_bytes):
+    assert suggested_description("Ordinateur portable", "Électronique", STATUS_AUTO) == (
+        "Ordinateur portable à vendre. Catégorie proposée : Électronique."
+    )
+    assert suggested_description("Canapé", "Maison et meubles", STATUS_TO_CONFIRM) == (
+        "Canapé à vendre. Catégorie à confirmer : Maison et meubles."
+    )
+
+    r = client.post("/predict", files={"file": ("pc.jpg", jpeg_bytes, "image/jpeg")})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["statut"] == STATUS_AUTO
+    assert body["description_suggeree"] == suggested_description(
+        body["titre_suggere"], body["categorie"], body["statut"]
+    )
+    assert body["description_suggeree"] == (
+        "Ordinateur portable à vendre. Catégorie proposée : Électronique."
+    )
 
 
 def test_reponse_predict_conforme_a_la_spec(client, jpeg_bytes):

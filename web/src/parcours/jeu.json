@@ -1,0 +1,20 @@
+{
+  "manifestPath": "data/test_set/manifest.csv",
+  "total": 200,
+  "categories": [
+    { "label": "Électronique", "count": 20 },
+    { "label": "Maison et meubles", "count": 20 },
+    { "label": "Électroménager", "count": 20 },
+    { "label": "Vêtements et accessoires", "count": 20 },
+    { "label": "Sport et loisirs", "count": 20 },
+    { "label": "Jeux et jouets", "count": 20 },
+    { "label": "Véhicules et pièces", "count": 20 },
+    { "label": "Bricolage et jardin", "count": 20 },
+    { "label": "Livres et musique", "count": 20 },
+    { "label": "Autre", "count": 20 }
+  ],
+  "sources": [
+    { "id": "sop", "count": 24 },
+    { "id": "caltech", "count": 176 }
+  ]
+}

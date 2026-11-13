@@ -43,6 +43,7 @@ export interface CategoryProposal {
 export interface PredictionResponse {
   categorie: string;
   titre_suggere: string;
+  description_suggeree?: string;
   confiance: number;
   statut: PredictionStatut;
   top3: TopClass[];

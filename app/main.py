@@ -17,7 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.business import suggest
+from app.business import suggest, suggested_description
 from app.config import get_settings
 from app.model import load_predictor
 from app.monitoring import NullTracker, create_tracker
@@ -236,6 +236,7 @@ async def _predict_impl(
     return PredictionResponse(
         categorie=result.category,
         titre_suggere=result.title,
+        description_suggeree=suggested_description(result.title, result.category, result.status),
         confiance=result.confidence,
         statut=result.status,
         top3=result.top3,

@@ -21,6 +21,20 @@ STATUS_AUTO = "auto"
 STATUS_TO_CONFIRM = "a_confirmer"
 
 
+def suggested_description(title: str, category: str, status: str) -> str:
+    """Phrase d'annonce fixe, à partir du titre et de la catégorie déjà calculés.
+
+    Aucun second modèle : la formulation ne dépend que du statut métier.
+    """
+    if status == STATUS_AUTO:
+        category_label = "Catégorie proposée"
+    elif status == STATUS_TO_CONFIRM:
+        category_label = "Catégorie à confirmer"
+    else:
+        raise ValueError(f"Statut inconnu : {status!r}")
+    return f"{title} à vendre. {category_label} : {category}."
+
+
 @dataclass(frozen=True)
 class ClassInfo:
     label: str
