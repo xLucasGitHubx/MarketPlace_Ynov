@@ -81,6 +81,7 @@ Interdit dans l'image Azure : PyTorch, transformers, CUDA, CLIP. Catalogue = COP
 | 2026-10-30 | Cloud = **Azure Container Apps** ; image GHCR ; Dockerfile sans BuildKit. | Lucas |
 | 2026-10-30 | ResNet-50 chemin prod ; CLIP = bench / Space. | LLM Council modèle |
 | 2026-11-13 | Multi-modèles ONNX + SPA mono-service ; Space `Lulu18` ZeroGPU pour KD / CLIP ; image Azure ONNX-only slim. | plan multi-model HF UI |
+| 2026-11-13 | Parcours MLOps dans la SPA (`/parcours`) ; `description_suggeree` est une règle, pas un second modèle. | assemblage front |
 
 ## Avancement des itérations
 

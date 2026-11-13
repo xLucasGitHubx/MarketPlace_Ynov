@@ -53,6 +53,10 @@ class CategoryProposal(BaseModel):
 class PredictionResponse(BaseModel):
     categorie: str = Field(examples=["Électronique"])
     titre_suggere: str = Field(examples=["Ordinateur portable"])
+    description_suggeree: str = Field(
+        examples=["Ordinateur portable à vendre. Catégorie proposée : Électronique."],
+        description="Phrase d'annonce dérivée du titre et de la catégorie déjà calculés.",
+    )
     confiance: float = Field(ge=0, le=1, examples=[0.92])
     statut: Literal["auto", "a_confirmer"] = Field(
         examples=["auto"],

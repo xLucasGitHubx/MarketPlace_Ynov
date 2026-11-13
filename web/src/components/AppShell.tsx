@@ -3,6 +3,7 @@ import { TokenBar } from "./TokenBar";
 
 const LINKS = [
   { to: "/", label: "Studio" },
+  { to: "/parcours", label: "Parcours" },
   { to: "/comparateur", label: "Comparateur" },
   { to: "/garde-fous", label: "Garde-fous" },
 ] as const;

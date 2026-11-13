@@ -1,0 +1,212 @@
+.root {
+  container-name: requete;
+  container-type: inline-size;
+  min-width: 0;
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+.title {
+  margin: 0 0 8px;
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.live {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  background: var(--mono-bg);
+  border-radius: 8px;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+
+.live[data-mode="idle"] {
+  color: var(--muted);
+}
+
+.pipeline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px 22px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+}
+
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 16px;
+  column-gap: 8px;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease;
+}
+
+.step[data-state="done"] {
+  background: var(--mono-bg);
+  border-color: var(--ok);
+}
+
+.step[data-state="current"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.step[data-state="current"]::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  pointer-events: none;
+  animation: schema-requete-pulse 1600ms ease-in-out infinite;
+}
+
+@keyframes schema-requete-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 0.12;
+  }
+}
+
+.index {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+
+.step[data-state="done"] .index {
+  color: var(--ok);
+}
+
+.step[data-state="current"] .index {
+  color: var(--accent-ink);
+}
+
+.label {
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.labelMono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.markSlot {
+  width: 16px;
+  height: 16px;
+  color: var(--ok);
+}
+
+.markSlot svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.arrow {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 50%;
+  bottom: -16px;
+  margin-left: -7px;
+  color: var(--line);
+  pointer-events: none;
+  transform: rotate(90deg);
+}
+
+.step[data-state="done"] .arrow {
+  color: var(--ok);
+}
+
+.step:last-child .arrow {
+  display: none;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@container requete (min-width: 520px) {
+  .pipeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .arrow {
+    top: 50%;
+    right: -18px;
+    bottom: auto;
+    left: auto;
+    margin-top: -7px;
+    margin-left: 0;
+    transform: none;
+  }
+
+  .step:nth-child(2n) .arrow {
+    display: none;
+  }
+}
+
+@container requete (min-width: 840px) {
+  .pipeline {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .step:nth-child(2n) .arrow {
+    display: block;
+  }
+
+  .step:nth-child(4n) .arrow,
+  .step:last-child .arrow {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step {
+    transition: none;
+  }
+
+  .step[data-state="current"]::after {
+    animation: none;
+    opacity: 0.45;
+  }
+}
