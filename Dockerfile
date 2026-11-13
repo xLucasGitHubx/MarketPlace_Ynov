@@ -99,6 +99,7 @@ COPY --from=deps-torch /opt/venv /opt/venv
 COPY --from=model-hf --chown=appuser /models /models
 COPY --chown=appuser app/ app/
 COPY --from=web-build --chown=appuser /web/dist/ app/static/
+RUN test -f app/static/index.html && test -d app/static/assets
 USER appuser
 
 # ---------- Cible : ONNX Runtime int8 + SPA (prod Azure) — défaut ----------
@@ -112,6 +113,8 @@ COPY --from=deps-onnx /opt/venv /opt/venv
 COPY --from=onnx-collect --chown=appuser /models/ /models/
 COPY --chown=appuser app/ app/
 COPY --from=web-build --chown=appuser /web/dist/ app/static/
+# Échoue le build si la SPA n'est pas embarquée (smoke GET / dépend de index.html)
+RUN test -f app/static/index.html && test -d app/static/assets
 # Métriques FinOps / GET /models (fichier versionné, sans secrets)
 COPY --chown=appuser docs/preuves/eval/catalog_metrics.json docs/preuves/eval/catalog_metrics.json
 USER appuser

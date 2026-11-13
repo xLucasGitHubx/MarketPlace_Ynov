@@ -52,26 +52,65 @@ jobs:
           context: .
           target: runtime-onnx
           platforms: linux/amd64
+          # PR : load local pour smoke. Main : push GHCR (smoke tire l'image).
           push: ${{ github.event_name != 'pull_request' }}
+          load: ${{ github.event_name == 'pull_request' }}
           tags: |
             ${{ steps.meta.outputs.image }}:latest
             ${{ steps.meta.outputs.image }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Smoke test de l'image
-        if: github.event_name != 'pull_request'
         run: |
+          set -euo pipefail
+          IMAGE="${{ steps.meta.outputs.image }}:${{ github.sha }}"
           docker run -d --name api --read-only \
             -e API_TOKEN=ci-token \
             -e MODEL_BACKEND=onnx \
             -e ONNX_MODELS_DIR=/models \
             -e AZURE_RUNTIME=true \
-            -p 8000:8000 ${{ steps.meta.outputs.image }}:${{ github.sha }}
-          for i in $(seq 1 30); do curl -sf localhost:8000/health && break; sleep 1; done
-          # SPA embarquée (index.html)
-          test "$(curl -s -o /dev/null -w '%{http_code}' localhost:8000/)" = "200"
-          curl -sf localhost:8000/api/models >/dev/null
+            -p 8000:8000 "$IMAGE"
+          cleanup() { docker rm -f api >/dev/null 2>&1 || true; }
+          trap cleanup EXIT
+
+          # Attendre que le conteneur accepte exec (démarrage uvicorn)
+          for i in $(seq 1 30); do
+            docker exec api true && break
+            sleep 1
+          done
+
+          # Présence SPA dans l'image (chemins relatifs à WORKDIR=/srv ; évite la conversion MSYS)
+          docker exec api python -c "from pathlib import Path; p=Path('app/static'); assert (p/'index.html').is_file() and (p/'assets').is_dir(), p"
+
+          for i in $(seq 1 30); do
+            curl -sf 127.0.0.1:8000/health && break
+            sleep 1
+          done
+
+          root_code=$(curl -s -o /tmp/spa.html -w '%{http_code}' 127.0.0.1:8000/)
+          echo "GET / → $root_code"
+          test "$root_code" = "200"
+          grep -qi '<html' /tmp/spa.html
+
+          curl -sf 127.0.0.1:8000/api/models >/dev/null
+
+          # JPEG non uniforme : l'aplat (200,30,30) est rejeté 422 par reject_non_object_image
           python3 -c "from PIL import Image" 2>/dev/null || pip install -q pillow
-          python3 -c "from PIL import Image; Image.new('RGB',(320,240),(200,30,30)).save('t.jpg')"
-          test "$(curl -s -o /dev/null -w '%{http_code}' -F file=@t.jpg localhost:8000/api/predict)" = "401"
-          test "$(curl -s -o /dev/null -w '%{http_code}' -H 'Authorization: Bearer ci-token' -F file=@t.jpg localhost:8000/api/predict)" = "200"
+          python3 - <<'PY'
+          from PIL import Image, ImageDraw
+          img = Image.new("RGB", (320, 240), (40, 40, 40))
+          d = ImageDraw.Draw(img)
+          d.rectangle((40, 40, 280, 200), fill=(220, 80, 40))
+          d.ellipse((100, 80, 220, 180), fill=(30, 140, 220))
+          d.line((50, 50, 270, 190), fill=(255, 255, 255), width=4)
+          img.save("t.jpg", quality=90)
+          PY
+
+          code_401=$(curl -s -o /dev/null -w '%{http_code}' -F file=@t.jpg 127.0.0.1:8000/api/predict)
+          echo "POST /api/predict sans token → $code_401"
+          test "$code_401" = "401"
+
+          code_200=$(curl -s -o /tmp/predict.json -w '%{http_code}' \
+            -H 'Authorization: Bearer ci-token' -F file=@t.jpg 127.0.0.1:8000/api/predict)
+          echo "POST /api/predict avec token → $code_200"
+          test "$code_200" = "200"
