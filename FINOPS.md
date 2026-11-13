@@ -119,12 +119,56 @@ Un GPU T4 serverless sur Container Apps coûte 0,000091 $/s, soit **≈ 236 $/mo
 
 Le benchmark CLIP ViT-B/32 (76,5 à 88,5 % d'accuracy) tourne aujourd'hui en PyTorch fp32 (577 Mo, ≈ 90 ms sur 2 vCPU). En production tel quel, son coût serait comparable au ResNet PyTorch (≈ 30 $/mois à 1 M d'images, option B). Exporter son encodeur image en ONNX int8 le ramènerait vers le coût actuel. À ce volume, le choix se joue sur la qualité, pas sur le budget.
 
-## 9. Leviers d'économie
+## 9. Catalogue multi-modèles — coût Azure par million d'images
+
+Au fort volume, le coût suit le CPU consommé. On normalise chaque modèle sur la **baseline ResNet-50 ONNX int8** (mesurée) :
+
+\[
+\text{coût}_{\$/M} = 1{,}8 \times \frac{\mathrm{p95}_{ms}}{28{,}6}
+\]
+
+Les valeurs EfficientNet / MobileNet / student sont des **estimations** (export + `evaluate_catalog.py` à relancer pour les remplacer par des mesures). CLIP n'est **pas** facturé sur Azure : runtime Space ZeroGPU.
+
+| ID catalogue | Accuracy proxy | p50 / p95 | Taille | $/M images (Azure CPU) | Source |
+| --- | --- | --- | --- | --- | --- |
+| `resnet50-onnx-int8` | 68,5 % | 21,5 / 28,6 ms | 24,9 Mo | **1,80 $** | mesuré (it.4) |
+| `efficientnet-b0-onnx-int8` | ≈ 66 % | ≈ 10 / 13 ms | ≈ 5,5 Mo | **≈ 0,82 $** | estimé (~0,45× latence) |
+| `mobilenet-v3-small-onnx-int8` | ≈ 60 % | ≈ 6,5 / 9 ms | ≈ 2,5 Mo | **≈ 0,57 $** | estimé (~0,30× latence) |
+| `student-kd-mobilenet-int8` | ≈ 64 % | ≈ 7 / 9,5 ms | ≈ 2,5 Mo | **≈ 0,60 $** | estimé (post-KD) |
+| `clip-vit-b32` | 76,5 % | 83 / 114 ms | 577 Mo | **0 $ Azure** (Space) | mesuré (bench) |
+
+Fichier consommé par l'API / le front : [`docs/preuves/eval/catalog_metrics.json`](docs/preuves/eval/catalog_metrics.json) → chargé par `app.registry` au démarrage → exposé via `GET /models` (`accuracy`, `p50_ms`, `p95_ms`, `taille_mo`, `cout_estime_usd_par_million`).
+
+**Lecture :** à 1 M d'images, passer de ResNet int8 à MobileNetV3-Small divise le coût CPU variable par ~3, au prix d'environ −8 pts d'accuracy proxy. EfficientNet-B0 est le compromis (≈ −2 pts, ≈ −55 % $/M). Le student KD vise à récupérer une partie de la qualité ResNet sans quitter l'enveloppe MobileNet.
+
+### Coût d'opportunité ZeroGPU (crédits école)
+
+| Poste | Azure Container Apps (CPU) | HF Space ZeroGPU (`Lulu18`) |
+| --- | --- | --- |
+| Facturation | vCPU-s + Gio-s (voir §2) | **0 $** (quota école) |
+| Disponibilité | 24/7, scale-out | **40 min GPU / jour** |
+| Usage prévu | Inférence catalogue ONNX int8 | Distillation student, bench CLIP, jobs lourds |
+| Coût d'opportunité | Dollars Azure | Minutes GPU restantes (pas monétisées) |
+
+Une journée de distillation (≤ 40 min) ne coûte rien en cash mais **bloque** le GPU pour le reste du jour : planifier CLIP demo + KD le même créneau, ou enchaîner sur plusieurs jours avec reprise de checkpoint. L'API Azure ne charge jamais `space_only` (évite OOM et cold start 2 Go+).
+
+Régénérer les métriques après export :
+
+```bash
+python scripts/export_catalog.py
+python scripts/evaluate_catalog.py --out docs/preuves/eval/catalog_metrics.json
+# sans modèles locaux / jeu de test :
+python scripts/evaluate_catalog.py --seed-only
+```
+
+## 10. Leviers d'économie
 
 1. **ONNX int8** (fait) : 5× moins de CPU par image, mémoire ÷ 2, image ÷ 3,7, démarrage ÷ 4.
-2. **Registre gratuit** (fait) : GHCR alimenté par la CI au lieu d'ACR Basic (−5 $/mois).
-3. **`min-replicas` adapté au trafic** : 0 pour un usage ponctuel, 1 dès que le trafic est continu (tarif repos 3,3× moins cher que le tarif actif).
-4. **0,5 vCPU / 1 Gio** si la latence le permet : facture divisée par 2.
-5. **Rejet avant lecture** (fait) : les requêtes sans token ou trop lourdes ne consomment presque rien (elles restent comptées comme requêtes HTTP).
-6. **Redimensionnement côté client** : envoyer une photo de 512 px au lieu de 4 000 px réduit l'upload et le décodage, sans effet sur la prédiction (le modèle travaille en 224 px).
-7. **Garde-fous** : `max-replicas 3` plafonne la dépense en cas de pic ou d'abus (3 × 23 ≈ 70 req/s). Ajouter un budget Azure avec alertes à 10, 25 et 50 $ sur l'abonnement.
+2. **Catalogue léger** (en cours) : MobileNet / EfficientNet int8 pour baisser le $/M quand la qualité proxy suffit ; ResNet reste le défaut prod.
+3. **ZeroGPU pour le lourd** : CLIP et distillation hors Azure (0 $ cash, quota 40 min/j).
+4. **Registre gratuit** (fait) : GHCR alimenté par la CI au lieu d'ACR Basic (−5 $/mois).
+5. **`min-replicas` adapté au trafic** : 0 pour un usage ponctuel, 1 dès que le trafic est continu (tarif repos 3,3× moins cher que le tarif actif).
+6. **0,5 vCPU / 1 Gio** si la latence le permet : facture divisée par 2.
+7. **Rejet avant lecture** (fait) : les requêtes sans token ou trop lourdes ne consomment presque rien (elles restent comptées comme requêtes HTTP).
+8. **Redimensionnement côté client** : envoyer une photo de 512 px au lieu de 4 000 px réduit l'upload et le décodage, sans effet sur la prédiction (le modèle travaille en 224 px).
+9. **Garde-fous** : `max-replicas 3` plafonne la dépense en cas de pic ou d'abus (3 × 23 ≈ 70 req/s). Ajouter un budget Azure avec alertes à 10, 25 et 50 $ sur l'abonnement.
