@@ -12,7 +12,7 @@ mlflow.db
 
 # Cache HF / exports locaux hors artefacts Docker
 models/
-# Pré-buildés catalogue (EfficientNet, MobileNet, student…) : artifacts/onnx/*.onnx
+# Pré-buildés catalogue optionnels (EfficientNet, MobileNet, KD…) : artifacts/onnx/*.onnx
 !artifacts/
 !artifacts/onnx/
 !artifacts/onnx/**

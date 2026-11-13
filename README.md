@@ -88,11 +88,11 @@ docker build --target runtime-onnx -t marketplace-api:onnx .
 docker run -d --read-only --env-file .env -p 8000:8000 marketplace-api:onnx
 # SPA : http://localhost:8000/   ·   API : /api/*   ·   Swagger : /docs
 
-# Ajouter EfficientNet / MobileNet / student à l'image (fichiers pré-exportés) :
+# Optionnel — catalogue int8 (KD / student non requis pour Docker ni Azure) :
 python scripts/export_catalog.py
 cp models/onnx/efficientnet-b0-int8-static.onnx \
    models/onnx/mobilenet-v3-small-int8-static.onnx \
-   artifacts/onnx/   # optionnel : student-kd-*.onnx
+   artifacts/onnx/   # student-kd-*.onnx uniquement si vous avez distillé
 docker build --target runtime-onnx -t marketplace-api:onnx .
 # ou : --build-arg PREBUILT_ONNX_DIR=models/onnx  (si le contexte inclut ce dossier)
 
@@ -123,12 +123,12 @@ Stratégie taille : rester près de **≤ 551 Mo**. Le catalogue n'ajoute que de
 | `CORS_ORIGINS` | localhost:5173 | Origines SPA dév |
 | `MLFLOW_TRACKING_URI` | *(vide)* | Suivi requêtes |
 
-## Distillation (Space Lulu18)
+## Distillation (Space Lulu18) — optionnelle
 
-Jobs GPU (KD ResNet → MobileNet, CLIP lourd) : Space Hugging Face **Lulu18** ZeroGPU (40 min/jour), pas dans l'image ACA. Voir [docs/preuves/it-hf-space.md](docs/preuves/it-hf-space.md) et `spaces/distill/`.
+Jobs GPU (KD ResNet → MobileNet, CLIP lourd) : Space Hugging Face **Lulu18** ZeroGPU (40 min/jour). **Pas requis** pour build Docker / déploiement ACA (ResNet int8 suffit). Voir [docs/preuves/it-hf-space.md](docs/preuves/it-hf-space.md) et `spaces/distill/`.
 
 ```bash
-python scripts/distill_student.py   # local ou Space ; artifact → models/onnx/ puis artifacts/onnx/
+python scripts/distill_student.py   # local ou Space ; puis copier l'artifact dans artifacts/onnx/ si désiré
 ```
 
 ## Déploiement Azure Container Apps

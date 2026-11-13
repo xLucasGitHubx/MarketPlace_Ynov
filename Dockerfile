@@ -10,13 +10,11 @@
 #   runtime-onnx  python:3.11-slim + onnxruntime + app + SPA + ONNX int8  (défaut / Azure)
 #   runtime-pytorch  référence it.3 uniquement — ne pas déployer sur Azure
 #
-# Catalogue EfficientNet / MobileNet / student :
-#   1. Hors Docker : python scripts/export_catalog.py (et/ou distill_student.py)
-#   2. Copier les *.onnx int8 dans artifacts/onnx/ avant le build
-#      (ex. efficientnet-b0-int8-static.onnx, mobilenet-v3-small-int8-static.onnx)
-#   3. docker build … — ils sont COPYés dans /models sans torch dans le runtime
-#   Alternative : --build-arg PREBUILT_ONNX_DIR=models/onnx si les fichiers sont déjà là
-#   (et .dockerignore autorise ce chemin).
+# Prod = ResNet-50 int8 exporté au build. Catalogue / KD = optionnels, jamais requis :
+#   - artifacts/onnx/ peut être vide (.gitkeep) → image OK (ResNet seul).
+#   - EfficientNet / MobileNet : python scripts/export_catalog.py puis COPY dans artifacts/onnx/
+#   - student KD : scripts/distill_student.py (ou Space) — optionnel, hors chemin critique Azure
+#   Alternative : --build-arg PREBUILT_ONNX_DIR=models/onnx si le contexte l'inclut.
 #
 # Portable : pas de syntaxe BuildKit (RUN --mount). Proxy TLS optionnel :
 #   --build-arg EXTRA_CA_CERT_B64="$(base64 -w0 proxy-ca.pem)"
@@ -74,7 +72,7 @@ RUN HF_HUB_OFFLINE=1 python scripts/export_onnx.py --cache-dir /models \
 FROM ${BASE_IMAGE} AS onnx-collect
 ARG PREBUILT_ONNX_DIR=artifacts/onnx
 WORKDIR /models
-# Dossier hôte versionné (souvent vide hors .gitkeep) : EfficientNet, MobileNet, student…
+# Optionnel : int8 catalogue / KD s'ils sont présents ; dossier vide (.gitkeep) = OK
 COPY ${PREBUILT_ONNX_DIR}/ ./
 # ResNet prod toujours fourni par l'étape d'export (chemin historique conservé)
 COPY --from=model-onnx /build/models/onnx/resnet50-int8-static.onnx ./resnet50-int8-static.onnx

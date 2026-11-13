@@ -71,9 +71,11 @@ LOCATION=swedencentral ./scripts/deploy_azure.sh
 docker build --target runtime-onnx -t marketplace-api:onnx .
 docker images marketplace-api:onnx   # viser ≈ ≤ 551 Mo ; + quelques Mo par ONNX catalogue
 
-# Catalogue supplémentaire (EfficientNet / MobileNet / student) :
+# Optionnel — catalogue int8 (EfficientNet / MobileNet). KD/student non requis.
 python scripts/export_catalog.py
-cp models/onnx/*-int8-static.onnx artifacts/onnx/
+cp models/onnx/efficientnet-b0-int8-static.onnx \
+   models/onnx/mobilenet-v3-small-int8-static.onnx \
+   artifacts/onnx/
 docker build --target runtime-onnx -t marketplace-api:onnx .
 ```
 
