@@ -83,6 +83,7 @@ Interdit dans l'image Azure : PyTorch, transformers, CUDA, CLIP. Catalogue = COP
 | 2026-11-13 | Multi-modèles ONNX + SPA mono-service ; Space `Lulu18` ZeroGPU pour KD / CLIP ; image Azure ONNX-only slim. | plan multi-model HF UI |
 | 2026-11-13 | Parcours MLOps dans la SPA (`/parcours`) ; `description_suggeree` est une règle, pas un second modèle. | assemblage front |
 | 2026-11-20 | UI soutenance : premier écran = photo → catégorie, titre, confiance, statut. Film de requête ~720 ms/étape. Parcours oral (précédent/suivant) mappé sur les 9 itérations. Badge mesuré/estimé. Titre garde-fous = photo lue en mémoire puis oubliée. | refonte jury |
+| 2026-11-20 | Diagnostic du notebook formateur intégré à l’étape Mesure du parcours (parties guidées). Chiffres issus des preuves it. 4 / it. 5. Lots 1–16, p99 d’inférence, prétraitement seul, pic CUDA : non mesurés, affichés comme tels. | notebook diagnostiquer_performances |
 | 2026-11-20 | EfficientNet-B0 int8 statique dans `artifacts/onnx/` (ready). Session ONNX = `ORT_ENABLE_BASIC` : `ENABLE_ALL` écrase le QDQ en classe constante. MobileNet et student restent `building`. | catalogue ready |
 
 ## Avancement des itérations
@@ -126,6 +127,35 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 - `.env` : pas de commentaire en fin de ligne.
 - PyTorch + `--read-only` → `--tmpfs /tmp` (cible `runtime-pytorch` seulement).
 - `AZURE_RUNTIME=true` : ne charge jamais `space_only` (CLIP).
+
+## Diagnostic à l’oral
+
+Notebook formateur « Diagnostiquer les performances ». On ne le colle pas dans une page à part.
+
+Chemin : **Parcours** → rail it. 4 (ONNX) ou it. 5 (Charge) → étape **Mesure** → rail « Parties du diagnostic », ou l’URL `/parcours?etape=mesure&partie=<id>`.
+
+| Partie | Id | Cours | Où cliquer |
+| --- | --- | --- | --- |
+| Qualité | `qualite` | hors notebook | Mesure, partie 1. Accuracy 68,5 %, seuil 0,6, deux latences |
+| Question | `question` | intro, §12 | Mesure |
+| Modèle et CPU | `modele` | §1, §2, §2.1 | Mesure, rappel aussi à l’étape Modèle |
+| Contrôle visuel | `controle` | §2 figure | Mesure, puis Studio |
+| Entrées | `entrees` | §3 | Mesure, rappel à Données |
+| Indicateurs | `indicateurs` | §4 | Mesure |
+| Protocole | `protocole` | §5 | Mesure |
+| Percentiles | `percentiles` | §5.1 | Mesure |
+| Débit | `debit` | §6 | Mesure |
+| Charge | `charge` | §6.1 | Mesure. Courbe HTTP 1 vCPU, pas les lots du cours |
+| Mémoire | `memoire` | §7, §7.1 | Mesure |
+| Chaîne | `chaine` | §8, §8.1 | Mesure, rappel à Préparation |
+| Référence | `reference` | §9 | Mesure. Lien depuis le Comparateur |
+| Trace | `trace` | §9.1 | Mesure, puis Fiche |
+| À retenir | `retenir` | §10 | Mesure |
+| Questions | `questions` | §11 | Mesure |
+
+Non mesuré, et marqué ainsi : top 5 de la photo COCO, tenseurs aléatoires, lots 1–16, p99 d’inférence, durée du préchauffage, prétraitement seul, pic d’allocations CPU, CSV du cours. Non applicable : synchro CUDA et pic mémoire GPU (prod CPU).
+
+Ne pas confondre p50 inférence 21,5 ms (it. 4, 2 vCPU, `predict_proba`) et p50 requête 67,9 ms (it. 5, 1 vCPU), arrondi ~68 ms sur le studio. Ce dernier est le chiffre de facture.
 
 ## Points ouverts
 
