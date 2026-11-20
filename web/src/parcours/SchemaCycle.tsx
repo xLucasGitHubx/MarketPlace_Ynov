@@ -26,8 +26,8 @@ const STEPS = [
   },
   {
     id: "mesure",
-    label: "Accuracy et seuil",
-    lines: ["Accuracy et seuil"],
+    label: "Mesure",
+    lines: ["Mesure"],
     col: 3,
     row: 1,
   },

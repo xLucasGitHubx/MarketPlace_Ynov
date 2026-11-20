@@ -120,6 +120,20 @@ export function PanelModele(): JSX.Element {
         <p>
           CLIP ViT-B/32, environ 577&nbsp;Mo, reste une comparaison sur Space.
         </p>
+        <p>
+          Le cours de diagnostic charge{" "}
+          <code className={styles.repo} translate="no">
+            microsoft/resnet-18
+          </code>{" "}
+          pour apprendre le protocole. Ici le réseau est{" "}
+          <code className={styles.repo} translate="no">
+            microsoft/resnet-50
+          </code>
+          , puis ONNX int8 sur CPU.{" "}
+          <Link className={styles.internalLink} to="/parcours?etape=mesure&partie=modele">
+            Voir la partie Modèle
+          </Link>
+        </p>
         <p className={styles.action}>
           <Link className={styles.internalLink} to="/comparateur">
             Voir le comparateur

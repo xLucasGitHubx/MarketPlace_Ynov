@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { ApiClientError, fetchModels } from "@/api/client";
 import type { ModelInfo } from "@/api/types";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -81,6 +82,14 @@ export function ComparateurPage() {
           vraie éval ne dit pas mesuré.
         </p>
       </aside>
+
+      <p className="page-lead">
+        <Link className="inline-link" to="/parcours?etape=mesure&partie=reference">
+          Référence d’optimisation
+        </Link>
+        , PyTorch contre ONNX&nbsp;: parcours, étape Mesure. Ce tableau-ci
+        compare le catalogue, pas les quatre variantes du même ResNet.
+      </p>
 
       {error ? (
         <p className="alert" data-tone="error" role="alert">

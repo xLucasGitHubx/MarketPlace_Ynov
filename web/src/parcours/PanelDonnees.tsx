@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { Link } from "react-router-dom";
 import jeuRaw from "./jeu.json?raw";
 import styles from "./PanelDonnees.module.css";
 
@@ -95,7 +96,13 @@ export function PanelDonnees(): JSX.Element {
         photos réelles de Leboncoin.
       </p>
       <p className={styles.choice}>
-        Pas d’images synthétiques. Le jeu reste celui du manifeste.
+        Pas d’images synthétiques. Le jeu reste celui du manifeste. Ces photos
+        mesurent l’accuracy. Le cours de diagnostic chronomètre aussi des
+        tenseurs aléatoires&nbsp;: ils ne jugent pas la qualité.{" "}
+        <Link className={styles.link} to="/parcours?etape=mesure&partie=entrees">
+          Voir la partie Entrées
+        </Link>
+        .
       </p>
       <p className={styles.meta}>
         {sharedCount !== undefined

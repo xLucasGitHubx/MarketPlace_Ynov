@@ -65,6 +65,8 @@ Titre : « Une photo devient une annonce. » Équation visible (catégorie, titr
 
 Oral guidé : Précédent / Suivant, une idée courte par étape du cycle. Rail des 9 itérations (squelette, cerveau, docker, onnx, charge, sécurité, azure, mlflow, facture) qui ouvre l’étape où le correcteur les trouve. Données et préparation n’ont pas de numéro : elles servent le cerveau et l’ONNX.
 
+L’étape Mesure porte le diagnostic du notebook formateur (latence, débit, mémoire, chaîne, référence). Un second rail, « Parties du diagnostic », avec Partie précédente / Partie suivante. Une idée par partie. Lien direct : `/parcours?etape=mesure&partie=reference`. Les barres de la charge et de la référence bougent en largeur (480 ms) ; `prefers-reduced-motion` coupe la transition. Badge `mesuré` / `non mesuré` / `non applicable` : un chiffre absent du dépôt n’est pas inventé.
+
 ### Comparateur (`/comparateur`)
 
 Badge `mesuré` ou `estimé` impossible à manquer. CLIP 76,5 % porte la réserve : zero-shot, vocabulaire générique, Space, pas Azure, ~577 Mo, pas le modèle de prod. EfficientNet, MobileNet et le student restent `estimé`.
