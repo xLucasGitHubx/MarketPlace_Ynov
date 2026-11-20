@@ -129,6 +129,7 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 - `.env` : pas de commentaire en fin de ligne.
 - PyTorch + `--read-only` → `--tmpfs /tmp` (cible `runtime-pytorch` seulement).
 - `AZURE_RUNTIME=true` : ne charge jamais `space_only` (CLIP).
+- `python:3.11-slim` ne connaît pas `.webp` : `mimetypes.add_type("image/webp", ".webp")` dans `app/main.py`, sinon les vignettes partent en `text/plain`.
 
 ## Diagnostic à l’oral
 

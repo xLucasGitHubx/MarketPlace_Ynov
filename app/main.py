@@ -7,6 +7,7 @@ Routes canoniques sous `/api/` (préfixe prévu pour la SPA) ; `/predict` et
 from __future__ import annotations
 
 import logging
+import mimetypes
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -25,6 +26,9 @@ from app.preprocessing import ImageValidationError, reject_non_object_image, val
 from app.registry import CATALOG_BY_ID, DEFAULT_MODEL_ID, ModelRegistry, build_registry
 from app.schemas import ErrorResponse, HealthResponse, ModelsResponse, PredictionResponse
 from app.security import RateLimiter, UploadGuardMiddleware, check_rate_limit, keep_uploads_in_memory, require_token
+
+# python:3.11-slim n'enregistre pas .webp : FileResponse tombait sur text/plain.
+mimetypes.add_type("image/webp", ".webp")
 
 # Build SPA : `cd web && npm run build` puis copier `web/dist/` → `app/static/`.
 STATIC_DIR = Path(__file__).resolve().parent / "static"
