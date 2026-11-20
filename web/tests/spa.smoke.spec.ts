@@ -153,6 +153,9 @@ test.describe("SPA smoke (mocks)", () => {
     await expect(page.getByText("Photos différentes")).toBeVisible();
     await page.getByRole("button", { name: "Suivant" }).click();
     await expect(page.getByRole("heading", { name: "Données" })).toBeVisible();
+    await expect(
+      page.getByRole("img", { name: /Proxy de laboratoire/ }).first(),
+    ).toBeVisible();
     await page.getByRole("button", { name: "ONNX" }).click();
     await expect(page.getByRole("heading", { name: "Mesure" })).toBeVisible();
     await page.getByRole("button", { name: "Précédent" }).click();

@@ -1,0 +1,1068 @@
+{
+  "manifestPath": "data/test_set/manifest.csv",
+  "total": 200,
+  "present": 200,
+  "missing": 0,
+  "categories": [
+    {
+      "label": "Électronique",
+      "count": 20,
+      "photos": [
+        {
+          "src": "/jeu/electronique/caltech_laptop-101_1831.webp",
+          "source": "caltech",
+          "classe": "laptop-101"
+        },
+        {
+          "src": "/jeu/electronique/caltech_computer-keyboard_1568.webp",
+          "source": "caltech",
+          "classe": "computer-keyboard"
+        },
+        {
+          "src": "/jeu/electronique/caltech_computer-monitor_2342.webp",
+          "source": "caltech",
+          "classe": "computer-monitor"
+        },
+        {
+          "src": "/jeu/electronique/caltech_computer-mouse_2050.webp",
+          "source": "caltech",
+          "classe": "computer-mouse"
+        },
+        {
+          "src": "/jeu/electronique/caltech_ipod_410.webp",
+          "source": "caltech",
+          "classe": "ipod"
+        },
+        {
+          "src": "/jeu/electronique/caltech_head-phones_2913.webp",
+          "source": "caltech",
+          "classe": "head-phones"
+        },
+        {
+          "src": "/jeu/electronique/caltech_boom-box_2012.webp",
+          "source": "caltech",
+          "classe": "boom-box"
+        },
+        {
+          "src": "/jeu/electronique/caltech_calculator_673.webp",
+          "source": "caltech",
+          "classe": "calculator"
+        },
+        {
+          "src": "/jeu/electronique/caltech_video-projector_618.webp",
+          "source": "caltech",
+          "classe": "video-projector"
+        },
+        {
+          "src": "/jeu/electronique/caltech_joy-stick_1606.webp",
+          "source": "caltech",
+          "classe": "joy-stick"
+        },
+        {
+          "src": "/jeu/electronique/caltech_laptop-101_2851.webp",
+          "source": "caltech",
+          "classe": "laptop-101"
+        },
+        {
+          "src": "/jeu/electronique/caltech_computer-keyboard_1709.webp",
+          "source": "caltech",
+          "classe": "computer-keyboard"
+        },
+        {
+          "src": "/jeu/electronique/caltech_computer-monitor_2842.webp",
+          "source": "caltech",
+          "classe": "computer-monitor"
+        },
+        {
+          "src": "/jeu/electronique/caltech_computer-mouse_1702.webp",
+          "source": "caltech",
+          "classe": "computer-mouse"
+        },
+        {
+          "src": "/jeu/electronique/caltech_ipod_1693.webp",
+          "source": "caltech",
+          "classe": "ipod"
+        },
+        {
+          "src": "/jeu/electronique/caltech_head-phones_222.webp",
+          "source": "caltech",
+          "classe": "head-phones"
+        },
+        {
+          "src": "/jeu/electronique/caltech_boom-box_2424.webp",
+          "source": "caltech",
+          "classe": "boom-box"
+        },
+        {
+          "src": "/jeu/electronique/caltech_calculator_1885.webp",
+          "source": "caltech",
+          "classe": "calculator"
+        },
+        {
+          "src": "/jeu/electronique/caltech_video-projector_1065.webp",
+          "source": "caltech",
+          "classe": "video-projector"
+        },
+        {
+          "src": "/jeu/electronique/caltech_joy-stick_2653.webp",
+          "source": "caltech",
+          "classe": "joy-stick"
+        }
+      ]
+    },
+    {
+      "label": "Maison et meubles",
+      "count": 20,
+      "photos": [
+        {
+          "src": "/jeu/maison-et-meubles/sop_281443378512_0.webp",
+          "source": "sop",
+          "classe": "chair"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/sop_371404182471_0.webp",
+          "source": "sop",
+          "classe": "sofa"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/sop_251494474962_0.webp",
+          "source": "sop",
+          "classe": "table"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/sop_251961499285_0.webp",
+          "source": "sop",
+          "classe": "lamp"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/sop_291533471025_0.webp",
+          "source": "sop",
+          "classe": "cabinet"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/sop_261969035520_0.webp",
+          "source": "sop",
+          "classe": "mug"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/caltech_teapot_23.webp",
+          "source": "caltech",
+          "classe": "teapot"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/caltech_frying-pan_2702.webp",
+          "source": "caltech",
+          "classe": "frying-pan"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/caltech_coffee-mug_2052.webp",
+          "source": "caltech",
+          "classe": "coffee-mug"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/caltech_mattress_2071.webp",
+          "source": "caltech",
+          "classe": "mattress"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/caltech_chandelier-101_2874.webp",
+          "source": "caltech",
+          "classe": "chandelier-101"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/sop_251659370580_0.webp",
+          "source": "sop",
+          "classe": "chair"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/sop_281554511552_0.webp",
+          "source": "sop",
+          "classe": "sofa"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/sop_380859501988_0.webp",
+          "source": "sop",
+          "classe": "table"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/sop_331619394796_0.webp",
+          "source": "sop",
+          "classe": "lamp"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/sop_331178740604_0.webp",
+          "source": "sop",
+          "classe": "cabinet"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/sop_391210015762_0.webp",
+          "source": "sop",
+          "classe": "mug"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/caltech_teapot_415.webp",
+          "source": "caltech",
+          "classe": "teapot"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/caltech_frying-pan_719.webp",
+          "source": "caltech",
+          "classe": "frying-pan"
+        },
+        {
+          "src": "/jeu/maison-et-meubles/caltech_coffee-mug_995.webp",
+          "source": "caltech",
+          "classe": "coffee-mug"
+        }
+      ]
+    },
+    {
+      "label": "Électroménager",
+      "count": 20,
+      "photos": [
+        {
+          "src": "/jeu/electromenager/sop_261799291430_0.webp",
+          "source": "sop",
+          "classe": "coffee_maker"
+        },
+        {
+          "src": "/jeu/electromenager/sop_271957718827_0.webp",
+          "source": "sop",
+          "classe": "kettle"
+        },
+        {
+          "src": "/jeu/electromenager/sop_281106392597_0.webp",
+          "source": "sop",
+          "classe": "toaster"
+        },
+        {
+          "src": "/jeu/electromenager/sop_301714422125_0.webp",
+          "source": "sop",
+          "classe": "fan"
+        },
+        {
+          "src": "/jeu/electromenager/caltech_microwave_304.webp",
+          "source": "caltech",
+          "classe": "microwave"
+        },
+        {
+          "src": "/jeu/electromenager/caltech_refrigerator_2070.webp",
+          "source": "caltech",
+          "classe": "refrigerator"
+        },
+        {
+          "src": "/jeu/electromenager/caltech_washing-machine_2316.webp",
+          "source": "caltech",
+          "classe": "washing-machine"
+        },
+        {
+          "src": "/jeu/electromenager/caltech_toaster_263.webp",
+          "source": "caltech",
+          "classe": "toaster"
+        },
+        {
+          "src": "/jeu/electromenager/caltech_breadmaker_2122.webp",
+          "source": "caltech",
+          "classe": "breadmaker"
+        },
+        {
+          "src": "/jeu/electromenager/sop_281757305864_0.webp",
+          "source": "sop",
+          "classe": "coffee_maker"
+        },
+        {
+          "src": "/jeu/electromenager/sop_261744068353_0.webp",
+          "source": "sop",
+          "classe": "kettle"
+        },
+        {
+          "src": "/jeu/electromenager/sop_321812716810_0.webp",
+          "source": "sop",
+          "classe": "toaster"
+        },
+        {
+          "src": "/jeu/electromenager/sop_400963292806_0.webp",
+          "source": "sop",
+          "classe": "fan"
+        },
+        {
+          "src": "/jeu/electromenager/caltech_microwave_1870.webp",
+          "source": "caltech",
+          "classe": "microwave"
+        },
+        {
+          "src": "/jeu/electromenager/caltech_refrigerator_2237.webp",
+          "source": "caltech",
+          "classe": "refrigerator"
+        },
+        {
+          "src": "/jeu/electromenager/caltech_washing-machine_2401.webp",
+          "source": "caltech",
+          "classe": "washing-machine"
+        },
+        {
+          "src": "/jeu/electromenager/caltech_toaster_2593.webp",
+          "source": "caltech",
+          "classe": "toaster"
+        },
+        {
+          "src": "/jeu/electromenager/caltech_breadmaker_2646.webp",
+          "source": "caltech",
+          "classe": "breadmaker"
+        },
+        {
+          "src": "/jeu/electromenager/sop_231640451110_0.webp",
+          "source": "sop",
+          "classe": "coffee_maker"
+        },
+        {
+          "src": "/jeu/electromenager/sop_271959412254_0.webp",
+          "source": "sop",
+          "classe": "kettle"
+        }
+      ]
+    },
+    {
+      "label": "Vêtements et accessoires",
+      "count": 20,
+      "photos": [
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_sneaker_1344.webp",
+          "source": "caltech",
+          "classe": "sneaker"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_tennis-shoes_705.webp",
+          "source": "caltech",
+          "classe": "tennis-shoes"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_t-shirt_827.webp",
+          "source": "caltech",
+          "classe": "t-shirt"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_socks_1592.webp",
+          "source": "caltech",
+          "classe": "socks"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_necktie_2182.webp",
+          "source": "caltech",
+          "classe": "necktie"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_cowboy-hat_1749.webp",
+          "source": "caltech",
+          "classe": "cowboy-hat"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_top-hat_2941.webp",
+          "source": "caltech",
+          "classe": "top-hat"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_watch-101_2446.webp",
+          "source": "caltech",
+          "classe": "watch-101"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_eyeglasses_2544.webp",
+          "source": "caltech",
+          "classe": "eyeglasses"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_backpack_665.webp",
+          "source": "caltech",
+          "classe": "backpack"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_sneaker_2972.webp",
+          "source": "caltech",
+          "classe": "sneaker"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_tennis-shoes_259.webp",
+          "source": "caltech",
+          "classe": "tennis-shoes"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_t-shirt_2848.webp",
+          "source": "caltech",
+          "classe": "t-shirt"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_socks_888.webp",
+          "source": "caltech",
+          "classe": "socks"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_necktie_1202.webp",
+          "source": "caltech",
+          "classe": "necktie"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_cowboy-hat_1081.webp",
+          "source": "caltech",
+          "classe": "cowboy-hat"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_top-hat_1029.webp",
+          "source": "caltech",
+          "classe": "top-hat"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_watch-101_708.webp",
+          "source": "caltech",
+          "classe": "watch-101"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_eyeglasses_833.webp",
+          "source": "caltech",
+          "classe": "eyeglasses"
+        },
+        {
+          "src": "/jeu/vetements-et-accessoires/caltech_backpack_1097.webp",
+          "source": "caltech",
+          "classe": "backpack"
+        }
+      ]
+    },
+    {
+      "label": "Sport et loisirs",
+      "count": 20,
+      "photos": [
+        {
+          "src": "/jeu/sport-et-loisirs/sop_252045189366_0.webp",
+          "source": "sop",
+          "classe": "bicycle"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_tennis-racket_161.webp",
+          "source": "caltech",
+          "classe": "tennis-racket"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_soccer-ball_1678.webp",
+          "source": "caltech",
+          "classe": "soccer-ball"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_golf-ball_333.webp",
+          "source": "caltech",
+          "classe": "golf-ball"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_baseball-bat_2348.webp",
+          "source": "caltech",
+          "classe": "baseball-bat"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_baseball-glove_1807.webp",
+          "source": "caltech",
+          "classe": "baseball-glove"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_bowling-ball_319.webp",
+          "source": "caltech",
+          "classe": "bowling-ball"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_boxing-glove_1075.webp",
+          "source": "caltech",
+          "classe": "boxing-glove"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_dumb-bell_671.webp",
+          "source": "caltech",
+          "classe": "dumb-bell"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_skateboard_1571.webp",
+          "source": "caltech",
+          "classe": "skateboard"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_kayak_2576.webp",
+          "source": "caltech",
+          "classe": "kayak"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/sop_301688006620_0.webp",
+          "source": "sop",
+          "classe": "bicycle"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_tennis-racket_208.webp",
+          "source": "caltech",
+          "classe": "tennis-racket"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_soccer-ball_1432.webp",
+          "source": "caltech",
+          "classe": "soccer-ball"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_golf-ball_1169.webp",
+          "source": "caltech",
+          "classe": "golf-ball"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_baseball-bat_313.webp",
+          "source": "caltech",
+          "classe": "baseball-bat"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_baseball-glove_171.webp",
+          "source": "caltech",
+          "classe": "baseball-glove"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_bowling-ball_2118.webp",
+          "source": "caltech",
+          "classe": "bowling-ball"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_boxing-glove_2799.webp",
+          "source": "caltech",
+          "classe": "boxing-glove"
+        },
+        {
+          "src": "/jeu/sport-et-loisirs/caltech_dumb-bell_2242.webp",
+          "source": "caltech",
+          "classe": "dumb-bell"
+        }
+      ]
+    },
+    {
+      "label": "Jeux et jouets",
+      "count": 20,
+      "photos": [
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_teddy-bear_2062.webp",
+          "source": "caltech",
+          "classe": "teddy-bear"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_chess-board_1527.webp",
+          "source": "caltech",
+          "classe": "chess-board"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_dice_308.webp",
+          "source": "caltech",
+          "classe": "dice"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_playing-card_234.webp",
+          "source": "caltech",
+          "classe": "playing-card"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_yo-yo_1378.webp",
+          "source": "caltech",
+          "classe": "yo-yo"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_pez-dispenser_2236.webp",
+          "source": "caltech",
+          "classe": "pez-dispenser"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_teddy-bear_624.webp",
+          "source": "caltech",
+          "classe": "teddy-bear"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_chess-board_850.webp",
+          "source": "caltech",
+          "classe": "chess-board"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_dice_716.webp",
+          "source": "caltech",
+          "classe": "dice"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_playing-card_1212.webp",
+          "source": "caltech",
+          "classe": "playing-card"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_yo-yo_921.webp",
+          "source": "caltech",
+          "classe": "yo-yo"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_pez-dispenser_1230.webp",
+          "source": "caltech",
+          "classe": "pez-dispenser"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_teddy-bear_2938.webp",
+          "source": "caltech",
+          "classe": "teddy-bear"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_chess-board_303.webp",
+          "source": "caltech",
+          "classe": "chess-board"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_dice_321.webp",
+          "source": "caltech",
+          "classe": "dice"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_playing-card_131.webp",
+          "source": "caltech",
+          "classe": "playing-card"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_yo-yo_311.webp",
+          "source": "caltech",
+          "classe": "yo-yo"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_pez-dispenser_832.webp",
+          "source": "caltech",
+          "classe": "pez-dispenser"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_teddy-bear_1440.webp",
+          "source": "caltech",
+          "classe": "teddy-bear"
+        },
+        {
+          "src": "/jeu/jeux-et-jouets/caltech_chess-board_1380.webp",
+          "source": "caltech",
+          "classe": "chess-board"
+        }
+      ]
+    },
+    {
+      "label": "Véhicules et pièces",
+      "count": 20,
+      "photos": [
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_car-side-101_194.webp",
+          "source": "caltech",
+          "classe": "car-side-101"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_motorbikes-101_1465.webp",
+          "source": "caltech",
+          "classe": "motorbikes-101"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_car-tire_1888.webp",
+          "source": "caltech",
+          "classe": "car-tire"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_school-bus_1928.webp",
+          "source": "caltech",
+          "classe": "school-bus"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_fire-truck_2139.webp",
+          "source": "caltech",
+          "classe": "fire-truck"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_snowmobile_2477.webp",
+          "source": "caltech",
+          "classe": "snowmobile"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_speed-boat_1609.webp",
+          "source": "caltech",
+          "classe": "speed-boat"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_steering-wheel_1266.webp",
+          "source": "caltech",
+          "classe": "steering-wheel"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_car-side-101_540.webp",
+          "source": "caltech",
+          "classe": "car-side-101"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_motorbikes-101_2988.webp",
+          "source": "caltech",
+          "classe": "motorbikes-101"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_car-tire_1387.webp",
+          "source": "caltech",
+          "classe": "car-tire"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_school-bus_1813.webp",
+          "source": "caltech",
+          "classe": "school-bus"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_fire-truck_1663.webp",
+          "source": "caltech",
+          "classe": "fire-truck"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_snowmobile_2739.webp",
+          "source": "caltech",
+          "classe": "snowmobile"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_speed-boat_1768.webp",
+          "source": "caltech",
+          "classe": "speed-boat"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_steering-wheel_2035.webp",
+          "source": "caltech",
+          "classe": "steering-wheel"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_car-side-101_276.webp",
+          "source": "caltech",
+          "classe": "car-side-101"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_motorbikes-101_1389.webp",
+          "source": "caltech",
+          "classe": "motorbikes-101"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_car-tire_631.webp",
+          "source": "caltech",
+          "classe": "car-tire"
+        },
+        {
+          "src": "/jeu/vehicules-et-pieces/caltech_school-bus_25.webp",
+          "source": "caltech",
+          "classe": "school-bus"
+        }
+      ]
+    },
+    {
+      "label": "Bricolage et jardin",
+      "count": 20,
+      "photos": [
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_screwdriver_1203.webp",
+          "source": "caltech",
+          "classe": "screwdriver"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_wheelbarrow_1439.webp",
+          "source": "caltech",
+          "classe": "wheelbarrow"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_self-propelled-lawn-mower_1547.webp",
+          "source": "caltech",
+          "classe": "self-propelled-lawn-mower"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_ladder_1635.webp",
+          "source": "caltech",
+          "classe": "ladder"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_flashlight_1227.webp",
+          "source": "caltech",
+          "classe": "flashlight"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_welding-mask_1272.webp",
+          "source": "caltech",
+          "classe": "welding-mask"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_mailbox_657.webp",
+          "source": "caltech",
+          "classe": "mailbox"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_birdbath_2387.webp",
+          "source": "caltech",
+          "classe": "birdbath"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_screwdriver_541.webp",
+          "source": "caltech",
+          "classe": "screwdriver"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_wheelbarrow_1710.webp",
+          "source": "caltech",
+          "classe": "wheelbarrow"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_self-propelled-lawn-mower_1108.webp",
+          "source": "caltech",
+          "classe": "self-propelled-lawn-mower"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_ladder_968.webp",
+          "source": "caltech",
+          "classe": "ladder"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_flashlight_760.webp",
+          "source": "caltech",
+          "classe": "flashlight"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_welding-mask_193.webp",
+          "source": "caltech",
+          "classe": "welding-mask"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_mailbox_840.webp",
+          "source": "caltech",
+          "classe": "mailbox"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_birdbath_2007.webp",
+          "source": "caltech",
+          "classe": "birdbath"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_screwdriver_2847.webp",
+          "source": "caltech",
+          "classe": "screwdriver"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_wheelbarrow_369.webp",
+          "source": "caltech",
+          "classe": "wheelbarrow"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_self-propelled-lawn-mower_534.webp",
+          "source": "caltech",
+          "classe": "self-propelled-lawn-mower"
+        },
+        {
+          "src": "/jeu/bricolage-et-jardin/caltech_ladder_971.webp",
+          "source": "caltech",
+          "classe": "ladder"
+        }
+      ]
+    },
+    {
+      "label": "Livres et musique",
+      "count": 20,
+      "photos": [
+        {
+          "src": "/jeu/livres-et-musique/caltech_electric-guitar-101_1447.webp",
+          "source": "caltech",
+          "classe": "electric-guitar-101"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_grand-piano-101_2918.webp",
+          "source": "caltech",
+          "classe": "grand-piano-101"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_harmonica_2472.webp",
+          "source": "caltech",
+          "classe": "harmonica"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_harp_1495.webp",
+          "source": "caltech",
+          "classe": "harp"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_french-horn_218.webp",
+          "source": "caltech",
+          "classe": "french-horn"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_mandolin_1279.webp",
+          "source": "caltech",
+          "classe": "mandolin"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_tambourine_1270.webp",
+          "source": "caltech",
+          "classe": "tambourine"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_xylophone_2450.webp",
+          "source": "caltech",
+          "classe": "xylophone"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_sheet-music_63.webp",
+          "source": "caltech",
+          "classe": "sheet-music"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_cd_1382.webp",
+          "source": "caltech",
+          "classe": "cd"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_electric-guitar-101_721.webp",
+          "source": "caltech",
+          "classe": "electric-guitar-101"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_grand-piano-101_28.webp",
+          "source": "caltech",
+          "classe": "grand-piano-101"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_harmonica_1116.webp",
+          "source": "caltech",
+          "classe": "harmonica"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_harp_1153.webp",
+          "source": "caltech",
+          "classe": "harp"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_french-horn_1166.webp",
+          "source": "caltech",
+          "classe": "french-horn"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_mandolin_2013.webp",
+          "source": "caltech",
+          "classe": "mandolin"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_tambourine_2886.webp",
+          "source": "caltech",
+          "classe": "tambourine"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_xylophone_953.webp",
+          "source": "caltech",
+          "classe": "xylophone"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_sheet-music_2512.webp",
+          "source": "caltech",
+          "classe": "sheet-music"
+        },
+        {
+          "src": "/jeu/livres-et-musique/caltech_cd_2924.webp",
+          "source": "caltech",
+          "classe": "cd"
+        }
+      ]
+    },
+    {
+      "label": "Autre",
+      "count": 20,
+      "photos": [
+        {
+          "src": "/jeu/autre/caltech_dog_215.webp",
+          "source": "caltech",
+          "classe": "dog"
+        },
+        {
+          "src": "/jeu/autre/caltech_horse_1641.webp",
+          "source": "caltech",
+          "classe": "horse"
+        },
+        {
+          "src": "/jeu/autre/caltech_butterfly_2270.webp",
+          "source": "caltech",
+          "classe": "butterfly"
+        },
+        {
+          "src": "/jeu/autre/caltech_giraffe_406.webp",
+          "source": "caltech",
+          "classe": "giraffe"
+        },
+        {
+          "src": "/jeu/autre/caltech_rainbow_1619.webp",
+          "source": "caltech",
+          "classe": "rainbow"
+        },
+        {
+          "src": "/jeu/autre/caltech_waterfall_1818.webp",
+          "source": "caltech",
+          "classe": "waterfall"
+        },
+        {
+          "src": "/jeu/autre/caltech_pyramid_272.webp",
+          "source": "caltech",
+          "classe": "pyramid"
+        },
+        {
+          "src": "/jeu/autre/caltech_sushi_830.webp",
+          "source": "caltech",
+          "classe": "sushi"
+        },
+        {
+          "src": "/jeu/autre/caltech_mushroom_1699.webp",
+          "source": "caltech",
+          "classe": "mushroom"
+        },
+        {
+          "src": "/jeu/autre/caltech_cake_1488.webp",
+          "source": "caltech",
+          "classe": "cake"
+        },
+        {
+          "src": "/jeu/autre/caltech_dog_1569.webp",
+          "source": "caltech",
+          "classe": "dog"
+        },
+        {
+          "src": "/jeu/autre/caltech_horse_1590.webp",
+          "source": "caltech",
+          "classe": "horse"
+        },
+        {
+          "src": "/jeu/autre/caltech_butterfly_2616.webp",
+          "source": "caltech",
+          "classe": "butterfly"
+        },
+        {
+          "src": "/jeu/autre/caltech_giraffe_2747.webp",
+          "source": "caltech",
+          "classe": "giraffe"
+        },
+        {
+          "src": "/jeu/autre/caltech_rainbow_1520.webp",
+          "source": "caltech",
+          "classe": "rainbow"
+        },
+        {
+          "src": "/jeu/autre/caltech_waterfall_771.webp",
+          "source": "caltech",
+          "classe": "waterfall"
+        },
+        {
+          "src": "/jeu/autre/caltech_pyramid_1497.webp",
+          "source": "caltech",
+          "classe": "pyramid"
+        },
+        {
+          "src": "/jeu/autre/caltech_sushi_2717.webp",
+          "source": "caltech",
+          "classe": "sushi"
+        },
+        {
+          "src": "/jeu/autre/caltech_mushroom_2655.webp",
+          "source": "caltech",
+          "classe": "mushroom"
+        },
+        {
+          "src": "/jeu/autre/caltech_cake_2810.webp",
+          "source": "caltech",
+          "classe": "cake"
+        }
+      ]
+    }
+  ]
+}
