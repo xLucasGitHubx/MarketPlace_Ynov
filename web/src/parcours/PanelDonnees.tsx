@@ -1,6 +1,7 @@
 import type { JSX } from "react";
 import { Link } from "react-router-dom";
 import jeuRaw from "./jeu.json?raw";
+import photosRaw from "./jeuPhotos.json?raw";
 import styles from "./PanelDonnees.module.css";
 
 type CategoryCount = {
@@ -53,7 +54,73 @@ function readJeu(raw: string): Jeu {
   return parsed;
 }
 
+type PhotoThumb = {
+  src: string;
+  source: string;
+  classe: string;
+};
+
+type PhotoGroup = {
+  label: string;
+  count: number;
+  photos: PhotoThumb[];
+};
+
+type PhotoPack = {
+  total: number;
+  present: number;
+  missing: number;
+  categories: PhotoGroup[];
+};
+
+function isPhoto(value: unknown): value is PhotoThumb {
+  if (typeof value !== "object" || value === null) return false;
+  const row = value as Record<string, unknown>;
+  return (
+    typeof row.src === "string" &&
+    row.src.startsWith("/jeu/") &&
+    !row.src.includes("..") &&
+    typeof row.source === "string" &&
+    typeof row.classe === "string"
+  );
+}
+
+function isGroup(value: unknown): value is PhotoGroup {
+  if (typeof value !== "object" || value === null) return false;
+  const row = value as Record<string, unknown>;
+  return (
+    typeof row.label === "string" &&
+    typeof row.count === "number" &&
+    Array.isArray(row.photos) &&
+    row.photos.every(isPhoto)
+  );
+}
+
+function readPhotos(raw: string): PhotoPack {
+  const parsed: unknown = JSON.parse(raw);
+  if (typeof parsed !== "object" || parsed === null) {
+    throw new Error("jeuPhotos.json is not an object.");
+  }
+  const row = parsed as Record<string, unknown>;
+  if (
+    typeof row.total !== "number" ||
+    typeof row.present !== "number" ||
+    typeof row.missing !== "number" ||
+    !Array.isArray(row.categories) ||
+    !row.categories.every(isGroup)
+  ) {
+    throw new Error("jeuPhotos.json does not match the thumbnail pack shape.");
+  }
+  return {
+    total: row.total,
+    present: row.present,
+    missing: row.missing,
+    categories: row.categories,
+  };
+}
+
 const jeu = readJeu(jeuRaw);
+const photos = readPhotos(photosRaw);
 
 const BAR_SCALE = 100;
 
@@ -144,6 +211,54 @@ export function PanelDonnees(): JSX.Element {
           ))}
         </ul>
       </figure>
+
+      <section className={styles.gallery} aria-labelledby="panel-donnees-photos">
+        <h3 id="panel-donnees-photos" className={styles.sourcesTitle}>
+          Photos du manifeste
+        </h3>
+        <p className={styles.detail}>
+          {photos.present}&nbsp;vignettes sur {photos.total} lignes. Proxy de
+          laboratoire, pas des photos Leboncoin. Les originaux ne sont pas dans
+          l’image Azure.
+          {photos.missing > 0
+            ? ` ${photos.missing} fichier(s) du manifeste absent(s) du pack.`
+            : null}
+        </p>
+        {photos.categories.map((category) => (
+          <div key={category.label} className={styles.group}>
+            <h4 className={styles.groupTitle}>
+              {category.label}
+              <span className={styles.count}>{category.photos.length}</span>
+            </h4>
+            {category.photos.length === 0 ? (
+              <p className={styles.detail}>
+                Aucune vignette de cette catégorie n’est dans ce dépôt.
+              </p>
+            ) : (
+              <ul
+                className={styles.strip}
+                tabIndex={0}
+                aria-label={`Vignettes ${category.label}`}
+              >
+                {category.photos.map((photo) => (
+                  <li key={photo.src} className={styles.frame}>
+                    <img
+                      className={styles.thumb}
+                      src={photo.src}
+                      alt={`${category.label}, ${photo.classe}. Proxy de laboratoire, pas une photo Leboncoin.`}
+                      width={160}
+                      height={120}
+                    />
+                    <span className={styles.classe} translate="no">
+                      {photo.classe}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+      </section>
 
       <h3 className={styles.sourcesTitle}>Sources</h3>
       <ul className={styles.sources}>

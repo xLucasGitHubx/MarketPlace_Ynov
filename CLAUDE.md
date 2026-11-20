@@ -31,6 +31,7 @@ pytest -q
 
 python scripts/build_categories.py
 python scripts/build_test_set.py
+python scripts/build_test_thumbnails.py            # vignettes WebP → web/public/jeu/
 python scripts/export_onnx.py                        # ResNet → models/onnx/
 python scripts/export_catalog.py                     # EfficientNet + MobileNet int8
 python scripts/distill_student.py                    # KD teacher→student (ou Space Lulu18)
@@ -85,6 +86,7 @@ Interdit dans l'image Azure : PyTorch, transformers, CUDA, CLIP. Catalogue = COP
 | 2026-11-20 | UI soutenance : premier écran = photo → catégorie, titre, confiance, statut. Film de requête ~720 ms/étape. Parcours oral (précédent/suivant) mappé sur les 9 itérations. Badge mesuré/estimé. Titre garde-fous = photo lue en mémoire puis oubliée. | refonte jury |
 | 2026-11-20 | Diagnostic du notebook formateur intégré à l’étape Mesure du parcours (parties guidées). Chiffres issus des preuves it. 4 / it. 5. Lots 1–16, p99 d’inférence, prétraitement seul, pic CUDA : non mesurés, affichés comme tels. | notebook diagnostiquer_performances |
 | 2026-11-20 | EfficientNet-B0 int8 statique dans `artifacts/onnx/` (ready). Session ONNX = `ORT_ENABLE_BASIC` : `ENABLE_ALL` écrase le QDQ en classe constante. MobileNet et student restent `building`. | catalogue ready |
+| 2026-11-20 | Étape Données : vignettes WebP (~0,5 Mo) des 200 lignes de `data/test_set/manifest.csv`. Les JPEG d’origine restent hors git et hors image. | galerie proxy |
 
 ## Avancement des itérations
 
