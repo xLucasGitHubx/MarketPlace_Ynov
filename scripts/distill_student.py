@@ -49,6 +49,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 TEACHER_ID = "microsoft/resnet-50"
+# Pas un dépôt public (401 / identifiant inconnu sur le Hub). Ne pas lancer
+# la distillation tant que ce chargeur transformers n'a pas un id réel.
 STUDENT_ID = "facebook/mobilenet_v3_small"
 CALTECH_URL = "https://huggingface.co/datasets/ilee0022/Caltech-256/resolve/main/data/test-00000-of-00001.parquet"
 

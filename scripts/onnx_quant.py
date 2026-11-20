@@ -48,6 +48,15 @@ class ImageCalibrationReader:
         return next(self._it, None)
 
 
+def _ort_session(path: Path):
+    """Same graph level as app.model.OnnxPredictor (extended QDQ fusions are wrong)."""
+    import onnxruntime as ort
+
+    opts = ort.SessionOptions()
+    opts.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_BASIC
+    return ort.InferenceSession(str(path), sess_options=opts, providers=["CPUExecutionProvider"])
+
+
 def export_hf_classifier_fp32(hf_model_id: str, path: Path, cache_dir: str | None) -> None:
     """Exporte un AutoModelForImageClassification Hugging Face en ONNX fp32 (logits)."""
     import torch
@@ -67,6 +76,34 @@ def export_hf_classifier_fp32(hf_model_id: str, path: Path, cache_dir: str | Non
     path.parent.mkdir(parents=True, exist_ok=True)
     torch.onnx.export(
         LogitsOnly(model),
+        (dummy,),
+        str(path),
+        input_names=["pixel_values"],
+        output_names=["logits"],
+        dynamic_axes={"pixel_values": {0: "batch"}, "logits": {0: "batch"}},
+        opset_version=17,
+        do_constant_folding=True,
+        dynamo=False,
+    )
+
+
+def export_timm_classifier_fp32(timm_name: str, path: Path) -> None:
+    """Export a timm classifier to ONNX fp32. Contract: pixel_values NCHW → logits."""
+    import timm
+    import torch
+
+    model = timm.create_model(timm_name, pretrained=True).eval()
+    cfg = getattr(model, "pretrained_cfg", {}) or {}
+    mean = tuple(round(float(x), 3) for x in cfg.get("mean", ()))
+    std = tuple(round(float(x), 3) for x in cfg.get("std", ()))
+    if mean != (0.485, 0.456, 0.406) or std != (0.229, 0.224, 0.225):
+        raise RuntimeError(
+            f"{timm_name} normalisation {mean} / {std} ≠ ImageNet du runtime"
+        )
+    dummy = torch.randn(1, 3, 224, 224)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    torch.onnx.export(
+        model,
         (dummy,),
         str(path),
         input_names=["pixel_values"],
@@ -115,23 +152,38 @@ def compare_logits_vs_pytorch(
     onnx_paths: list[Path],
     probe: list[Image.Image],
     cache_dir: str | None,
+    *,
+    loader: str = "transformers",
 ) -> dict:
     """Rapport taille + écart logits / top-1 vs PyTorch de référence."""
-    import onnxruntime as ort
     import torch
-    from transformers import AutoModelForImageClassification
 
-    ref = AutoModelForImageClassification.from_pretrained(hf_model_id, cache_dir=cache_dir).eval()
+    if loader == "timm":
+        import timm
+
+        ref = timm.create_model(hf_model_id, pretrained=True).eval()
+
+        def _logits(im: Image.Image):
+            return ref(torch.from_numpy(to_model_input(im))).detach().numpy()
+
+    else:
+        from transformers import AutoModelForImageClassification
+
+        ref = AutoModelForImageClassification.from_pretrained(
+            hf_model_id, cache_dir=cache_dir
+        ).eval()
+
+        def _logits(im: Image.Image):
+            return ref(pixel_values=torch.from_numpy(to_model_input(im))).logits.numpy()
+
     with torch.inference_mode():
-        ref_logits = [
-            ref(pixel_values=torch.from_numpy(to_model_input(im))).logits.numpy() for im in probe
-        ]
+        ref_logits = [_logits(im) for im in probe]
 
     report: dict = {}
     for path in onnx_paths:
         if not path.is_file():
             continue
-        sess = ort.InferenceSession(str(path), providers=["CPUExecutionProvider"])
+        sess = _ort_session(path)
         outs = [sess.run(None, {"pixel_values": to_model_input(im)})[0] for im in probe]
         report[path.name] = {
             "taille_mo": round(path.stat().st_size / 1_048_576, 1),
@@ -153,6 +205,8 @@ def export_and_quantize(
     calib_size: int,
     do_dynamic: bool = True,
     out_dir: Path | None = None,
+    loader: str = "transformers",
+    timm_name: str | None = None,
 ) -> dict:
     """Pipeline complet : fp32 → (dynamique) → int8 statique. Renvoie le rapport de contrôle."""
     directory = out_dir or OUT_DIR
@@ -163,8 +217,11 @@ def export_and_quantize(
     dyn = directory / f"{stem}-int8-dynamic.onnx"
     sta = directory / f"{stem}-int8-static.onnx"
 
-    print(f"  Export fp32 ({hf_model_id}) → {fp32.name} ...")
-    export_hf_classifier_fp32(hf_model_id, fp32, cache_dir)
+    print(f"  Export fp32 ({timm_name or hf_model_id}) → {fp32.name} ...")
+    if loader == "timm":
+        export_timm_classifier_fp32(timm_name or hf_model_id, fp32)
+    else:
+        export_hf_classifier_fp32(hf_model_id, fp32, cache_dir)
     preprocess_for_quant(fp32, pre)
 
     paths = [fp32]
@@ -180,5 +237,11 @@ def export_and_quantize(
     pre.unlink(missing_ok=True)
 
     print("  Contrôle sorties vs PyTorch ...")
-    report = compare_logits_vs_pytorch(hf_model_id, paths, calib[:8], cache_dir)
+    report = compare_logits_vs_pytorch(
+        timm_name or hf_model_id,
+        paths,
+        calib[:8],
+        cache_dir,
+        loader=loader,
+    )
     return report

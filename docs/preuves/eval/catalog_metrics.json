@@ -31,10 +31,10 @@
       "accuracy": 0.66,
       "p50_ms": 10.0,
       "p95_ms": 13.0,
-      "size_mb": 5.5,
+      "size_mb": 5.9,
       "cout_estime_usd_par_million": 0.82,
       "metric_source": "estimated",
-      "notes": "Estimé : ~5,3 M params, int8 ≈ 5–6 Mo ; latence CPU ~0,45× ResNet-50 ; accuracy catégorie légèrement sous ResNet (−2 à −3 pts)"
+      "notes": "Accuracy et latence toujours estimées. Fichier int8 livré : 5,9 Mo. Pas une réévaluation du jeu de test."
     },
     "mobilenet-v3-small-onnx-int8": {
       "accuracy": 0.6,

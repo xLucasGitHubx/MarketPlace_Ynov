@@ -34,7 +34,8 @@ const PIPELINE_STEP_MS = 720;
 const HF_ORIGINE_URL: Record<string, string> = {
   "resnet50-onnx-int8": "https://huggingface.co/microsoft/resnet-50",
   "efficientnet-b0-onnx-int8": "https://huggingface.co/google/efficientnet-b0",
-  "mobilenet-v3-small-onnx-int8": "https://huggingface.co/facebook/mobilenet_v3_small",
+  "mobilenet-v3-small-onnx-int8":
+    "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
   "clip-vit-b32": "https://huggingface.co/openai/clip-vit-base-patch32",
 };
 
@@ -348,9 +349,22 @@ export function StudioPage() {
             {!isAuthenticated ? (
               <span className="dropzone-hint">Renseigne le jeton pour prédire.</span>
             ) : null}
-            {selected && selected.statut !== "ready" ? (
+            {models
+              .filter((m) => m.statut === "space_only")
+              .map((m) => (
+                <p key={m.id} className="dropzone-hint">
+                  {m.label}&nbsp;: garé, pas un oubli. L’inférence Space ne
+                  fonctionne pas encore.
+                </p>
+              ))}
+            {selected && selected.statut === "space_only" ? (
               <span className="dropzone-hint">
-                Ce modèle n’est pas prêt sur ce runtime ({selected.statut}).
+                Ce modèle n’est pas chargé sur Azure.
+              </span>
+            ) : null}
+            {selected && selected.statut === "building" ? (
+              <span className="dropzone-hint">
+                Ce modèle n’est pas prêt sur ce runtime (building).
               </span>
             ) : null}
           </div>

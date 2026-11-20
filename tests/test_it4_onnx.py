@@ -65,6 +65,32 @@ def test_api_avec_backend_onnx(make_client, tiny_onnx_model, jpeg_bytes):
     assert r.json()["modele"] == "resnet50-onnx-int8-static"
 
 
+def test_catalogue_int8_ne_collapse_pas():
+    """Les int8 livrés dans l'image ne doivent pas prédire une classe constante.
+
+    ORT_ENABLE_ALL fusionne mal le QDQ EfficientNet (toujours la classe 600).
+    """
+    from app.model import OnnxPredictor
+
+    root = Path(__file__).resolve().parents[1] / "artifacts" / "onnx"
+    names = (
+        "efficientnet-b0-int8-static.onnx",
+        "mobilenet-v3-small-int8-static.onnx",
+    )
+    present = [root / name for name in names if (root / name).is_file()]
+    if not present:
+        pytest.skip("int8 catalogue absents de artifacts/onnx")
+    images = [
+        Image.new("RGB", (320, 240), (180, 40, 40)),
+        Image.new("RGB", (280, 360), (30, 90, 160)),
+        Image.new("RGB", (400, 300), (220, 210, 40)),
+    ]
+    for path in present:
+        predictor = OnnxPredictor(str(path), name=path.stem)
+        argmaxes = {int(predictor.predict_proba(im).argmax()) for im in images}
+        assert len(argmaxes) > 1, path.name
+
+
 def test_backend_inconnu():
     from app.model import load_predictor
 

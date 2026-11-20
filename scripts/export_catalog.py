@@ -2,7 +2,8 @@
 
 Modèles ciblés (IDs catalogue Phase 1) :
 - efficientnet-b0-onnx-int8  ← HF google/efficientnet-b0
-- mobilenet-v3-small-onnx-int8 ← HF facebook/mobilenet_v3_small
+- mobilenet-v3-small-onnx-int8 ← timm mobilenetv3_small_100.lamb_in1k
+  (`facebook/mobilenet_v3_small` n'est pas un dépôt public)
 
 Produit dans models/onnx/ pour chaque stem :
 - {stem}-fp32.onnx
@@ -41,7 +42,9 @@ CATALOG_EXPORTS: tuple[dict, ...] = (
     },
     {
         "catalog_id": "mobilenet-v3-small-onnx-int8",
-        "hf_model_id": "facebook/mobilenet_v3_small",
+        "hf_model_id": "timm/mobilenetv3_small_100.lamb_in1k",
+        "timm_name": "mobilenetv3_small_100.lamb_in1k",
+        "loader": "timm",
         "stem": "mobilenet-v3-small",
     },
 )
@@ -86,7 +89,17 @@ def main() -> None:
                 calib_size=args.calib_size,
                 do_dynamic=args.dynamic,
                 out_dir=args.out_dir,
+                loader=entry.get("loader", "transformers"),
+                timm_name=entry.get("timm_name"),
             )
+            int8_name = f"{entry['stem']}-int8-static.onnx"
+            top1 = (report or {}).get(int8_name, {}).get("top1_identique")
+            if top1 is not None and top1 < 0.5:
+                bad = args.out_dir / int8_name
+                bad.unlink(missing_ok=True)
+                raise RuntimeError(
+                    f"{int8_name} top-1 {top1:.2f} < 0.5 face au modèle source — fichier écarté"
+                )
             full_report["models"][entry["catalog_id"]] = {
                 "hf_model_id": entry["hf_model_id"],
                 "stem": entry["stem"],

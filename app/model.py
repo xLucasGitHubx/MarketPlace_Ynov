@@ -74,7 +74,9 @@ class OnnxPredictor:
 
         self._to_input = to_model_input
         opts = ort.SessionOptions()
-        opts.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+        # ORT_ENABLE_EXTENDED / ALL fuse QDQ CNN graphs (EfficientNet) into a
+        # constant classifier. BASIC keeps the int8 prediction aligned with fp32.
+        opts.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_BASIC
         if num_threads:
             opts.intra_op_num_threads = num_threads
         self.session = ort.InferenceSession(model_path, sess_options=opts, providers=["CPUExecutionProvider"])

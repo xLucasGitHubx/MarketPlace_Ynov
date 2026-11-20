@@ -81,6 +81,10 @@ export function ComparateurPage() {
           EfficientNet, MobileNet et le student restent estimés tant qu’une
           vraie éval ne dit pas mesuré.
         </p>
+        <p>
+          Le statut <span translate="no">space_only</span> veut dire garé, pas
+          un oubli : l’inférence Space ne fonctionne pas encore.
+        </p>
       </aside>
 
       <p className="page-lead">
