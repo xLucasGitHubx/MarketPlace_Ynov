@@ -102,28 +102,23 @@ export function PanelModele(): JSX.Element {
       </h2>
       <div className={styles.prose}>
         <p>
-          Le choix retenu est l’inférence directe de{" "}
+          Prod :{" "}
           <ExternalAnchor
             href="https://huggingface.co/microsoft/resnet-50"
             label="ResNet-50"
           />{" "}
-          <code className={styles.repo} translate="no">
-            microsoft/resnet-50
-          </code>
-          , déjà entraîné, converti en ONNX int8. L’identifiant de production est{" "}
+          déjà entraîné, ONNX int8. Identifiant{" "}
           <code className={styles.repo} translate="no">
             resnet50-onnx-int8
           </code>
-          . On ne ré-entraîne pas&nbsp;: on industrialise un modèle pré-entraîné.
+          . On ne réentraîne pas.
         </p>
         <p>
-          L’image Azure reste autour de 551&nbsp;Mo, sans PyTorch. L’inférence passe par{" "}
+          Image Azure autour de 551&nbsp;Mo, sans PyTorch. Inférence via{" "}
           <ExternalAnchor href={RUNTIME_SOURCE.href} label={RUNTIME_SOURCE.label} />.
         </p>
         <p>
-          CLIP et ViT restent des comparaisons. CLIP ViT-B/32 pèse environ 577&nbsp;Mo dans
-          le catalogue&nbsp;: trop lourd pour cette image. Les mesures des autres modèles
-          sont dans le comparateur.
+          CLIP ViT-B/32, environ 577&nbsp;Mo, reste une comparaison sur Space.
         </p>
         <p className={styles.action}>
           <Link className={styles.internalLink} to="/comparateur">

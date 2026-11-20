@@ -30,12 +30,14 @@ export function GardeFousPage() {
 
   return (
     <section className="fade-in" aria-labelledby="guard-title">
+      <p className="page-kicker">Garde-fous</p>
       <h1 id="guard-title" className="page-title">
-        Garde-fous
+        La photo est lue en mémoire puis oubliée.
       </h1>
-      <p className="page-lead">
-        Auth, limites d’upload, rate-limit et engagement RGPD : rien n’est écrit sur disque.
-      </p>
+      <div className="guard-zero">
+        <p className="guard-zero-num">0</p>
+        <p>fichier image écrit sur le disque.</p>
+      </div>
 
       {error ? (
         <p className="alert" data-tone="error" role="alert">
@@ -44,6 +46,30 @@ export function GardeFousPage() {
       ) : null}
 
       <div className="guard-grid">
+        <article className="panel">
+          <h2>Mémoire</h2>
+          <dl>
+            <div className="guard-item">
+              <dt>Lecture</dt>
+              <dd>
+                <code>await file.read()</code>, le temps de l’analyse, puis
+                oubli.
+              </dd>
+            </div>
+            <div className="guard-item">
+              <dt>Logs</dt>
+              <dd>Pas de contenu binaire ni de nom de fichier dans les logs.</dd>
+            </div>
+            <div className="guard-item">
+              <dt>space_only</dt>
+              <dd>
+                CLIP et jobs GPU restent sur Space HF — pas chargés sur Azure
+                CPU.
+              </dd>
+            </div>
+          </dl>
+        </article>
+
         <article className="panel">
           <h2>Authentification</h2>
           <dl>
@@ -66,7 +92,7 @@ export function GardeFousPage() {
         </article>
 
         <article className="panel">
-          <h2>Limites runtime</h2>
+          <h2>Limites de l’appel</h2>
           <dl>
             <div className="guard-item">
               <dt>Formats</dt>
@@ -83,31 +109,8 @@ export function GardeFousPage() {
             <div className="guard-item">
               <dt>Allowlist modèles</dt>
               <dd>
-                IDs catalogue seulement — pas d’ID Hugging Face arbitraire depuis le
-                client.
-              </dd>
-            </div>
-          </dl>
-        </article>
-
-        <article className="panel">
-          <h2>RGPD &amp; mémoire</h2>
-          <dl>
-            <div className="guard-item">
-              <dt>Images</dt>
-              <dd>
-                Traitement 100&nbsp;% en mémoire (<code>await file.read()</code>) — 0 fichier
-                image écrit.
-              </dd>
-            </div>
-            <div className="guard-item">
-              <dt>Logs</dt>
-              <dd>Pas de contenu binaire ni de nom de fichier dans les logs.</dd>
-            </div>
-            <div className="guard-item">
-              <dt>space_only</dt>
-              <dd>
-                CLIP et jobs GPU restent sur Space HF — pas chargés sur Azure CPU.
+                IDs catalogue seulement — pas d’ID Hugging Face arbitraire depuis
+                le client.
               </dd>
             </div>
           </dl>

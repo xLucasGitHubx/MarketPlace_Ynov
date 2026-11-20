@@ -11,28 +11,21 @@ export function PanelMesure(): JSX.Element {
       </h2>
 
       <div className={styles.text}>
+        <p>Une photo, une catégorie. On mesure l’accuracy. Pas la mAP.</p>
         <p>
-          Une photo reçoit une seule catégorie. On mesure l’accuracy, la
-          confiance et la latence. La mAP sert à la détection, quand il faut
-          trouver plusieurs objets et des boîtes : on ne l’utilise pas.
-        </p>
-        <p>
-          Le seuil reste à 0,6. En dessous, le statut est{" "}
+          Seuil 0,6. En dessous, le statut est{" "}
           <code className={styles.code} translate="no">
             a_confirmer
-          </code>{" "}
-          et le vendeur choisit : une mauvaise catégorie coûte plus cher que
-          de demander.
+          </code>
+          .
         </p>
         <p>
-          En production, le ResNet ONNX int8 atteint 68,5&nbsp;% d’accuracy
-          sur le proxy de labo (200 photos). Ce score global ne prouve pas que
-          chaque catégorie est aussi bonne.
+          ONNX, it.&nbsp;4 : 68,5&nbsp;% sur 200 photos. Inférence p50
+          21,5&nbsp;ms, p95 28,6&nbsp;ms.
         </p>
         <p>
-          On suit la p95, parce que la promesse est une réponse en moins
-          d’une seconde. La mesure retenue est 28,6&nbsp;ms (p50&nbsp;:
-          21,5&nbsp;ms).
+          Charge, it.&nbsp;5 : la requête complète, 1&nbsp;vCPU, ~68&nbsp;ms
+          p50. C’est le chiffre de la facture.
         </p>
       </div>
 

@@ -140,8 +140,9 @@ export function SchemaCycle({
       aria-describedby={descriptionId}
     >
       <p id={descriptionId} className={styles.srOnly}>
-        Huit étapes, du besoin à la surveillance. La flèche « photos
-        différentes » relie la surveillance aux données citées.
+        Huit étapes, du besoin à la surveillance. La flèche teal relie la
+        surveillance aux données : des photos différentes. La phrase est sous
+        le schéma.
       </p>
       <svg
         className={styles.diagram}
@@ -190,14 +191,6 @@ export function SchemaCycle({
             d={loop.d}
             markerEnd={`url(#${returnMarkerId})`}
           />
-          <text
-            className={styles.returnLabel}
-            x={loop.labelX}
-            y={loop.labelY}
-            textAnchor="middle"
-          >
-            photos différentes
-          </text>
         </g>
 
         {STEPS.map((step, index) => {

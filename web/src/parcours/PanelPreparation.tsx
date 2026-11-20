@@ -9,33 +9,14 @@ export function PanelPreparation(): JSX.Element {
       </h2>
 
       <div className={styles.text}>
+        <p>Le petit côté passe à 256. Le centre est recadré en 224×224.</p>
         <p>
-          Chaque photo devient un carré de 224×224, puis des nombres
-          normalisés à la façon d’ImageNet, avant que le modèle ne la voie.
+          Moyenne et écart-type ImageNet : rouge 0,485 / 0,229, vert 0,456 /
+          0,224, bleu 0,406 / 0,225. Forme 1 × 3 × 224 × 224.
         </p>
         <p>
-          Le petit côté est d’abord porté à 256 pixels, en bicubique. Le centre
-          est ensuite recadré en 224×224. C’est le réglage de{" "}
-          <code>microsoft/resnet-50</code> : un recadrage de 87,5&nbsp;%.
-        </p>
-        <p>
-          Les pixels, entre 0 et 255, sont divisés par 255. On retire alors la
-          moyenne ImageNet et on divise par l’écart-type, couleur par couleur :
-          rouge 0,485 et 0,229, vert 0,456 et 0,224, bleu 0,406 et 0,225.
-        </p>
-        <p>
-          Le modèle reçoit un tableau de forme 1 × 3 × 224 × 224 : une image,
-          trois couleurs, 224 pixels de haut et de large.
-        </p>
-        <p>
-          L’augmentation (miroir, recadrage au hasard, couleur changée) sert
-          seulement à entraîner. On ne réentraîne pas, donc la production
-          n’augmente rien : la même photo donne toujours les mêmes nombres.
-        </p>
-        <p>
-          Un seul choix : garder cette recette. Le réseau a appris avec elle.
-          Une autre taille ou une autre normalisation lui ferait lire une image
-          qu’il ne connaît pas.
+          Pas d’augmentation en production. La même photo donne les mêmes
+          nombres : le réseau a appris avec cette recette.
         </p>
       </div>
 

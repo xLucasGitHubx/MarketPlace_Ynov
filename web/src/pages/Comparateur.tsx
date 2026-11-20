@@ -8,6 +8,22 @@ import {
   formatMb,
   formatMs,
 } from "@/lib/format";
+import { metricProvenance, type MetricKind } from "@/lib/provenance";
+
+function ProvenanceBadge({ modelId }: { modelId: string }) {
+  const provenance = metricProvenance(modelId);
+  const kind: MetricKind = provenance.kind;
+  return (
+    <span className="provenance-cell">
+      <span className={`provenance provenance-${kind}`}>
+        {kind === "measured" ? "mesuré" : "estimé"}
+      </span>
+      {provenance.qualifier ? (
+        <span className="provenance-sub">{provenance.qualifier}</span>
+      ) : null}
+    </span>
+  );
+}
 
 export function ComparateurPage() {
   const [models, setModels] = useState<ModelInfo[]>([]);
@@ -43,13 +59,28 @@ export function ComparateurPage() {
 
   return (
     <section className="fade-in" aria-labelledby="cmp-title">
+      <p className="page-kicker">Comparateur</p>
       <h1 id="cmp-title" className="page-title">
-        Comparateur
+        Mesuré et estimé ne se comparent pas.
       </h1>
       <p className="page-lead">
-        Perf, coût et taille du catalogue allowlisté. Défaut API&nbsp;:{" "}
-        <code translate="no">{defaut || "…"}</code>
+        Défaut API&nbsp;: <code translate="no">{defaut || "…"}</code>
       </p>
+
+      <aside className="clip-caveat" role="note" aria-label="Réserve sur CLIP">
+        <p className="clip-caveat-title">
+          CLIP 76,5&nbsp;% ne se lit pas à côté du ResNet 68,5&nbsp;%.
+        </p>
+        <p>
+          CLIP est mesuré en zero-shot, vocabulaire générique, sur Space. Il
+          n’est pas sur Azure. Environ 577&nbsp;Mo&nbsp;: ce n’est pas le modèle
+          de production.
+        </p>
+        <p>
+          EfficientNet, MobileNet et le student restent estimés tant qu’une
+          vraie éval ne dit pas mesuré.
+        </p>
+      </aside>
 
       {error ? (
         <p className="alert" data-tone="error" role="alert">
@@ -65,6 +96,7 @@ export function ComparateurPage() {
             <thead>
               <tr>
                 <th scope="col">Modèle</th>
+                <th scope="col">Preuve</th>
                 <th scope="col">Statut</th>
                 <th scope="col">Accuracy</th>
                 <th scope="col">p50</th>
@@ -75,12 +107,15 @@ export function ComparateurPage() {
             </thead>
             <tbody>
               {models.map((m) => (
-                <tr key={m.id}>
+                <tr key={m.id} data-model={m.id}>
                   <td>
                     <strong>{m.label}</strong>
                     <span className="model-id" translate="no">
                       {m.id}
                     </span>
+                  </td>
+                  <td>
+                    <ProvenanceBadge modelId={m.id} />
                   </td>
                   <td>
                     <StatusBadge status={m.statut} />
@@ -94,7 +129,7 @@ export function ComparateurPage() {
               ))}
               {models.length === 0 ? (
                 <tr>
-                  <td colSpan={7}>Aucun modèle dans le catalogue.</td>
+                  <td colSpan={8}>Aucun modèle dans le catalogue.</td>
                 </tr>
               ) : null}
             </tbody>

@@ -19,7 +19,7 @@ export function TokenBar() {
       />
       {isAuthenticated ? (
         <button type="button" className="btn btn-ghost" onClick={clearToken}>
-          Clear Token
+          Effacer le jeton
         </button>
       ) : null}
       <span id="token-hint" className="live-region">

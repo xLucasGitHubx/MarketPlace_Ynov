@@ -11,20 +11,16 @@ export function PanelProduction(): JSX.Element {
         Production
       </h2>
       <p className={styles.line}>
-        On ne laisse pas le modèle sur la machine du développeur. On l’emballe,
-        puis on le met en ligne.
+        <strong>Docker, it.&nbsp;3.</strong> Avec PyTorch, l’image pèse environ
+        2&nbsp;Go. C’est la référence.
       </p>
       <p className={styles.line}>
-        Choix retenu : une image Docker sans PyTorch, sur Azure Container Apps,
-        avec une réplique toujours allumée.
+        <strong>Azure, it.&nbsp;7.</strong> Sans PyTorch, autour de 551&nbsp;Mo.
+        Une réplique toujours allumée.
       </p>
       <p className={styles.line}>
-        PyTorch rend l’image lourde (environ 2 Go) et chaque photo plus lente.
-        Sans PyTorch, l’image reste autour de 551 Mo. Une réplique déjà allumée
-        répond sans attendre un démarrage.
-      </p>
-      <p className={styles.line}>
-        Deux montants restent côte à côte. On ne les additionne pas.
+        <strong>Facture, it.&nbsp;9.</strong> Environ 25&nbsp;$ pour un million
+        d’images. Estimation. Deux montants côte à côte, jamais additionnés.
       </p>
 
       <div

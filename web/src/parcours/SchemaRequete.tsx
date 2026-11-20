@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useEffect, useId, useRef } from "react";
 import type { JSX } from "react";
 
 import styles from "./SchemaRequete.module.css";
@@ -29,28 +29,55 @@ function stepState(index: number, etapeActive: number): StepState {
   return "pending";
 }
 
+function prefersReducedMotion(): boolean {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export function SchemaRequete({
   etapeActive,
 }: {
   etapeActive: number;
 }): JSX.Element {
   const titleId = useId();
+  const listRef = useRef<HTMLOListElement>(null);
   const active = Number.isInteger(etapeActive) ? etapeActive : -1;
   const running = active >= 0 && active < STEPS.length;
   const finished = active >= STEPS.length;
+  const shown = running ? active : finished ? STEPS.length - 1 : -1;
+  const progress =
+    shown < 0 ? 0 : Math.round(((shown + 1) / STEPS.length) * 100);
 
   let live = "En attente d’une photo.";
+  let now = "En attente d’une photo";
   if (running) {
     live = `Étape ${active + 1} sur ${STEPS.length} — ${STEPS[active].label}`;
+    now = STEPS[active].label;
   } else if (finished) {
     live = "Les huit étapes sont terminées.";
+    now = "Photo oubliée";
   }
+
+  useEffect(() => {
+    if (active < 0) return;
+    const current = listRef.current?.querySelector<HTMLElement>(
+      '[aria-current="step"]',
+    );
+    if (!current) return;
+    current.scrollIntoView({
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  }, [active]);
 
   return (
     <section className={styles.root} aria-labelledby={titleId}>
       <h2 id={titleId} className={styles.title}>
         Chaîne d’une requête
       </h2>
+      <p className={styles.now} data-mode={running ? "running" : finished ? "done" : "idle"}>
+        {now}
+      </p>
       <p
         className={styles.live}
         aria-live="polite"
@@ -59,7 +86,10 @@ export function SchemaRequete({
       >
         {live}
       </p>
-      <ol className={styles.pipeline}>
+      <div className={styles.rail} aria-hidden="true">
+        <span style={{ width: `${progress}%` }} />
+      </div>
+      <ol className={styles.pipeline} ref={listRef}>
         {STEPS.map((step, index) => {
           const state = stepState(index, etapeActive);
           return (

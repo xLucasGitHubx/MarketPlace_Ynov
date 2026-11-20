@@ -21,7 +21,9 @@ import { SchemaRequete } from "@/parcours/SchemaRequete";
 
 const ACCEPT = "image/jpeg,image/png,image/webp";
 const LAST_ETAPE = 7;
-const PIPELINE_STEP_MS = 200;
+const MODEL_STEP = 4;
+/** Assez long pour que l’œil suive une étape avant la suivante. */
+const PIPELINE_STEP_MS = 720;
 
 /**
  * Exact Hugging Face pages.
@@ -36,29 +38,13 @@ const HF_ORIGINE_URL: Record<string, string> = {
   "clip-vit-b32": "https://huggingface.co/openai/clip-vit-base-patch32",
 };
 
+type PendingPrediction = {
+  generation: number;
+  response: PredictionResponse;
+};
+
 function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-function clearStepTimers(ref: { current: number[] }): void {
-  for (const id of ref.current) window.clearTimeout(id);
-  ref.current = [];
-}
-
-function schedulePipeline(
-  ref: { current: number[] },
-  setEtape: (step: number) => void,
-): void {
-  clearStepTimers(ref);
-  if (prefersReducedMotion()) {
-    setEtape(LAST_ETAPE);
-    return;
-  }
-  setEtape(0);
-  for (let step = 1; step <= LAST_ETAPE; step += 1) {
-    const id = window.setTimeout(() => setEtape(step), step * PIPELINE_STEP_MS);
-    ref.current.push(id);
-  }
 }
 
 export function StudioPage() {
@@ -77,8 +63,18 @@ export function StudioPage() {
   const [liveMsg, setLiveMsg] = useState("");
   const [etapeActive, setEtapeActive] = useState(-1);
   const abortRef = useRef<AbortController | null>(null);
-  const stepTimersRef = useRef<number[]>([]);
   const requestGen = useRef(0);
+  const pendingRef = useRef<PendingPrediction | null>(null);
+  const filmCancelRef = useRef<(() => void) | null>(null);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      filmCancelRef.current?.();
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -109,15 +105,64 @@ export function StudioPage() {
     };
   }, [previewUrl]);
 
-  useEffect(() => {
-    const timers = stepTimersRef;
-    return () => {
-      clearStepTimers(timers);
-    };
+  const commitResult = useCallback(
+    (generation: number, response: PredictionResponse) => {
+      if (!mountedRef.current || requestGen.current !== generation) return;
+      setEtapeActive(LAST_ETAPE);
+      setResult(response);
+      ajouter(response.latence_ms, response.cout_estime_usd_par_million);
+      setLiveMsg(
+        `Résultat : ${response.categorie}, confiance ${formatConfidence(response.confiance)}.`,
+      );
+      setLoading(false);
+    },
+    [ajouter],
+  );
+
+  const stopFilm = useCallback(() => {
+    filmCancelRef.current?.();
+    filmCancelRef.current = null;
   }, []);
 
+  const startFilm = useCallback(
+    (generation: number) => {
+      stopFilm();
+      if (prefersReducedMotion()) {
+        setEtapeActive(LAST_ETAPE);
+        return;
+      }
+      let step = 0;
+      let timer = 0;
+      let cancelled = false;
+      setEtapeActive(0);
+      const tick = () => {
+        if (cancelled || !mountedRef.current || requestGen.current !== generation) return;
+        const pending = pendingRef.current;
+        const ready = pending !== null && pending.generation === generation;
+        if (step < MODEL_STEP || (ready && step < LAST_ETAPE)) {
+          step += 1;
+          setEtapeActive(step);
+        }
+        if (pending && pending.generation === generation && step >= LAST_ETAPE) {
+          commitResult(generation, pending.response);
+          return;
+        }
+        timer = window.setTimeout(tick, PIPELINE_STEP_MS);
+      };
+      timer = window.setTimeout(tick, PIPELINE_STEP_MS);
+      filmCancelRef.current = () => {
+        cancelled = true;
+        window.clearTimeout(timer);
+      };
+    },
+    [commitResult, stopFilm],
+  );
+
   const assignFile = useCallback((next: File | null) => {
-    clearStepTimers(stepTimersRef);
+    stopFilm();
+    requestGen.current += 1;
+    pendingRef.current = null;
+    setLoading(false);
     setEtapeActive(-1);
     setResult(null);
     setError(null);
@@ -126,7 +171,7 @@ export function StudioPage() {
       if (prev) URL.revokeObjectURL(prev);
       return next ? URL.createObjectURL(next) : null;
     });
-  }, []);
+  }, [stopFilm]);
 
   const onDrop = (e: DragEvent) => {
     e.preventDefault();
@@ -150,22 +195,26 @@ export function StudioPage() {
     const ctrl = new AbortController();
     abortRef.current = ctrl;
     const generation = ++requestGen.current;
+    pendingRef.current = null;
     setLoading(true);
     setError(null);
+    setResult(null);
     setLiveMsg("Analyse en cours…");
-    schedulePipeline(stepTimersRef, setEtapeActive);
+    const reduced = prefersReducedMotion();
+    startFilm(generation);
     try {
       const res = await predictImage(file, modele, token, ctrl.signal);
-      if (requestGen.current !== generation) return;
-      clearStepTimers(stepTimersRef);
-      setEtapeActive(LAST_ETAPE);
-      setResult(res);
-      ajouter(res.latence_ms, res.cout_estime_usd_par_million);
-      setLiveMsg(`Résultat : ${res.categorie}, confiance ${formatConfidence(res.confiance)}.`);
+      if (requestGen.current !== generation || !mountedRef.current) return;
+      if (reduced) {
+        commitResult(generation, res);
+        return;
+      }
+      pendingRef.current = { generation, response: res };
     } catch (err) {
-      if (requestGen.current !== generation) return;
-      clearStepTimers(stepTimersRef);
+      if (requestGen.current !== generation || !mountedRef.current) return;
+      stopFilm();
       setEtapeActive(-1);
+      setLoading(false);
       if (err instanceof DOMException && err.name === "AbortError") return;
       const msg =
         err instanceof ApiClientError
@@ -175,20 +224,29 @@ export function StudioPage() {
           : "Échec de la prédiction.";
       setError(msg);
       setLiveMsg(msg);
-    } finally {
-      if (requestGen.current === generation) setLoading(false);
     }
   }
 
   return (
     <section className="fade-in" aria-labelledby="studio-title">
+      <p className="page-kicker">Studio</p>
       <h1 id="studio-title" className="page-title">
-        Studio
+        Une photo devient une annonce.
       </h1>
-      <p className="page-lead">
-        Dépose une photo d’objet, choisis un modèle allowlisté, obtient catégorie, titre et
-        confiance.
-      </p>
+      <ol className="product-equation" aria-label="Ce que l’API renvoie">
+        <li>Catégorie</li>
+        <li>Titre</li>
+        <li>Confiance</li>
+        <li>
+          <span className="product-status">auto</span>
+          <span className="product-or">ou</span>
+          <span className="product-status">a_confirmer</span>
+        </li>
+      </ol>
+
+      <div className="studio-film">
+        <SchemaRequete etapeActive={etapeActive} />
+      </div>
 
       {error ? (
         <p className="alert" data-tone="error" role="alert">
@@ -196,13 +254,9 @@ export function StudioPage() {
         </p>
       ) : null}
 
-      <div style={{ marginBottom: 24 }}>
-        <SchemaRequete etapeActive={etapeActive} />
-      </div>
-
       <div className="grid-studio">
         <div className="panel">
-          <h2>Entrée</h2>
+          <h2>Photo</h2>
           <div
             className="dropzone"
             data-active={dragOver ? "true" : "false"}
@@ -292,7 +346,7 @@ export function StudioPage() {
               {loading ? "Analyse…" : "Analyser"}
             </button>
             {!isAuthenticated ? (
-              <span className="dropzone-hint">Renseigne le Bearer token pour prédire.</span>
+              <span className="dropzone-hint">Renseigne le jeton pour prédire.</span>
             ) : null}
             {selected && selected.statut !== "ready" ? (
               <span className="dropzone-hint">
@@ -303,59 +357,82 @@ export function StudioPage() {
         </div>
 
         <div className="panel">
-          <h2>Résultat</h2>
+          <h2>Annonce</h2>
           <div aria-live="polite">
-            {!result ? (
-              <p className="empty-state">
-                Aucune prédiction pour l’instant. Le panneau se remplit après une analyse réussie.
+          {!result ? (
+            <div className="result-hero" data-state="waiting">
+              <p className="slot-label">Catégorie</p>
+              <p className="result-category">—</p>
+              <p className="slot-label">Titre</p>
+              <p className="result-title">En attente d’une photo</p>
+              <p className="slot-label">Confiance</p>
+              <p className="result-title">—</p>
+              <p className="slot-label">Statut</p>
+              <p className="status-pair">
+                <StatusBadge status="auto" />
+                <span>ou</span>
+                <StatusBadge status="a_confirmer" />
               </p>
-            ) : (
-              <>
-                <div className="result-hero">
-                  <p className="result-category">{result.categorie}</p>
-                  <p className="result-title">{result.titre_suggere}</p>
-                  {result.description_suggeree ? (
-                    <p className="result-title">{result.description_suggeree}</p>
-                  ) : null}
-                  <StatusBadge status={result.statut} />
+            </div>
+          ) : (
+            <>
+              <div className="result-hero">
+                <p className="slot-label">Catégorie</p>
+                <p className="result-category">{result.categorie}</p>
+                <p className="slot-label">Titre</p>
+                <p className="result-title">{result.titre_suggere}</p>
+                <p className="slot-label">Description</p>
+                {result.description_suggeree ? (
+                  <p className="result-title">{result.description_suggeree}</p>
+                ) : (
+                  <p className="result-title">—</p>
+                )}
+                <p className="rule-caption">
+                  Règle sur le titre et la catégorie. Pas un second modèle.
+                </p>
+                <p className="slot-label">Confiance</p>
+                <p className="result-title">{formatConfidence(result.confiance)}</p>
+                <p className="slot-label">Statut</p>
+                <StatusBadge status={result.statut} />
+              </div>
+              <dl className="metrics">
+                <div className="metric">
+                  <dt>Inférence, cette requête</dt>
+                  <dd>{formatMs(result.latence_ms)}</dd>
                 </div>
-                <dl className="metrics">
-                  <div className="metric">
-                    <dt>Confiance</dt>
-                    <dd>{formatConfidence(result.confiance)}</dd>
-                  </div>
-                  <div className="metric">
-                    <dt>Latence</dt>
-                    <dd>{formatMs(result.latence_ms)}</dd>
-                  </div>
-                  <div className="metric">
-                    <dt>Modèle</dt>
-                    <dd translate="no">{result.modele}</dd>
-                  </div>
-                  <div className="metric">
-                    <dt>Coût estimé</dt>
-                    <dd>{formatCostPerMillion(result.cout_estime_usd_par_million)}</dd>
-                  </div>
-                </dl>
-                {result.propositions.length > 0 ? (
-                  <>
-                    <h2>Propositions</h2>
-                    <ul className="list-proposals">
-                      {result.propositions.map((p) => (
-                        <li key={p.categorie}>
-                          <span className="label">
-                            {p.categorie}
-                            <br />
-                            <span className="dropzone-hint">{p.titre}</span>
-                          </span>
-                          <span className="score">{formatConfidence(p.score)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                ) : null}
-              </>
-            )}
+                <div className="metric">
+                  <dt>Modèle</dt>
+                  <dd translate="no">{result.modele}</dd>
+                </div>
+                <div className="metric">
+                  <dt>Coût estimé</dt>
+                  <dd>{formatCostPerMillion(result.cout_estime_usd_par_million)}</dd>
+                </div>
+              </dl>
+              <p className="latency-note">
+                Référence it.&nbsp;4, inférence CPU&nbsp;: p50 21,5&nbsp;ms, p95 28,6&nbsp;ms.
+                La requête complète dans le conteneur (it.&nbsp;5, 1&nbsp;vCPU) est à
+                ~68&nbsp;ms p50&nbsp;: c’est ce chiffre qui entre dans la facture.
+              </p>
+              {result.propositions.length > 0 ? (
+                <>
+                  <h2>Propositions</h2>
+                  <ul className="list-proposals">
+                    {result.propositions.map((p) => (
+                      <li key={p.categorie}>
+                        <span className="label">
+                          {p.categorie}
+                          <br />
+                          <span className="dropzone-hint">{p.titre}</span>
+                        </span>
+                        <span className="score">{formatConfidence(p.score)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
+            </>
+          )}
           </div>
           <div style={{ marginTop: 16 }}>
             <CompteurSession />

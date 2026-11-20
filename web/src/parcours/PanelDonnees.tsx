@@ -95,9 +95,7 @@ export function PanelDonnees(): JSX.Element {
         photos réelles de Leboncoin.
       </p>
       <p className={styles.choice}>
-        On ne génère pas d’images synthétiques : des photos fabriquées ne
-        rapprocheraient pas ce proxy de vraies annonces, et le jeu reste celui
-        du manifeste.
+        Pas d’images synthétiques. Le jeu reste celui du manifeste.
       </p>
       <p className={styles.meta}>
         {sharedCount !== undefined

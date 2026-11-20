@@ -108,16 +108,9 @@
 .returnArrow {
   fill: none;
   stroke: var(--accent);
-  stroke-width: 1.75;
+  stroke-width: 2.75;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-.returnLabel {
-  fill: var(--accent);
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 600;
 }
 
 @media (hover: hover) {
