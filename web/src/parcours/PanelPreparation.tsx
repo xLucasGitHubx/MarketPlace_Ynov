@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { Link } from "react-router-dom";
 import styles from "./PanelPreparation.module.css";
 
 export function PanelPreparation(): JSX.Element {
@@ -17,6 +18,14 @@ export function PanelPreparation(): JSX.Element {
         <p>
           Pas d’augmentation en production. La même photo donne les mêmes
           nombres : le réseau a appris avec cette recette.
+        </p>
+        <p>
+          Ce prétraitement est inclus dans le chrono it.&nbsp;4. Sa durée,
+          seule, n’est pas mesurée.{" "}
+          <Link to="/parcours?etape=mesure&partie=chaine">
+            Le détail est dans Mesure, partie Chaîne
+          </Link>
+          .
         </p>
       </div>
 

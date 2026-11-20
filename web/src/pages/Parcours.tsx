@@ -1,4 +1,5 @@
-import { useState, type JSX } from "react";
+import { useSearchParams } from "react-router-dom";
+import type { JSX } from "react";
 import { PanelBesoin } from "@/parcours/PanelBesoin";
 import { PanelDonnees } from "@/parcours/PanelDonnees";
 import { PanelFiche } from "@/parcours/PanelFiche";
@@ -23,7 +24,18 @@ const PANELS: Record<string, () => JSX.Element> = {
 };
 
 export function ParcoursPage() {
-  const [actif, setActif] = useState<string>(ORAL_STEPS[0].id);
+  const [params, setParams] = useSearchParams();
+  const etape = params.get("etape");
+  const actif = ORAL_STEPS.some((step) => step.id === etape)
+    ? etape ?? ORAL_STEPS[0].id
+    : ORAL_STEPS[0].id;
+
+  function setActif(id: string) {
+    const next = new URLSearchParams(params);
+    next.set("etape", id);
+    if (id !== "mesure") next.delete("partie");
+    setParams(next);
+  }
   const index = Math.max(
     0,
     ORAL_STEPS.findIndex((step) => step.id === actif),

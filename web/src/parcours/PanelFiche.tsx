@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { Link } from "react-router-dom";
 import styles from "./PanelFiche.module.css";
 
 function ExternalLink({ href, children }: { href: string; children: string }) {
@@ -58,6 +59,20 @@ export function PanelFiche(): JSX.Element {
               ImageNet
             </ExternalLink>
             . Pas d’augmentation en production.
+          </dd>
+        </div>
+        <div className={styles.row}>
+          <dt>Référence</dt>
+          <dd>
+            Latence, débit et mémoire du notebook de diagnostic&nbsp;: étape
+            Mesure du parcours, partie par partie. Les CSV du cours ne sont pas
+            produits. Les JSON tiennent ce rôle (
+            <code>docs/preuves/it4-optimisation.md</code>,{" "}
+            <code>docs/preuves/it5-charge.md</code>
+            ).{" "}
+            <Link to="/parcours?etape=mesure&partie=reference">
+              Ouvrir la référence
+            </Link>
           </dd>
         </div>
         <div className={styles.row}>
