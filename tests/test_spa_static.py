@@ -53,6 +53,16 @@ def test_spa_asset_file_via_fallback(tmp_path, monkeypatch):
     assert "console.log" in r.text
 
 
+def test_vignette_webp_a_le_bon_type(tmp_path, monkeypatch):
+    client = _client_with_static(tmp_path, monkeypatch)
+    jeu = tmp_path / "static" / "jeu"
+    jeu.mkdir()
+    (jeu / "photo.webp").write_bytes(b"RIFF\x00\x00\x00\x00WEBP")
+    response = client.get("/jeu/photo.webp")
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("image/webp")
+
+
 def test_api_toujours_prioritaire_avec_spa(tmp_path, monkeypatch):
     client = _client_with_static(tmp_path, monkeypatch)
     assert client.get("/api/health").status_code == 200
