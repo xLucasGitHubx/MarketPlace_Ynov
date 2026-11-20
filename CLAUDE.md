@@ -83,6 +83,7 @@ Interdit dans l'image Azure : PyTorch, transformers, CUDA, CLIP. Catalogue = COP
 | 2026-11-13 | Multi-modèles ONNX + SPA mono-service ; Space `Lulu18` ZeroGPU pour KD / CLIP ; image Azure ONNX-only slim. | plan multi-model HF UI |
 | 2026-11-13 | Parcours MLOps dans la SPA (`/parcours`) ; `description_suggeree` est une règle, pas un second modèle. | assemblage front |
 | 2026-11-20 | UI soutenance : premier écran = photo → catégorie, titre, confiance, statut. Film de requête ~720 ms/étape. Parcours oral (précédent/suivant) mappé sur les 9 itérations. Badge mesuré/estimé. Titre garde-fous = photo lue en mémoire puis oubliée. | refonte jury |
+| 2026-11-20 | EfficientNet-B0 int8 statique dans `artifacts/onnx/` (ready). Session ONNX = `ORT_ENABLE_BASIC` : `ENABLE_ALL` écrase le QDQ en classe constante. MobileNet et student restent `building`. | catalogue ready |
 
 ## Avancement des itérations
 
@@ -107,7 +108,8 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 | --- | --- | --- | --- | --- |
 | 2026-10-30 | resnet50-onnx-int8-static (prod) | 68,5 % | 21,5 / 28,6 ms | 24,9 Mo, image Docker ≈ 551 Mo |
 | 2026-10-30 | clip-vit-b32 vocab générique | 76,5 % | 83 / 114 ms | Space / bench, pas ACA |
-| 2026-11-13 | catalogue EfficientNet / MobileNet | estimé | voir `catalog_metrics.json` | int8 dans `artifacts/onnx/` pour Docker |
+| 2026-11-13 | catalogue EfficientNet / MobileNet | estimé | voir `catalog_metrics.json` | accuracy non remesurée |
+| 2026-11-20 | efficientnet-b0-int8-static | estimé (0,66) | non remesuré | fichier ~5,9 Mo dans l’image ; accord top-1 7/8 vs fp32 sur la sonde de calibration. MobileNet int8 non livré (0/8). |
 
 ## Pièges connus
 
@@ -118,6 +120,8 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 - Azure Students : pas d'ACR Tasks ; régions limitées ; env ACA avec `--logs-destination none`.
 - Starlette SpooledTemporaryFile > 1 Mo : `keep_uploads_in_memory()` — ne pas retirer.
 - Quantization dynamique CNN = lent ; utiliser int8 statique QDQ.
+- `ORT_ENABLE_ALL` sur un QDQ EfficientNet renvoie une classe constante. `OnnxPredictor` reste en `ORT_ENABLE_BASIC`.
+- MobileNetV3 : le QDQ statique et l’int8 dynamique ORT 1.32 donnent 0/8 top-1 vs le fp32 (HardSwish). Ne pas copier ce fichier dans `artifacts/onnx/`.
 - ONNX Runtime 1.31 : IR ≤ 9 si graphe manuel.
 - `.env` : pas de commentaire en fin de ligne.
 - PyTorch + `--read-only` → `--tmpfs /tmp` (cible `runtime-pytorch` seulement).
@@ -125,6 +129,9 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 
 ## Points ouverts
 
-- Confirmer CLIP / student sur ~100 photos réelles (`data/test_set/real/`) avant bascule prod.
+- CLIP ViT-B/32 reste `space_only` parce que l’inférence Space ne fonctionne toujours pas ; ne pas le passer à `ready` ; suivi dédié.
+- Student KD MobileNet reste `building` : `scripts/distill_student.py` cite `facebook/mobilenet_v3_small`, qui n’est pas un dépôt public, et aucune distillation n’a été lancée (pas de checkpoint, pas de faux fichier). Ne pas le passer à `ready` sans un int8 qui prédit vraiment.
+- MobileNetV3-Small reste `building` : le fp32 timm `mobilenetv3_small_100.lamb_in1k` est fidèle, mais l’int8 ORT (QDQ statique et dynamique) fait 0/8 top-1 face à ce fp32. Fichier écarté. Accuracy catalogue toujours estimée.
+- Confirmer le student KD sur ~100 photos réelles (`data/test_set/real/`) avant d’en faire un modèle de prod. CLIP n’entre pas dans cette bascule tant que le point ci-dessus n’est pas clos.
 - Exporter encodeur CLIP ONNX int8 seulement si la mesure le justifie (reste Space sinon).
 - Mail formateur : ResNet pré-entraîné + CLIP en comparaison + KD légère.

@@ -17,6 +17,8 @@ type CatalogSource = {
 /** Hugging Face repo ids copied from the code, not guessed.
  *  Prod: app/model.py HF_MODEL_ID and scripts/export_onnx.py MODEL_ID.
  *  EfficientNet, MobileNet, CLIP: hf_model_id on CATALOG in app/registry.py.
+ *  MobileNet weights are timm/mobilenetv3_small_100.lamb_in1k
+ *  (facebook/mobilenet_v3_small is not a public repo).
  *  Student: no hf_model_id; scripts/distill_student.py STUDENT_ID and TEACHER_ID.
  */
 const CATALOG_SOURCES: readonly CatalogSource[] = [
@@ -43,22 +45,23 @@ const CATALOG_SOURCES: readonly CatalogSource[] = [
   },
   {
     catalogId: "mobilenet-v3-small-onnx-int8",
+    note: "Poids publics timm. L’int8 ORT (QDQ ou dynamique) ne retrouve pas le top-1 du fp32 : fichier non livré, statut building.",
     links: [
       {
         label: "MobileNetV3-Small sur Hugging Face",
-        href: "https://huggingface.co/facebook/mobilenet_v3_small",
-        repoId: "facebook/mobilenet_v3_small",
+        href: "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+        repoId: "timm/mobilenetv3_small_100.lamb_in1k",
       },
     ],
   },
   {
     catalogId: "student-kd-mobilenet-int8",
-    note: "Pas de dépôt propre dans le registre. La distillation part de ces deux identifiants.",
+    note: "Distillation non relancée : pas de fichier int8, statut building. Le script cite encore facebook/mobilenet_v3_small, qui n’est pas un dépôt public.",
     links: [
       {
-        label: "Architecture de l’élève sur Hugging Face",
-        href: "https://huggingface.co/facebook/mobilenet_v3_small",
-        repoId: "facebook/mobilenet_v3_small",
+        label: "Architecture publique MobileNetV3-Small",
+        href: "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+        repoId: "timm/mobilenetv3_small_100.lamb_in1k",
       },
       {
         label: "Enseignant ResNet-50 sur Hugging Face",

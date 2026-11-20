@@ -15,6 +15,8 @@ venv/
 # Modèles et artefacts lourds (régénérés par scripts/)
 models/
 *.onnx
+# Exception : int8 catalogue copiés dans l'image Azure (quelques Mo).
+!artifacts/onnx/*.onnx
 *.bin
 *.safetensors
 
