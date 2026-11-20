@@ -17,6 +17,19 @@ const MOCK_MODELS = {
       space_only: false,
     },
     {
+      id: "efficientnet-b0-onnx-int8",
+      label: "EfficientNet-B0 ONNX int8",
+      source: "HF google/efficientnet-b0 → ONNX int8",
+      statut: "building",
+      charge: false,
+      accuracy: 0.66,
+      p50_ms: 10,
+      p95_ms: 13,
+      taille_mo: 5.5,
+      cout_estime_usd_par_million: 0.82,
+      space_only: false,
+    },
+    {
       id: "clip-vit-b32",
       label: "CLIP ViT-B/32 (Space ZeroGPU)",
       source: "HF openai/clip-vit-base-patch32",
@@ -43,6 +56,7 @@ const MOCK_HEALTH = {
 const MOCK_PREDICT = {
   categorie: "Électronique",
   titre_suggere: "Ordinateur portable",
+  description_suggeree: "Ordinateur portable à vendre. Catégorie proposée : Électronique.",
   confiance: 0.92,
   statut: "auto",
   top3: [{ label: "laptop", categorie: "Électronique", score: 0.92 }],
@@ -84,7 +98,10 @@ test.describe("SPA smoke (mocks)", () => {
     await page.goto("/");
 
     await expect(page.getByText("MarketPlace Vision")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Studio" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Une photo devient une annonce." }),
+    ).toBeVisible();
+    await expect(page.getByText("a_confirmer").first()).toBeVisible();
 
     await page.getByLabel("Bearer token").fill("test-token");
 
@@ -99,18 +116,46 @@ test.describe("SPA smoke (mocks)", () => {
     });
 
     await page.getByRole("button", { name: "Analyser" }).click();
-    await expect(page.getByText("Électronique").first()).toBeVisible();
+    await expect(page.getByText("Électronique").first()).toBeVisible({ timeout: 20_000 });
     await expect(page.getByText("Ordinateur portable").first()).toBeVisible();
+    await expect(
+      page.getByText("Pas un second modèle."),
+    ).toBeVisible();
   });
 
   test("Comparateur + Garde-fous routes", async ({ page }) => {
     await mockApi(page);
     await page.goto("/comparateur");
-    await expect(page.getByRole("heading", { name: "Comparateur" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Mesuré et estimé ne se comparent pas." }),
+    ).toBeVisible();
     await expect(page.getByText("resnet50-onnx-int8").first()).toBeVisible();
+    await expect(page.getByText("mesuré", { exact: true }).first()).toBeVisible();
+    await expect(page.getByText("estimé", { exact: true })).toBeVisible();
+    await expect(page.getByText("76,5 % ne se lit pas")).toBeVisible();
 
     await page.goto("/garde-fous");
-    await expect(page.getByRole("heading", { name: "Garde-fous" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        name: "La photo est lue en mémoire puis oubliée.",
+      }),
+    ).toBeVisible();
     await expect(page.getByText("sessionStorage")).toBeVisible();
+    await expect(page.getByText("0", { exact: true })).toBeVisible();
+  });
+
+  test("Parcours précédent / suivant et itérations", async ({ page }) => {
+    await mockApi(page);
+    await page.goto("/parcours");
+    await expect(
+      page.getByRole("heading", { name: "Une idée, puis la suivante." }),
+    ).toBeVisible();
+    await expect(page.getByText("Photos différentes")).toBeVisible();
+    await page.getByRole("button", { name: "Suivant" }).click();
+    await expect(page.getByRole("heading", { name: "Données" })).toBeVisible();
+    await page.getByRole("button", { name: "ONNX" }).click();
+    await expect(page.getByRole("heading", { name: "Mesure" })).toBeVisible();
+    await page.getByRole("button", { name: "Précédent" }).click();
+    await expect(page.getByRole("heading", { name: "Choix du modèle" })).toBeVisible();
   });
 });

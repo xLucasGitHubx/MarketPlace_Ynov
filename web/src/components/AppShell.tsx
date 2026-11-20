@@ -17,17 +17,18 @@ export function AppShell() {
       <header className="app-header">
         <div className="brand">
           <p className="brand-name">MarketPlace Vision</p>
-          <p className="brand-tag">Photo d’objet → catégorie d’annonce, en un appel API.</p>
         </div>
-        <nav className="nav" aria-label="Navigation principale">
-          {LINKS.map((link) => (
-            <NavLink key={link.to} to={link.to} end={link.to === "/"}>
-              {link.label}
-            </NavLink>
-          ))}
-        </nav>
+        <div className="header-tools">
+          <nav className="nav" aria-label="Navigation principale">
+            {LINKS.map((link) => (
+              <NavLink key={link.to} to={link.to} end={link.to === "/"}>
+                {link.label}
+              </NavLink>
+            ))}
+          </nav>
+          <TokenBar />
+        </div>
       </header>
-      <TokenBar />
       <main id="main">
         <Outlet />
       </main>

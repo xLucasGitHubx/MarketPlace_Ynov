@@ -30,11 +30,12 @@ Variable optionnelle : `VITE_API_BASE` (URL absolue de l’API). Vide = same-ori
 
 | Path | Écran |
 | --- | --- |
-| `/` | Studio — upload + modèle + résultat |
-| `/comparateur` | Comparateur perf / coût / taille |
-| `/garde-fous` | Auth, limites, RGPD |
+| `/` | Studio — une photo devient catégorie, titre, confiance, statut |
+| `/parcours` | Oral du cycle, mappé sur les 9 itérations |
+| `/comparateur` | Mesuré / estimé, perf, coût, taille |
+| `/garde-fous` | La photo est lue en mémoire puis oubliée |
 
-Token Bearer : champ en tête d’app → `sessionStorage` (`marketplace_api_token`).
+Jeton Bearer : champ dans l’en-tête → `sessionStorage` (`marketplace_api_token`).
 
 ## QA Playwright (optionnel)
 

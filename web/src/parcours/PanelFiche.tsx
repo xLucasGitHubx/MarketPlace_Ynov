@@ -15,6 +15,9 @@ export function PanelFiche(): JSX.Element {
       <h2 id="fiche-titre" className={styles.title}>
         Fiche projet
       </h2>
+      <p className={styles.roles}>
+        MLflow garde les mesures. Pas les photos. Git garde le code.
+      </p>
       <dl className={styles.fiche}>
         <div className={styles.row}>
           <dt>Projet</dt>
@@ -27,17 +30,15 @@ export function PanelFiche(): JSX.Element {
         <div className={styles.row}>
           <dt>Dataset</dt>
           <dd>
-            Proxy de labo <code>data/test_set/manifest.csv</code>, assemblé par{" "}
-            <code>scripts/build_test_set.py</code>. Ce ne sont pas des photos
-            Leboncoin. Les images viennent de{" "}
+            Proxy de labo, pas des photos Leboncoin.{" "}
             <ExternalLink href="https://huggingface.co/datasets/pawlo2013/StanfordOnlineProducts">
               Stanford Online Products
-            </ExternalLink>{" "}
-            (meubles, électroménager, vélos) et du split test{" "}
+            </ExternalLink>
+            {" et "}
             <ExternalLink href="https://huggingface.co/datasets/ilee0022/Caltech-256">
               Caltech-256
-            </ExternalLink>{" "}
-            pour le reste des catégories.
+            </ExternalLink>
+            . Manifeste <code>data/test_set/manifest.csv</code>.
           </dd>
         </div>
         <div className={styles.row}>
@@ -83,16 +84,6 @@ export function PanelFiche(): JSX.Element {
           </dd>
         </div>
       </dl>
-      <p className={styles.roles}>
-        <ExternalLink href="https://huggingface.co/models">
-          Hugging Face
-        </ExternalLink>{" "}
-        fournit le modèle,{" "}
-        <ExternalLink href="https://mlflow.org/docs/latest/">
-          MLflow
-        </ExternalLink>{" "}
-        garde les mesures (pas les photos), Git garde le code.
-      </p>
       <h3 className={styles.sourcesTitle}>Sources</h3>
       <ul className={styles.sources}>
         <li>

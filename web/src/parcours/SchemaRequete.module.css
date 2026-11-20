@@ -7,37 +7,68 @@
 }
 
 .title {
-  margin: 0 0 8px;
+  margin: 0 0 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.now {
+  margin: 0 0 6px;
   font-family: var(--font-brand);
+  font-weight: 800;
+  font-size: clamp(1.45rem, 2.4vw, 1.85rem);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.now[data-mode="idle"] {
+  color: var(--muted);
+  font-size: 1.15rem;
   font-weight: 700;
-  font-size: 1.05rem;
-  letter-spacing: -0.02em;
-  color: var(--ink);
+}
+
+.now[data-mode="running"],
+.now[data-mode="done"] {
+  color: var(--accent);
 }
 
 .live {
-  margin: 0 0 12px;
-  padding: 8px 10px;
-  background: var(--mono-bg);
-  border-radius: 8px;
-  color: var(--ink);
+  margin: 0 0 8px;
+  color: var(--muted);
   font-family: var(--font-mono);
   font-size: 0.8rem;
   font-variant-numeric: tabular-nums;
   line-height: 1.4;
 }
 
-.live[data-mode="idle"] {
-  color: var(--muted);
+.rail {
+  height: 3px;
+  margin: 0 0 12px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.rail > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 480ms ease;
 }
 
 .pipeline {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 18px 22px;
+  display: flex;
+  gap: 10px;
   margin: 0;
-  padding: 4px;
+  padding: 4px 2px 8px;
   list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 8px;
 }
 
 .step {
@@ -46,16 +77,19 @@
   grid-template-columns: auto minmax(0, 1fr) 16px;
   column-gap: 8px;
   align-items: center;
-  min-height: 48px;
-  padding: 8px 10px;
+  flex: 1 0 148px;
+  min-height: 64px;
+  padding: 10px 12px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--ink);
+  scroll-snap-align: center;
   transition:
-    background-color 220ms ease,
-    border-color 220ms ease,
-    color 220ms ease;
+    background-color 480ms ease,
+    border-color 480ms ease,
+    color 480ms ease,
+    transform 480ms ease;
 }
 
 .step[data-state="done"] {
@@ -67,27 +101,7 @@
   background: var(--accent);
   border-color: var(--accent);
   color: var(--accent-ink);
-}
-
-.step[data-state="current"]::after {
-  content: "";
-  position: absolute;
-  inset: -3px;
-  border: 1px solid var(--accent);
-  border-radius: 10px;
-  pointer-events: none;
-  animation: schema-requete-pulse 1600ms ease-in-out infinite;
-}
-
-@keyframes schema-requete-pulse {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-
-  50% {
-    opacity: 0.12;
-  }
+  transform: translateY(-2px);
 }
 
 .index {
@@ -112,7 +126,6 @@
   font-weight: 600;
   line-height: 1.25;
   text-wrap: balance;
-  overflow-wrap: anywhere;
 }
 
 .labelMono {
@@ -127,6 +140,10 @@
   color: var(--ok);
 }
 
+.step[data-state="current"] .markSlot {
+  color: var(--accent-ink);
+}
+
 .markSlot svg {
   display: block;
   width: 16px;
@@ -134,22 +151,6 @@
 }
 
 .arrow {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  left: 50%;
-  bottom: -16px;
-  margin-left: -7px;
-  color: var(--line);
-  pointer-events: none;
-  transform: rotate(90deg);
-}
-
-.step[data-state="done"] .arrow {
-  color: var(--ok);
-}
-
-.step:last-child .arrow {
   display: none;
 }
 
@@ -165,33 +166,33 @@
   border: 0;
 }
 
-@container requete (min-width: 520px) {
+@container requete (min-width: 720px) {
   .pipeline {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px 22px;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  .step {
+    flex: none;
   }
 
   .arrow {
+    display: block;
+    position: absolute;
+    width: 14px;
+    height: 14px;
     top: 50%;
     right: -18px;
-    bottom: auto;
-    left: auto;
     margin-top: -7px;
-    margin-left: 0;
-    transform: none;
+    color: var(--line);
+    pointer-events: none;
   }
 
-  .step:nth-child(2n) .arrow {
-    display: none;
-  }
-}
-
-@container requete (min-width: 840px) {
-  .pipeline {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .step:nth-child(2n) .arrow {
-    display: block;
+  .step[data-state="done"] .arrow {
+    color: var(--ok);
   }
 
   .step:nth-child(4n) .arrow,
@@ -201,12 +202,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .step {
+  .step,
+  .rail > span {
     transition: none;
   }
 
-  .step[data-state="current"]::after {
-    animation: none;
-    opacity: 0.45;
+  .step[data-state="current"] {
+    transform: none;
   }
 }
