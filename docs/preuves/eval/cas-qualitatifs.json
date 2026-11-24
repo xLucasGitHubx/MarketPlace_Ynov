@@ -1,0 +1,433 @@
+{
+  "titre": "Cas qualitatifs sur le proxy de 200 photos",
+  "date": "2026-11-24",
+  "jeu": {
+    "manifest": "data/test_set/manifest.csv",
+    "n": 200,
+    "n_par_categorie": 20,
+    "jeu_focal": "non utilisé : data/test_set/focus_manifest.csv absent",
+    "mapping": "data/imagenet_mapping.tsv",
+    "mapping_modifie": false,
+    "portee": "Ces cas illustrent des mécanismes. Ils ne constituent pas une nouvelle mesure d'accuracy."
+  },
+  "seuil": 0.6,
+  "confiance": "Score de catégorie cumulé sur le top-5 (app.business.suggest). Le top-1 est la classe la plus forte. Pour ResNet int8, confiance et top-1 n'existent que sur les 63 erreurs de eval-onnx-int8-static.json.",
+  "sources": [
+    "docs/preuves/eval/preds-resnet50-int8-historique-200.jsonl",
+    "docs/preuves/eval/preds-efficientnet-b0-int8-200.jsonl",
+    "docs/preuves/eval/preds-clip-vit-b32-generique-200.jsonl",
+    "docs/preuves/eval/eval-onnx-int8-static.json",
+    "docs/preuves/eval/compare-models-200.json"
+  ],
+  "hors_lecture": "MobileNet fp32 (57,5 % sur 200, pas un int8) et le student non distillé ne sont pas des résultats de jury : non comparables, absents de ces cas.",
+  "cas": [
+    {
+      "id": "vehicules-camion-pompiers",
+      "fichier": "vehicules-et-pieces/caltech_fire-truck_2139.jpg",
+      "vignette": "web/public/jeu/vehicules-et-pieces/caltech_fire-truck_2139.webp",
+      "attendu": "Véhicules et pièces",
+      "mecanisme": "accord",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Véhicules et pièces",
+          "confiance": null,
+          "top1": null,
+          "top1_nature": null,
+          "statut": null,
+          "note": "bonne catégorie déduite (absente des erreurs) ; confiance et top1 non archivés"
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Véhicules et pièces",
+          "confiance": 0.9343,
+          "top1": "fire engine",
+          "top1_nature": "imagenet",
+          "statut": "auto"
+        },
+        "clip-vit-b32": {
+          "predit": "Véhicules et pièces",
+          "confiance": 0.9234,
+          "top1": "vehicle",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "auto"
+        }
+      },
+      "texte": "Le camion de pompiers est une classe ImageNet, fire engine, déjà mappée vers Véhicules et pièces. Les trois modèles rendent cette catégorie : EfficientNet à 0,934 (auto) et CLIP, vocabulaire générique, à 0,923 (libellé vehicle, auto). La confiance et le top-1 ResNet ne sont pas archivés, la photo étant absente des 63 erreurs."
+    },
+    {
+      "id": "vehicules-motoneige",
+      "fichier": "vehicules-et-pieces/caltech_snowmobile_2477.jpg",
+      "vignette": "web/public/jeu/vehicules-et-pieces/caltech_snowmobile_2477.webp",
+      "attendu": "Véhicules et pièces",
+      "mecanisme": "accord",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Véhicules et pièces",
+          "confiance": null,
+          "top1": null,
+          "top1_nature": null,
+          "statut": null,
+          "note": "bonne catégorie déduite (absente des erreurs) ; confiance et top1 non archivés"
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Véhicules et pièces",
+          "confiance": 0.8967,
+          "top1": "snowmobile",
+          "top1_nature": "imagenet",
+          "statut": "auto"
+        },
+        "clip-vit-b32": {
+          "predit": "Véhicules et pièces",
+          "confiance": 0.2847,
+          "top1": "vehicle",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "a_confirmer"
+        }
+      },
+      "texte": "La motoneige est dans le mapping, sous le nom snowmobile. ResNet et EfficientNet (0,897, auto) la classent en Véhicules, et CLIP aussi, avec le libellé vehicle à 0,285 seulement, donc à confirmer. Les trois modèles s'accordent sur la catégorie ; le statut auto dépend du score, et la confiance ResNet de cette réussite n'est pas archivée."
+    },
+    {
+      "id": "jeux-peluche",
+      "fichier": "jeux-et-jouets/caltech_teddy-bear_2938.jpg",
+      "vignette": "web/public/jeu/jeux-et-jouets/caltech_teddy-bear_2938.webp",
+      "attendu": "Jeux et jouets",
+      "mecanisme": "accord",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Jeux et jouets",
+          "confiance": null,
+          "top1": null,
+          "top1_nature": null,
+          "statut": null,
+          "note": "bonne catégorie déduite (absente des erreurs) ; confiance et top1 non archivés"
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Jeux et jouets",
+          "confiance": 0.7974,
+          "top1": "teddy",
+          "top1_nature": "imagenet",
+          "statut": "auto"
+        },
+        "clip-vit-b32": {
+          "predit": "Jeux et jouets",
+          "confiance": 0.5756,
+          "top1": "toy",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "a_confirmer"
+        }
+      },
+      "texte": "teddy est l'une des neuf classes ImageNet mappées vers Jeux et jouets. Sur les 20 photos de la catégorie, les quatre peluches sont les quatre bonnes réponses de ResNet ; ici EfficientNet lit teddy à 0,797 (auto) et CLIP lit toy à 0,576 (à confirmer). La confiance ResNet de cette photo n'est pas dans l'archive."
+    },
+    {
+      "id": "jeux-yoyo-absent",
+      "fichier": "jeux-et-jouets/caltech_yo-yo_921.jpg",
+      "vignette": "web/public/jeu/jeux-et-jouets/caltech_yo-yo_921.webp",
+      "attendu": "Jeux et jouets",
+      "mecanisme": "classe_absente",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Maison et meubles",
+          "confiance": 0.4164,
+          "top1": "ladle",
+          "top1_nature": "imagenet",
+          "statut": null
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Sport et loisirs",
+          "confiance": 0.0669,
+          "top1": "whistle",
+          "top1_nature": "imagenet",
+          "statut": "a_confirmer"
+        },
+        "clip-vit-b32": {
+          "predit": "Livres et musique",
+          "confiance": 0.2539,
+          "top1": "musical instrument",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "a_confirmer"
+        }
+      },
+      "texte": "Le mapping Jeux compte neuf classes et n'a pas été modifié pour cette lecture : le yo-yo n'y figure pas. Les trois modèles se trompent dans trois directions : ResNet louche vers Maison à 0,416, EfficientNet sifflet vers Sport à 0,067, CLIP instrument de musique à 0,254. Aucun score n'atteint 0,6."
+    },
+    {
+      "id": "electromenager-machine-a-pain",
+      "fichier": "electromenager/caltech_breadmaker_2646.jpg",
+      "vignette": "web/public/jeu/electromenager/caltech_breadmaker_2646.webp",
+      "attendu": "Électroménager",
+      "mecanisme": "classe_absente",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Électronique",
+          "confiance": 0.9932,
+          "top1": "printer",
+          "top1_nature": "imagenet",
+          "statut": null
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Électronique",
+          "confiance": 0.2747,
+          "top1": "printer",
+          "top1_nature": "imagenet",
+          "statut": "a_confirmer"
+        },
+        "clip-vit-b32": {
+          "predit": "Électroménager",
+          "confiance": 0.9128,
+          "top1": "household appliance",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "auto"
+        }
+      },
+      "texte": "La machine à pain n'est pas dans les 17 classes Électroménager du mapping. ResNet et EfficientNet tombent tous les deux sur printer, donc Électronique : 0,993 pour ResNet, 0,275 pour EfficientNet (à confirmer). CLIP, vocabulaire générique, reste sur Électroménager, libellé household appliance, à 0,913 (auto)."
+    },
+    {
+      "id": "jeux-yoyo-puits",
+      "fichier": "jeux-et-jouets/caltech_yo-yo_1378.jpg",
+      "vignette": "web/public/jeu/jeux-et-jouets/caltech_yo-yo_1378.webp",
+      "attendu": "Jeux et jouets",
+      "mecanisme": "puits_autre",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Autre",
+          "confiance": 0.6773,
+          "top1": "slot",
+          "top1_nature": "imagenet",
+          "statut": null
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Maison et meubles",
+          "confiance": 0.3947,
+          "top1": "saltshaker",
+          "top1_nature": "imagenet",
+          "statut": "a_confirmer"
+        },
+        "clip-vit-b32": {
+          "predit": "Jeux et jouets",
+          "confiance": 0.6194,
+          "top1": "toy",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "auto"
+        }
+      },
+      "texte": "Sur cette autre photo de yo-yo, la classe ImageNet la plus forte de ResNet est slot, qui n'est pas mappée. Elle rejoint Autre, le puits des 596 classes hors mapping, avec une confiance de 0,677 : au seuil 0,6 la catégorie pré-remplie serait Autre. EfficientNet part vers une salière (Maison, 0,395) et CLIP retrouve toy à 0,619 (auto)."
+    },
+    {
+      "id": "jeux-carte-puits",
+      "fichier": "jeux-et-jouets/caltech_playing-card_1212.jpg",
+      "vignette": "web/public/jeu/jeux-et-jouets/caltech_playing-card_1212.webp",
+      "attendu": "Jeux et jouets",
+      "mecanisme": "puits_autre",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Autre",
+          "confiance": 0.5028,
+          "top1": "Band Aid",
+          "top1_nature": "imagenet",
+          "statut": null
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Livres et musique",
+          "confiance": 0.4048,
+          "top1": "book jacket",
+          "top1_nature": "imagenet",
+          "statut": "a_confirmer"
+        },
+        "clip-vit-b32": {
+          "predit": "Jeux et jouets",
+          "confiance": 0.8345,
+          "top1": "game",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "auto"
+        }
+      },
+      "texte": "La carte à jouer n'est pas une classe ImageNet. ResNet retient Band Aid, classe non mappée, donc Autre, à 0,503 : le puits reste sous le seuil 0,6. EfficientNet lit book jacket (Livres et musique, 0,405, à confirmer) et CLIP lit game à 0,835 (auto)."
+    },
+    {
+      "id": "jeux-echiquier-tapis",
+      "fichier": "jeux-et-jouets/caltech_chess-board_1380.jpg",
+      "vignette": "web/public/jeu/jeux-et-jouets/caltech_chess-board_1380.webp",
+      "attendu": "Jeux et jouets",
+      "mecanisme": "confusion_voisine",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Maison et meubles",
+          "confiance": 0.9589,
+          "top1": "prayer rug",
+          "top1_nature": "imagenet",
+          "statut": null
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Maison et meubles",
+          "confiance": 0.8752,
+          "top1": "prayer rug",
+          "top1_nature": "imagenet",
+          "statut": "auto"
+        },
+        "clip-vit-b32": {
+          "predit": "Jeux et jouets",
+          "confiance": 0.5436,
+          "top1": "game",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "a_confirmer"
+        }
+      },
+      "texte": "L'échiquier n'a pas de classe ImageNet. ResNet et EfficientNet s'accordent sur prayer rug, mappée vers Maison et meubles, à 0,959 et 0,875 : un rectangle à motif est lu comme un tapis. CLIP reste sur game, à 0,544, donc à confirmer."
+    },
+    {
+      "id": "vehicules-moto-velo",
+      "fichier": "vehicules-et-pieces/caltech_motorbikes-101_1465.jpg",
+      "vignette": "web/public/jeu/vehicules-et-pieces/caltech_motorbikes-101_1465.webp",
+      "attendu": "Véhicules et pièces",
+      "mecanisme": "confusion_voisine",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Véhicules et pièces",
+          "confiance": null,
+          "top1": null,
+          "top1_nature": null,
+          "statut": null,
+          "note": "bonne catégorie déduite (absente des erreurs) ; confiance et top1 non archivés"
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Véhicules et pièces",
+          "confiance": 0.4898,
+          "top1": "moped",
+          "top1_nature": "imagenet",
+          "statut": "a_confirmer"
+        },
+        "clip-vit-b32": {
+          "predit": "Sport et loisirs",
+          "confiance": 0.8801,
+          "top1": "bicycle",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "auto"
+        }
+      },
+      "texte": "Le cyclomoteur est une classe ImageNet mappée vers Véhicules : EfficientNet lit moped à 0,490 (à confirmer), et ResNet est dans la bonne catégorie, sans score archivé. Le vocabulaire générique de CLIP n'a pas de moto ; le libellé le plus fort est bicycle, côté Sport et loisirs, à 0,880 (auto). Moto et vélo sont des catégories voisines, et ce score passerait en auto."
+    },
+    {
+      "id": "electromenager-bouilloire",
+      "fichier": "electromenager/sop_271957718827_0.jpg",
+      "vignette": "web/public/jeu/electromenager/sop_271957718827_0.webp",
+      "attendu": "Électroménager",
+      "classe_source_manifest": "kettle",
+      "mecanisme": "confusion_voisine",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Maison et meubles",
+          "confiance": 0.9639,
+          "top1": "teapot",
+          "top1_nature": "imagenet",
+          "statut": null
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Maison et meubles",
+          "confiance": 0.782,
+          "top1": "teapot",
+          "top1_nature": "imagenet",
+          "statut": "auto"
+        },
+        "clip-vit-b32": {
+          "predit": "Maison et meubles",
+          "confiance": 0.8221,
+          "top1": "kitchenware",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "auto"
+        }
+      },
+      "texte": "La ligne du manifest est une bouilloire (kettle). ImageNet n'a pas de bouilloire électrique : teapot est mappée vers Maison et meubles, et les trois modèles y vont, ResNet à 0,964, EfficientNet à 0,782 (auto), CLIP avec le libellé kitchenware à 0,822 (auto). Le vocabulaire générique range les ustensiles avec Maison."
+    },
+    {
+      "id": "jeux-de-confiant",
+      "fichier": "jeux-et-jouets/caltech_dice_716.jpg",
+      "vignette": "web/public/jeu/jeux-et-jouets/caltech_dice_716.webp",
+      "attendu": "Jeux et jouets",
+      "mecanisme": "erreur_confiante",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Livres et musique",
+          "confiance": 0.8721,
+          "top1": "rubber eraser",
+          "top1_nature": "imagenet",
+          "statut": null
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Vêtements et accessoires",
+          "confiance": 0.207,
+          "top1": "hair slide",
+          "top1_nature": "imagenet",
+          "statut": "a_confirmer"
+        },
+        "clip-vit-b32": {
+          "predit": "Jeux et jouets",
+          "confiance": 0.9902,
+          "top1": "game",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "auto"
+        }
+      },
+      "texte": "Le dé n'est pas une classe ImageNet. ResNet choisit rubber eraser, donc Livres et musique, à 0,872 : au-dessus de 0,6, l'annonce fausse partirait en auto, comme 11 des 16 erreurs Jeux. EfficientNet part vers une barrette (0,207, à confirmer) et CLIP retrouve game à 0,990 (auto)."
+    },
+    {
+      "id": "vehicules-volant",
+      "fichier": "vehicules-et-pieces/caltech_steering-wheel_1266.jpg",
+      "vignette": "web/public/jeu/vehicules-et-pieces/caltech_steering-wheel_1266.webp",
+      "attendu": "Véhicules et pièces",
+      "mecanisme": "erreur_confiante",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Électroménager",
+          "confiance": 0.9851,
+          "top1": "electric fan",
+          "top1_nature": "imagenet",
+          "statut": null
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Électroménager",
+          "confiance": 0.8064,
+          "top1": "electric fan",
+          "top1_nature": "imagenet",
+          "statut": "auto"
+        },
+        "clip-vit-b32": {
+          "predit": "Véhicules et pièces",
+          "confiance": 0.8639,
+          "top1": "vehicle",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "auto"
+        }
+      },
+      "texte": "C'est la seule erreur ResNet sur les 20 photos Véhicules, et sa confiance dépasse 0,6. Les deux CNN lisent electric fan, donc Électroménager, à 0,985 et à 0,806 : les deux dépasseraient le seuil. CLIP reste sur vehicle à 0,864 (auto)."
+    },
+    {
+      "id": "electromenager-lave-linge",
+      "fichier": "electromenager/caltech_washing-machine_2316.jpg",
+      "vignette": "web/public/jeu/electromenager/caltech_washing-machine_2316.webp",
+      "attendu": "Électroménager",
+      "mecanisme": "erreur_confiante",
+      "predictions": {
+        "resnet50-onnx-int8": {
+          "predit": "Électronique",
+          "confiance": 0.9722,
+          "top1": "photocopier",
+          "top1_nature": "imagenet",
+          "statut": null
+        },
+        "efficientnet-b0-onnx-int8": {
+          "predit": "Bricolage et jardin",
+          "confiance": 0.4681,
+          "top1": "ashcan",
+          "top1_nature": "imagenet",
+          "statut": "a_confirmer"
+        },
+        "clip-vit-b32": {
+          "predit": "Électroménager",
+          "confiance": 0.899,
+          "top1": "household appliance",
+          "top1_nature": "texte_vocabulaire_generique",
+          "statut": "auto"
+        }
+      },
+      "texte": "ImageNet possède la classe washer, et l'autre lave-linge des 20 photos est bien classé par les trois modèles. Ici ResNet lit photocopier, donc Électronique, à 0,972 : sept des neuf erreurs Électroménager dépassent ainsi 0,6. EfficientNet lit une poubelle (0,468, à confirmer) et CLIP retrouve household appliance à 0,899 (auto)."
+    }
+  ]
+}

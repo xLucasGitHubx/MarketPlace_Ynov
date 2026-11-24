@@ -131,8 +131,15 @@ test.describe("SPA smoke (mocks)", () => {
     ).toBeVisible();
     await expect(page.getByText("resnet50-onnx-int8").first()).toBeVisible();
     await expect(page.getByText("mesuré", { exact: true }).first()).toBeVisible();
-    await expect(page.getByText("estimé", { exact: true })).toBeVisible();
-    await expect(page.getByText("76,5 % ne se lit pas")).toBeVisible();
+    await expect(page.getByRole("region", { name: "Lecture jury" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Jeu focal, n = 100/ })).toBeVisible();
+    await expect(page.getByText("n = 20").first()).toBeVisible();
+    await expect(page.getByText("Jeu focal non mesuré")).toHaveCount(0);
+    await expect(page.getByText("écarté", { exact: true }).first()).toBeVisible();
+    await expect(page.getByText("hors du tableau")).toBeVisible();
+    await expect(
+      page.getByRole("img", { name: /focus_caltech_/ }).first(),
+    ).toBeVisible();
 
     await page.goto("/garde-fous");
     await expect(

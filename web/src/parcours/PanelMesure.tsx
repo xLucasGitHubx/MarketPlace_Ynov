@@ -856,6 +856,12 @@ function PartReference(): JSX.Element {
         ONNX viennent du rapport d’export. Les 97,7&nbsp;Mo PyTorch viennent de
         la preuve it.&nbsp;4.
       </p>
+      <p className={styles.caption}>
+        <Link className={styles.link} to="/comparateur#jury-eval">
+          Lecture jury du jeu focal, n&nbsp;=&nbsp;100
+        </Link>
+        . Le proxy des 200 photos est un autre protocole, sur la même page.
+      </p>
       <Sources>
         <li>Notebook §9. Fiche de référence du projet.</li>
         {BASELINE.map((row) => (

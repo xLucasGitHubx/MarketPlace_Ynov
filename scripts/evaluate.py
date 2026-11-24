@@ -7,6 +7,9 @@ confiance pour le calibrer. Les mêmes images servent à comparer les backends.
 Usage :
     python scripts/evaluate.py --backend pytorch
     python scripts/evaluate.py --backend onnx --onnx-path models/onnx/resnet50-int8-static.onnx --mlflow
+    python scripts/evaluate.py --backend onnx --onnx-path models/onnx/efficientnet-b0-int8-static.onnx \
+        --manifest data/test_set/focus_manifest.csv \
+        --predictions docs/preuves/eval/preds-efficientnet-b0-int8-focus.jsonl
 """
 
 from __future__ import annotations
@@ -42,15 +45,35 @@ def percentile(values: list[float], p: float) -> float:
     return s[f] + (s[c] - s[f]) * (k - f)
 
 
-def load_manifest(test_dir: Path) -> list[dict]:
-    with (test_dir / "manifest.csv").open(encoding="utf-8") as f:
+def image_path(test_dir: Path, fichier: str) -> Path:
+    path = Path(fichier)
+    return path if path.is_absolute() else test_dir / path
+
+
+def load_manifest(test_dir: Path, manifest: Path | None = None) -> list[dict]:
+    path = manifest if manifest is not None else test_dir / "manifest.csv"
+    with path.open(encoding="utf-8") as f:
         return list(csv.DictReader(f))
 
 
-def evaluate_predictor(predictor, suggest_fn, threshold: float, test_dir: Path = TEST_DIR, warmup: int = 3) -> dict:
+def write_predictions(path: Path, rows: list[dict]) -> None:
+    """JSONL : une prédiction suggest() par image (fichier, attendu, predit, confiance, top1, model_id)."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as handle:
+        for row in rows:
+            handle.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
+def evaluate_predictor(predictor, suggest_fn, threshold: float, test_dir: Path = TEST_DIR, warmup: int = 3,
+                       manifest: Path | None = None, model_id: str | None = None) -> dict:
     """Évaluation générique : `suggest_fn(probs, threshold)` renvoie une Suggestion (business.py)."""
-    rows = load_manifest(test_dir)
-    images = [Image.open(test_dir / r["fichier"]).convert("RGB") for r in rows]
+    rows = load_manifest(test_dir, manifest)
+    images = []
+    for row in rows:
+        path = image_path(test_dir, row["fichier"])
+        if not path.is_file():
+            raise FileNotFoundError(f"Image absente du jeu : {path}")
+        images.append(Image.open(path).convert("RGB"))
     for img in images[:warmup]:
         predictor.predict_proba(img)
 
@@ -90,8 +113,23 @@ def evaluate_predictor(predictor, suggest_fn, threshold: float, test_dir: Path =
         }
 
     default = score(threshold)
+    mid = model_id or predictor.name
+    predictions = []
+    for rec in records:
+        suggestion = suggest_fn(rec["probs"], threshold)
+        top1 = suggestion.top3[0]["label"] if suggestion.top3 else ""
+        predictions.append({
+            "model_id": mid,
+            "fichier": rec["row"]["fichier"],
+            "attendu": rec["row"]["categorie"],
+            "predit": suggestion.category,
+            "confiance": suggestion.confidence,
+            "top1": top1,
+            "statut": suggestion.status,
+        })
     return {
         "modele": predictor.name,
+        "model_id": mid,
         "n_images": len(records),
         "accuracy": round(default["accuracy"], 4),
         "taux_auto": round(default["taux_auto"], 4),
@@ -107,6 +145,7 @@ def evaluate_predictor(predictor, suggest_fn, threshold: float, test_dir: Path =
             for t in THRESHOLDS
         ],
         "erreurs": default["erreurs"],
+        "predictions": predictions,
     }
 
 
@@ -118,7 +157,7 @@ def model_size_mb(backend: str, onnx_path: str | None, cache_dir: str | None) ->
 
 
 def evaluate(backend: str, test_dir: Path = TEST_DIR, top_k: int = 5, warmup: int = 3,
-             onnx_path: str | None = None) -> dict:
+             onnx_path: str | None = None, manifest: Path | None = None, model_id: str | None = None) -> dict:
     from app.model import DEFAULT_ONNX_PATH
 
     settings = get_settings()
@@ -126,7 +165,8 @@ def evaluate(backend: str, test_dir: Path = TEST_DIR, top_k: int = 5, warmup: in
     predictor = load_predictor(backend, cache_dir=settings.model_cache_dir, hf_token=settings.hf_token,
                                onnx_path=onnx_path)
     res = evaluate_predictor(
-        predictor, lambda p, t: suggest(p, threshold=t, top_k=top_k), settings.confidence_threshold, test_dir, warmup
+        predictor, lambda p, t: suggest(p, threshold=t, top_k=top_k), settings.confidence_threshold, test_dir, warmup,
+        manifest=manifest, model_id=model_id,
     )
     res.update({"backend": backend, "top_k": top_k,
                 "taille_modele_mo": model_size_mb(backend, onnx_path, settings.model_cache_dir)})
@@ -164,18 +204,27 @@ def main() -> None:
     ap.add_argument("--test-dir", type=Path, default=TEST_DIR)
     ap.add_argument("--top-k", type=int, default=get_settings().top_k)
     ap.add_argument("--onnx-path", default=None, help="modèle ONNX à évaluer (backend onnx)")
+    ap.add_argument("--manifest", type=Path, default=None,
+                    help="CSV d'étiquettes (défaut : <test-dir>/manifest.csv), ex. data/test_set/focus_manifest.csv")
+    ap.add_argument("--model-id", default=None, help="identifiant écrit dans le JSONL (défaut : nom du prédicteur)")
+    ap.add_argument("--predictions", type=Path, default=None, help="JSONL des prédictions par image")
     ap.add_argument("--out", type=Path, default=None, help="fichier JSON de résultats")
     ap.add_argument("--mlflow", action="store_true", help="journalise le run dans MLflow")
     ap.add_argument("--tracking-uri", default=os.getenv("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db"))
     args = ap.parse_args()
 
-    res = evaluate(args.backend, args.test_dir, args.top_k, onnx_path=args.onnx_path)
+    res = evaluate(args.backend, args.test_dir, args.top_k, onnx_path=args.onnx_path,
+                   manifest=args.manifest, model_id=args.model_id)
+    predictions = res.pop("predictions", [])
     summary = {k: v for k, v in res.items() if k != "erreurs"}
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     print(f"\n{len(res['erreurs'])} erreurs (détail dans --out)")
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(res, ensure_ascii=False, indent=2), encoding="utf-8")
+    if args.predictions:
+        write_predictions(args.predictions, predictions)
+        print(f"Prédictions {len(predictions)} -> {args.predictions}")
     if args.mlflow:
         run_id = log_to_mlflow(res, args.tracking_uri)
         print(f"Run MLflow {run_id} -> {args.tracking_uri}")

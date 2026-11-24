@@ -17,7 +17,7 @@ from typing import Any, Generator
 import spaces  # avant tout import CUDA / torch
 import gradio as gr
 
-from distill_student import DistillConfig, dry_run, run_export, train
+from distill_student import STUDENT_ID, TEACHER_ID, DistillConfig, dry_run, run_export, train
 
 ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
@@ -289,7 +289,7 @@ def build_ui() -> gr.Blocks:
             gr.Markdown(
                 f"""
 # MarketPlace Ynov — Distillation KD
-Teacher `microsoft/resnet-50` → student `facebook/mobilenet_v3_small` sur **ZeroGPU**.
+Teacher `{TEACHER_ID}` → student `{STUDENT_ID}` (timm) sur **ZeroGPU**.
 
 Budget recommandé : **≤ 35 min** / session (quota Academia/PRO ≈ **40 min/jour**).  
 API Azure (prod ONNX CPU) : [{AZURE_API}]({AZURE_API})

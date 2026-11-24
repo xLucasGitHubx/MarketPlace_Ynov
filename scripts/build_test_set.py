@@ -13,6 +13,7 @@ Les photos réelles de Lucas pourront s'ajouter dans data/test_set/real/<categor
 Sortie : data/test_set/<slug>/<fichier>.jpg (non versionné) + data/test_set/manifest.csv (versionné).
 
 Usage : python scripts/build_test_set.py [--per-category 20] [--caltech PATH_PARQUET]
+         python scripts/build_test_set.py --focus
 """
 
 from __future__ import annotations
@@ -21,6 +22,7 @@ import argparse
 import csv
 import io
 import random
+import sys
 import unicodedata
 import urllib.error
 import urllib.request
@@ -102,6 +104,12 @@ def round_robin(pools: list[list], n: int, rng: random.Random, load) -> list:
 
 
 def main() -> None:
+    if "--focus" in sys.argv:
+        sys.argv = [arg for arg in sys.argv if arg != "--focus"]
+        import build_focus_set
+
+        raise SystemExit(build_focus_set.main())
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--per-category", type=int, default=20)
     ap.add_argument("--caltech", type=Path, default=None, help="parquet Caltech-256 déjà téléchargé")

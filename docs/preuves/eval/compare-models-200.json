@@ -1,0 +1,907 @@
+{
+  "seuil": 0.6,
+  "logique": "Catégorie et confiance issues de app.business.suggest (top-k cumulé). Statut auto recalculé ici : confiance >= seuil. Part d'erreurs confiantes : confiance > seuil.",
+  "manifest": "data\\test_set\\manifest.csv",
+  "n_manifest": 200,
+  "modeles": {
+    "resnet50-onnx-int8": {
+      "n": 200,
+      "accuracy": 0.685,
+      "taux_auto": null,
+      "precision_auto": null,
+      "confiance_connue": 63,
+      "origine": "docs/preuves/eval/eval-onnx-int8-static.json",
+      "par_categorie": {
+        "Autre": {
+          "n": 20,
+          "accuracy": 0.7,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 6
+        },
+        "Bricolage et jardin": {
+          "n": 20,
+          "accuracy": 0.6,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 8
+        },
+        "Jeux et jouets": {
+          "n": 20,
+          "accuracy": 0.2,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 16
+        },
+        "Livres et musique": {
+          "n": 20,
+          "accuracy": 0.8,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 4
+        },
+        "Maison et meubles": {
+          "n": 20,
+          "accuracy": 0.85,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 3
+        },
+        "Sport et loisirs": {
+          "n": 20,
+          "accuracy": 0.55,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 9
+        },
+        "Véhicules et pièces": {
+          "n": 20,
+          "accuracy": 0.95,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 1
+        },
+        "Vêtements et accessoires": {
+          "n": 20,
+          "accuracy": 0.8,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 4
+        },
+        "Électroménager": {
+          "n": 20,
+          "accuracy": 0.55,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 9
+        },
+        "Électronique": {
+          "n": 20,
+          "accuracy": 0.85,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 3
+        }
+      },
+      "categories_focales": {
+        "Véhicules et pièces": {
+          "n": 20,
+          "accuracy": 0.95,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 1
+        },
+        "Jeux et jouets": {
+          "n": 20,
+          "accuracy": 0.2,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 16
+        },
+        "Électroménager": {
+          "n": 20,
+          "accuracy": 0.55,
+          "taux_auto": null,
+          "precision_auto": null,
+          "confiance_connue": 9
+        }
+      },
+      "matrice_confusion": {
+        "labels": [
+          "Électronique",
+          "Maison et meubles",
+          "Électroménager",
+          "Vêtements et accessoires",
+          "Sport et loisirs",
+          "Jeux et jouets",
+          "Véhicules et pièces",
+          "Bricolage et jardin",
+          "Livres et musique",
+          "Autre"
+        ],
+        "lignes_attendu": {
+          "Électronique": {
+            "Électronique": 17,
+            "Maison et meubles": 0,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 1,
+            "Livres et musique": 0,
+            "Autre": 2
+          },
+          "Maison et meubles": {
+            "Électronique": 0,
+            "Maison et meubles": 17,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 1,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 2,
+            "Livres et musique": 0,
+            "Autre": 0
+          },
+          "Électroménager": {
+            "Électronique": 3,
+            "Maison et meubles": 4,
+            "Électroménager": 11,
+            "Vêtements et accessoires": 1,
+            "Sport et loisirs": 1,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 0,
+            "Autre": 0
+          },
+          "Vêtements et accessoires": {
+            "Électronique": 0,
+            "Maison et meubles": 3,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 16,
+            "Sport et loisirs": 1,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 0,
+            "Autre": 0
+          },
+          "Sport et loisirs": {
+            "Électronique": 0,
+            "Maison et meubles": 3,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 1,
+            "Sport et loisirs": 11,
+            "Jeux et jouets": 1,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 2,
+            "Autre": 2
+          },
+          "Jeux et jouets": {
+            "Électronique": 1,
+            "Maison et meubles": 5,
+            "Électroménager": 1,
+            "Vêtements et accessoires": 2,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 4,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 1,
+            "Livres et musique": 4,
+            "Autre": 2
+          },
+          "Véhicules et pièces": {
+            "Électronique": 0,
+            "Maison et meubles": 0,
+            "Électroménager": 1,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 19,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 0,
+            "Autre": 0
+          },
+          "Bricolage et jardin": {
+            "Électronique": 1,
+            "Maison et meubles": 2,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 2,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 12,
+            "Livres et musique": 1,
+            "Autre": 2
+          },
+          "Livres et musique": {
+            "Électronique": 1,
+            "Maison et meubles": 0,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 2,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 1,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 16,
+            "Autre": 0
+          },
+          "Autre": {
+            "Électronique": 0,
+            "Maison et meubles": 3,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 2,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 1,
+            "Autre": 14
+          }
+        }
+      },
+      "erreurs_confiantes": {
+        "seuil": 0.6,
+        "comparaison": "confiance > seuil",
+        "n_erreurs": 63,
+        "n_erreurs_confiance_gt_seuil": 35,
+        "part": 0.5556,
+        "par_categorie": {
+          "Véhicules et pièces": {
+            "n_erreurs": 1,
+            "n_erreurs_confiance_gt_seuil": 1,
+            "part": 1.0
+          },
+          "Jeux et jouets": {
+            "n_erreurs": 16,
+            "n_erreurs_confiance_gt_seuil": 11,
+            "part": 0.6875
+          },
+          "Électroménager": {
+            "n_erreurs": 9,
+            "n_erreurs_confiance_gt_seuil": 7,
+            "part": 0.7778
+          }
+        }
+      },
+      "manquants": [],
+      "note": "Pas de ré-inférence : models/onnx/resnet50-int8-static.onnx absent. Catégorie reconstruite depuis eval-onnx-int8-static.json (erreur explicite, sinon attendu). Confiance et top1 seulement sur les 63 erreurs, donc taux_auto non recalculé. Chiffres historiques du même fichier : accuracy 0,685, taux_auto 0,78, precision_auto 0,7756, p50 21,5 ms."
+    },
+    "efficientnet-b0-onnx-int8": {
+      "n": 200,
+      "accuracy": 0.635,
+      "taux_auto": 0.445,
+      "precision_auto": 0.8876,
+      "par_categorie": {
+        "Autre": {
+          "n": 20,
+          "accuracy": 0.7,
+          "taux_auto": 0.3,
+          "precision_auto": 1.0
+        },
+        "Bricolage et jardin": {
+          "n": 20,
+          "accuracy": 0.35,
+          "taux_auto": 0.15,
+          "precision_auto": 0.6667
+        },
+        "Jeux et jouets": {
+          "n": 20,
+          "accuracy": 0.25,
+          "taux_auto": 0.25,
+          "precision_auto": 0.4
+        },
+        "Livres et musique": {
+          "n": 20,
+          "accuracy": 0.65,
+          "taux_auto": 0.45,
+          "precision_auto": 1.0
+        },
+        "Maison et meubles": {
+          "n": 20,
+          "accuracy": 0.9,
+          "taux_auto": 0.75,
+          "precision_auto": 1.0
+        },
+        "Sport et loisirs": {
+          "n": 20,
+          "accuracy": 0.5,
+          "taux_auto": 0.5,
+          "precision_auto": 0.8
+        },
+        "Véhicules et pièces": {
+          "n": 20,
+          "accuracy": 0.9,
+          "taux_auto": 0.55,
+          "precision_auto": 0.9091
+        },
+        "Vêtements et accessoires": {
+          "n": 20,
+          "accuracy": 0.8,
+          "taux_auto": 0.4,
+          "precision_auto": 1.0
+        },
+        "Électroménager": {
+          "n": 20,
+          "accuracy": 0.5,
+          "taux_auto": 0.45,
+          "precision_auto": 0.6667
+        },
+        "Électronique": {
+          "n": 20,
+          "accuracy": 0.8,
+          "taux_auto": 0.65,
+          "precision_auto": 1.0
+        }
+      },
+      "categories_focales": {
+        "Véhicules et pièces": {
+          "n": 20,
+          "accuracy": 0.9,
+          "taux_auto": 0.55,
+          "precision_auto": 0.9091
+        },
+        "Jeux et jouets": {
+          "n": 20,
+          "accuracy": 0.25,
+          "taux_auto": 0.25,
+          "precision_auto": 0.4
+        },
+        "Électroménager": {
+          "n": 20,
+          "accuracy": 0.5,
+          "taux_auto": 0.45,
+          "precision_auto": 0.6667
+        }
+      },
+      "matrice_confusion": {
+        "labels": [
+          "Électronique",
+          "Maison et meubles",
+          "Électroménager",
+          "Vêtements et accessoires",
+          "Sport et loisirs",
+          "Jeux et jouets",
+          "Véhicules et pièces",
+          "Bricolage et jardin",
+          "Livres et musique",
+          "Autre"
+        ],
+        "lignes_attendu": {
+          "Électronique": {
+            "Électronique": 16,
+            "Maison et meubles": 1,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 2,
+            "Livres et musique": 0,
+            "Autre": 1
+          },
+          "Maison et meubles": {
+            "Électronique": 0,
+            "Maison et meubles": 18,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 1,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 1,
+            "Livres et musique": 0,
+            "Autre": 0
+          },
+          "Électroménager": {
+            "Électronique": 1,
+            "Maison et meubles": 4,
+            "Électroménager": 10,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 2,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 1,
+            "Livres et musique": 0,
+            "Autre": 2
+          },
+          "Vêtements et accessoires": {
+            "Électronique": 0,
+            "Maison et meubles": 1,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 16,
+            "Sport et loisirs": 1,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 1,
+            "Livres et musique": 0,
+            "Autre": 1
+          },
+          "Sport et loisirs": {
+            "Électronique": 0,
+            "Maison et meubles": 4,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 3,
+            "Sport et loisirs": 10,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 2,
+            "Autre": 1
+          },
+          "Jeux et jouets": {
+            "Électronique": 0,
+            "Maison et meubles": 3,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 3,
+            "Sport et loisirs": 1,
+            "Jeux et jouets": 5,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 3,
+            "Livres et musique": 3,
+            "Autre": 2
+          },
+          "Véhicules et pièces": {
+            "Électronique": 0,
+            "Maison et meubles": 1,
+            "Électroménager": 1,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 18,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 0,
+            "Autre": 0
+          },
+          "Bricolage et jardin": {
+            "Électronique": 1,
+            "Maison et meubles": 4,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 1,
+            "Sport et loisirs": 1,
+            "Jeux et jouets": 1,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 7,
+            "Livres et musique": 1,
+            "Autre": 4
+          },
+          "Livres et musique": {
+            "Électronique": 0,
+            "Maison et meubles": 2,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 2,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 1,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 13,
+            "Autre": 2
+          },
+          "Autre": {
+            "Électronique": 0,
+            "Maison et meubles": 3,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 1,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 1,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 1,
+            "Autre": 14
+          }
+        }
+      },
+      "erreurs_confiantes": {
+        "seuil": 0.6,
+        "comparaison": "confiance > seuil",
+        "n_erreurs": 73,
+        "n_erreurs_confiance_gt_seuil": 10,
+        "part": 0.137,
+        "par_categorie": {
+          "Véhicules et pièces": {
+            "n_erreurs": 2,
+            "n_erreurs_confiance_gt_seuil": 1,
+            "part": 0.5
+          },
+          "Jeux et jouets": {
+            "n_erreurs": 15,
+            "n_erreurs_confiance_gt_seuil": 3,
+            "part": 0.2
+          },
+          "Électroménager": {
+            "n_erreurs": 10,
+            "n_erreurs_confiance_gt_seuil": 3,
+            "part": 0.3
+          }
+        }
+      },
+      "manquants": []
+    },
+    "clip-vit-b32": {
+      "n": 200,
+      "accuracy": 0.765,
+      "taux_auto": 0.675,
+      "precision_auto": 0.8889,
+      "par_categorie": {
+        "Autre": {
+          "n": 20,
+          "accuracy": 0.75,
+          "taux_auto": 0.75,
+          "precision_auto": 0.7333
+        },
+        "Bricolage et jardin": {
+          "n": 20,
+          "accuracy": 0.45,
+          "taux_auto": 0.4,
+          "precision_auto": 0.625
+        },
+        "Jeux et jouets": {
+          "n": 20,
+          "accuracy": 0.9,
+          "taux_auto": 0.65,
+          "precision_auto": 1.0
+        },
+        "Livres et musique": {
+          "n": 20,
+          "accuracy": 0.7,
+          "taux_auto": 0.7,
+          "precision_auto": 0.9286
+        },
+        "Maison et meubles": {
+          "n": 20,
+          "accuracy": 0.75,
+          "taux_auto": 0.55,
+          "precision_auto": 1.0
+        },
+        "Sport et loisirs": {
+          "n": 20,
+          "accuracy": 0.75,
+          "taux_auto": 0.7,
+          "precision_auto": 0.7857
+        },
+        "Véhicules et pièces": {
+          "n": 20,
+          "accuracy": 0.8,
+          "taux_auto": 0.7,
+          "precision_auto": 0.9286
+        },
+        "Vêtements et accessoires": {
+          "n": 20,
+          "accuracy": 0.85,
+          "taux_auto": 0.65,
+          "precision_auto": 0.9231
+        },
+        "Électroménager": {
+          "n": 20,
+          "accuracy": 0.85,
+          "taux_auto": 0.9,
+          "precision_auto": 0.8889
+        },
+        "Électronique": {
+          "n": 20,
+          "accuracy": 0.85,
+          "taux_auto": 0.75,
+          "precision_auto": 1.0
+        }
+      },
+      "categories_focales": {
+        "Véhicules et pièces": {
+          "n": 20,
+          "accuracy": 0.8,
+          "taux_auto": 0.7,
+          "precision_auto": 0.9286
+        },
+        "Jeux et jouets": {
+          "n": 20,
+          "accuracy": 0.9,
+          "taux_auto": 0.65,
+          "precision_auto": 1.0
+        },
+        "Électroménager": {
+          "n": 20,
+          "accuracy": 0.85,
+          "taux_auto": 0.9,
+          "precision_auto": 0.8889
+        }
+      },
+      "matrice_confusion": {
+        "labels": [
+          "Électronique",
+          "Maison et meubles",
+          "Électroménager",
+          "Vêtements et accessoires",
+          "Sport et loisirs",
+          "Jeux et jouets",
+          "Véhicules et pièces",
+          "Bricolage et jardin",
+          "Livres et musique",
+          "Autre"
+        ],
+        "lignes_attendu": {
+          "Électronique": {
+            "Électronique": 17,
+            "Maison et meubles": 1,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 2,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 0,
+            "Autre": 0
+          },
+          "Maison et meubles": {
+            "Électronique": 0,
+            "Maison et meubles": 15,
+            "Électroménager": 1,
+            "Vêtements et accessoires": 2,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 1,
+            "Livres et musique": 1,
+            "Autre": 0
+          },
+          "Électroménager": {
+            "Électronique": 0,
+            "Maison et meubles": 2,
+            "Électroménager": 17,
+            "Vêtements et accessoires": 1,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 0,
+            "Autre": 0
+          },
+          "Vêtements et accessoires": {
+            "Électronique": 1,
+            "Maison et meubles": 0,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 17,
+            "Sport et loisirs": 1,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 0,
+            "Autre": 1
+          },
+          "Sport et loisirs": {
+            "Électronique": 0,
+            "Maison et meubles": 0,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 15,
+            "Jeux et jouets": 2,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 1,
+            "Livres et musique": 1,
+            "Autre": 1
+          },
+          "Jeux et jouets": {
+            "Électronique": 0,
+            "Maison et meubles": 0,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 18,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 2,
+            "Autre": 0
+          },
+          "Véhicules et pièces": {
+            "Électronique": 0,
+            "Maison et meubles": 0,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 4,
+            "Jeux et jouets": 0,
+            "Véhicules et pièces": 16,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 0,
+            "Autre": 0
+          },
+          "Bricolage et jardin": {
+            "Électronique": 0,
+            "Maison et meubles": 2,
+            "Électroménager": 2,
+            "Vêtements et accessoires": 0,
+            "Sport et loisirs": 3,
+            "Jeux et jouets": 1,
+            "Véhicules et pièces": 1,
+            "Bricolage et jardin": 9,
+            "Livres et musique": 0,
+            "Autre": 2
+          },
+          "Livres et musique": {
+            "Électronique": 1,
+            "Maison et meubles": 1,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 1,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 2,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 1,
+            "Livres et musique": 14,
+            "Autre": 0
+          },
+          "Autre": {
+            "Électronique": 0,
+            "Maison et meubles": 2,
+            "Électroménager": 0,
+            "Vêtements et accessoires": 2,
+            "Sport et loisirs": 0,
+            "Jeux et jouets": 1,
+            "Véhicules et pièces": 0,
+            "Bricolage et jardin": 0,
+            "Livres et musique": 0,
+            "Autre": 15
+          }
+        }
+      },
+      "erreurs_confiantes": {
+        "seuil": 0.6,
+        "comparaison": "confiance > seuil",
+        "n_erreurs": 47,
+        "n_erreurs_confiance_gt_seuil": 15,
+        "part": 0.3191,
+        "par_categorie": {
+          "Véhicules et pièces": {
+            "n_erreurs": 4,
+            "n_erreurs_confiance_gt_seuil": 1,
+            "part": 0.25
+          },
+          "Jeux et jouets": {
+            "n_erreurs": 2,
+            "n_erreurs_confiance_gt_seuil": 0,
+            "part": 0.0
+          },
+          "Électroménager": {
+            "n_erreurs": 3,
+            "n_erreurs_confiance_gt_seuil": 2,
+            "part": 0.6667
+          }
+        }
+      },
+      "manquants": []
+    }
+  },
+  "accord": [
+    {
+      "modele_a": "clip-vit-b32",
+      "modele_b": "efficientnet-b0-onnx-int8",
+      "global": {
+        "n": 200,
+        "meme_categorie": 114,
+        "part_meme_categorie": 0.57,
+        "les_deux_faux": 26,
+        "part_les_deux_faux": 0.13,
+        "desaccord": 86,
+        "part_desaccord": 0.43
+      },
+      "par_categorie": {
+        "Véhicules et pièces": {
+          "n": 20,
+          "meme_categorie": 14,
+          "part_meme_categorie": 0.7,
+          "les_deux_faux": 0,
+          "part_les_deux_faux": 0.0,
+          "desaccord": 6,
+          "part_desaccord": 0.3
+        },
+        "Jeux et jouets": {
+          "n": 20,
+          "meme_categorie": 5,
+          "part_meme_categorie": 0.25,
+          "les_deux_faux": 2,
+          "part_les_deux_faux": 0.1,
+          "desaccord": 15,
+          "part_desaccord": 0.75
+        },
+        "Électroménager": {
+          "n": 20,
+          "meme_categorie": 11,
+          "part_meme_categorie": 0.55,
+          "les_deux_faux": 3,
+          "part_les_deux_faux": 0.15,
+          "desaccord": 9,
+          "part_desaccord": 0.45
+        }
+      }
+    },
+    {
+      "modele_a": "clip-vit-b32",
+      "modele_b": "resnet50-onnx-int8",
+      "global": {
+        "n": 200,
+        "meme_categorie": 121,
+        "part_meme_categorie": 0.605,
+        "les_deux_faux": 23,
+        "part_les_deux_faux": 0.115,
+        "desaccord": 79,
+        "part_desaccord": 0.395
+      },
+      "par_categorie": {
+        "Véhicules et pièces": {
+          "n": 20,
+          "meme_categorie": 15,
+          "part_meme_categorie": 0.75,
+          "les_deux_faux": 0,
+          "part_les_deux_faux": 0.0,
+          "desaccord": 5,
+          "part_desaccord": 0.25
+        },
+        "Jeux et jouets": {
+          "n": 20,
+          "meme_categorie": 4,
+          "part_meme_categorie": 0.2,
+          "les_deux_faux": 2,
+          "part_les_deux_faux": 0.1,
+          "desaccord": 16,
+          "part_desaccord": 0.8
+        },
+        "Électroménager": {
+          "n": 20,
+          "meme_categorie": 12,
+          "part_meme_categorie": 0.6,
+          "les_deux_faux": 3,
+          "part_les_deux_faux": 0.15,
+          "desaccord": 8,
+          "part_desaccord": 0.4
+        }
+      }
+    },
+    {
+      "modele_a": "efficientnet-b0-onnx-int8",
+      "modele_b": "resnet50-onnx-int8",
+      "global": {
+        "n": 200,
+        "meme_categorie": 147,
+        "part_meme_categorie": 0.735,
+        "les_deux_faux": 52,
+        "part_les_deux_faux": 0.26,
+        "desaccord": 53,
+        "part_desaccord": 0.265
+      },
+      "par_categorie": {
+        "Véhicules et pièces": {
+          "n": 20,
+          "meme_categorie": 19,
+          "part_meme_categorie": 0.95,
+          "les_deux_faux": 1,
+          "part_les_deux_faux": 0.05,
+          "desaccord": 1,
+          "part_desaccord": 0.05
+        },
+        "Jeux et jouets": {
+          "n": 20,
+          "meme_categorie": 10,
+          "part_meme_categorie": 0.5,
+          "les_deux_faux": 15,
+          "part_les_deux_faux": 0.75,
+          "desaccord": 10,
+          "part_desaccord": 0.5
+        },
+        "Électroménager": {
+          "n": 20,
+          "meme_categorie": 14,
+          "part_meme_categorie": 0.7,
+          "les_deux_faux": 8,
+          "part_les_deux_faux": 0.4,
+          "desaccord": 6,
+          "part_desaccord": 0.3
+        }
+      }
+    }
+  ],
+  "mlflow": "aucun serveur local (http://127.0.0.1:5000 sans réponse) ; le JSON est la preuve",
+  "jeu_focal": "non exécuté : data/test_set/focus_manifest.csv absent",
+  "relance_focus": [
+    "python scripts/evaluate.py --backend onnx --onnx-path models/onnx/efficientnet-b0-int8-static.onnx --manifest data/test_set/focus_manifest.csv --model-id efficientnet-b0-onnx-int8 --out docs/preuves/eval/eval-efficientnet-b0-int8-static-focus.json --predictions docs/preuves/eval/preds-efficientnet-b0-int8-focus.jsonl",
+    "python scripts/benchmark_clip.py --vocab generique --threshold 0.6 --cache-dir models/hf --manifest data/test_set/focus_manifest.csv --model-id clip-vit-b32 --out docs/preuves/eval/eval-clip-vocab-generique-focus.json --predictions docs/preuves/eval/preds-clip-vit-b32-generique-focus.jsonl",
+    "python scripts/evaluate.py --backend onnx --onnx-path models/onnx/resnet50-int8-static.onnx --manifest data/test_set/focus_manifest.csv --model-id resnet50-onnx-int8 --out docs/preuves/eval/eval-resnet50-int8-static-focus.json --predictions docs/preuves/eval/preds-resnet50-int8-focus.jsonl",
+    "python scripts/compare_models.py --manifest data/test_set/focus_manifest.csv --threshold 0.6 --predictions docs/preuves/eval/preds-efficientnet-b0-int8-focus.jsonl docs/preuves/eval/preds-clip-vit-b32-generique-focus.jsonl docs/preuves/eval/preds-resnet50-int8-focus.jsonl --out docs/preuves/eval/compare-models-focus.json"
+  ]
+}

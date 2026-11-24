@@ -1,0 +1,584 @@
+{
+  "modele": "clip-vit-base-patch32-zeroshot-pytorch-fp32-generique",
+  "model_id": "clip-vit-b32",
+  "n_images": 200,
+  "accuracy": 0.625,
+  "taux_auto": 0.52,
+  "precision_auto": 0.8846,
+  "seuil": 0.6,
+  "latence_p50_ms": 53.3,
+  "latence_p95_ms": 82.6,
+  "latence_moy_ms": 56.4,
+  "par_categorie": {
+    "Jeux et jouets": 0.81,
+    "Véhicules et pièces": 0.44
+  },
+  "balayage_seuil": [
+    {
+      "seuil": 0.3,
+      "taux_auto": 0.96,
+      "precision_auto": 0.6406
+    },
+    {
+      "seuil": 0.4,
+      "taux_auto": 0.81,
+      "precision_auto": 0.6975
+    },
+    {
+      "seuil": 0.5,
+      "taux_auto": 0.63,
+      "precision_auto": 0.8254
+    },
+    {
+      "seuil": 0.6,
+      "taux_auto": 0.52,
+      "precision_auto": 0.8846
+    },
+    {
+      "seuil": 0.7,
+      "taux_auto": 0.435,
+      "precision_auto": 0.9425
+    },
+    {
+      "seuil": 0.8,
+      "taux_auto": 0.35,
+      "precision_auto": 0.9714
+    },
+    {
+      "seuil": 0.9,
+      "taux_auto": 0.24,
+      "precision_auto": 0.9792
+    }
+  ],
+  "erreurs": [
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_747.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.4397,
+      "top1": "piece of clothing"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_2921.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4016,
+      "top1": "sports equipment"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_2346.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4032,
+      "top1": "sports equipment"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_2180.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.4863,
+      "top1": "fashion accessory"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_playing-card_1725.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.6863,
+      "top1": "piece of clothing"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_2019.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.3616,
+      "top1": "fashion accessory"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_1660.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.5646,
+      "top1": "kitchenware"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_1967.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.7288,
+      "top1": "fashion accessory"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_2463.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.2586,
+      "top1": "kitchenware"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_1788.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.9067,
+      "top1": "kitchenware"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_2856.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.8508,
+      "top1": "piece of furniture"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_teddy-bear_2614.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.5135,
+      "top1": "home decoration"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_yo-yo_2720.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Sport et loisirs",
+      "confiance": 0.5603,
+      "top1": "sports equipment"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_chess-board_1108.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.5054,
+      "top1": "piece of furniture"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_teddy-bear_1304.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.4879,
+      "top1": "home decoration"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_teddy-bear_447.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.7175,
+      "top1": "fashion accessory"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_playing-card_1097.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.5161,
+      "top1": "person"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_yo-yo_769.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.4504,
+      "top1": "fashion accessory"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_chess-board_133.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.3253,
+      "top1": "piece of clothing"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2779.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.5626,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_snowmobile_233.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.6039,
+      "top1": "game"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_speed-boat_241.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.308,
+      "top1": "vehicle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_steering-wheel_2125.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Électroménager",
+      "confiance": 0.4792,
+      "top1": "household appliance"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1132.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.3511,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_snowmobile_56.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.5212,
+      "top1": "game"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1952.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.3561,
+      "top1": "sports equipment"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_speed-boat_831.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Maison et meubles",
+      "confiance": 0.333,
+      "top1": "home decoration"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_817.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.3324,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_snowmobile_2073.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.6757,
+      "top1": "game"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2310.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.5887,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_snowmobile_100.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.3537,
+      "top1": "game"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1898.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.5046,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_snowmobile_1403.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.5294,
+      "top1": "game"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2362.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4734,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1316.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4062,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_678.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.3368,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_450.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.451,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_89.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.283,
+      "top1": "vehicle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1268.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4814,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1743.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.4235,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_970.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.3992,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1595.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.2474,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2615.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.719,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2228.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.4522,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_3039.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.3929,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2795.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.3546,
+      "top1": "vehicle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2640.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.3253,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_681.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4559,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1596.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.43,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_804.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4282,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1801.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4472,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_549.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.3546,
+      "top1": "vehicle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1460.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4479,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1395.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.6538,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1957.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.381,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1679.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.4589,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_981.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4145,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1107.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4502,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_5.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.6756,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2814.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.3526,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2825.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.4769,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_21.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.254,
+      "top1": "vehicle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1578.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.3686,
+      "top1": "sports equipment"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2399.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.3352,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1899.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4611,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2215.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.292,
+      "top1": "vehicle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1332.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.3602,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2797.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.6156,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1016.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4139,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2223.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Jeux et jouets",
+      "confiance": 0.2767,
+      "top1": "toy"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_202.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4489,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_698.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.6623,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1760.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4207,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2570.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.33,
+      "top1": "bicycle"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1744.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4188,
+      "top1": "bicycle"
+    }
+  ],
+  "backend": "clip-pytorch",
+  "top_k": 5,
+  "taille_modele_mo": 577.1,
+  "n_descriptions": 24
+}

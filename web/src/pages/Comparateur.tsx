@@ -9,7 +9,14 @@ import {
   formatMb,
   formatMs,
 } from "@/lib/format";
+import { JuryEval } from "@/components/JuryEval";
 import { metricProvenance, type MetricKind } from "@/lib/provenance";
+
+const PROOF_LABEL: Record<MetricKind, string> = {
+  measured: "mesuré",
+  estimated: "estimé",
+  excluded: "écarté",
+};
 
 function ProvenanceBadge({ modelId }: { modelId: string }) {
   const provenance = metricProvenance(modelId);
@@ -17,7 +24,7 @@ function ProvenanceBadge({ modelId }: { modelId: string }) {
   return (
     <span className="provenance-cell">
       <span className={`provenance provenance-${kind}`}>
-        {kind === "measured" ? "mesuré" : "estimé"}
+        {PROOF_LABEL[kind]}
       </span>
       {provenance.qualifier ? (
         <span className="provenance-sub">{provenance.qualifier}</span>
@@ -68,24 +75,7 @@ export function ComparateurPage() {
         Défaut API&nbsp;: <code translate="no">{defaut || "…"}</code>
       </p>
 
-      <aside className="clip-caveat" role="note" aria-label="Réserve sur CLIP">
-        <p className="clip-caveat-title">
-          CLIP 76,5&nbsp;% ne se lit pas à côté du ResNet 68,5&nbsp;%.
-        </p>
-        <p>
-          CLIP est mesuré en zero-shot, vocabulaire générique, sur Space. Il
-          n’est pas sur Azure. Environ 577&nbsp;Mo&nbsp;: ce n’est pas le modèle
-          de production.
-        </p>
-        <p>
-          EfficientNet, MobileNet et le student restent estimés tant qu’une
-          vraie éval ne dit pas mesuré.
-        </p>
-        <p>
-          Le statut <span translate="no">space_only</span> veut dire garé, pas
-          un oubli : l’inférence Space ne fonctionne pas encore.
-        </p>
-      </aside>
+      <JuryEval />
 
       <p className="page-lead">
         <Link className="inline-link" to="/parcours?etape=mesure&partie=reference">
@@ -133,11 +123,25 @@ export function ComparateurPage() {
                   <td>
                     <StatusBadge status={m.statut} />
                   </td>
-                  <td className="num">{formatAccuracy(m.accuracy)}</td>
-                  <td className="num">{formatMs(m.p50_ms)}</td>
-                  <td className="num">{formatMs(m.p95_ms)}</td>
-                  <td className="num">{formatMb(m.taille_mo)}</td>
-                  <td className="num">{formatCostPerMillion(m.cout_estime_usd_par_million)}</td>
+                  <td className="num">
+                    {metricProvenance(m.id).kind === "excluded"
+                      ? "—"
+                      : formatAccuracy(m.accuracy)}
+                  </td>
+                  <td className="num">
+                    {metricProvenance(m.id).kind === "excluded" ? "—" : formatMs(m.p50_ms)}
+                  </td>
+                  <td className="num">
+                    {metricProvenance(m.id).kind === "excluded" ? "—" : formatMs(m.p95_ms)}
+                  </td>
+                  <td className="num">
+                    {metricProvenance(m.id).kind === "excluded" ? "—" : formatMb(m.taille_mo)}
+                  </td>
+                  <td className="num">
+                    {metricProvenance(m.id).kind === "excluded"
+                      ? "—"
+                      : formatCostPerMillion(m.cout_estime_usd_par_million)}
+                  </td>
                 </tr>
               ))}
               {models.length === 0 ? (
