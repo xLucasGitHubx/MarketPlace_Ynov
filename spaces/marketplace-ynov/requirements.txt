@@ -3,6 +3,8 @@
 torch
 torchvision
 transformers>=4.44,<5
+# Student ImageNet-1k : pas de config transformers, chargé par timm.
+timm
 Pillow>=10
 numpy>=1.26,<3
 pandas>=2.2

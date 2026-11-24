@@ -26,7 +26,7 @@ sys.path.insert(0, str(ROOT))
 import numpy as np  # noqa: E402
 
 from app.business import CategoryMap, ClassInfo, suggest  # noqa: E402
-from scripts.evaluate import TEST_DIR, evaluate_predictor, log_to_mlflow  # noqa: E402
+from scripts.evaluate import TEST_DIR, evaluate_predictor, log_to_mlflow, write_predictions  # noqa: E402
 
 # Catégorie -> [(objet en anglais pour CLIP, titre suggéré en français)]
 VOCABULARY: dict[str, list[tuple[str, str]]] = {
@@ -170,6 +170,11 @@ def main() -> None:
     ap.add_argument("--vocab", choices=["detaille", "generique"], default="detaille")
     ap.add_argument("--threshold", type=float, default=0.6)
     ap.add_argument("--top-k", type=int, default=5)
+    ap.add_argument("--test-dir", type=Path, default=TEST_DIR)
+    ap.add_argument("--manifest", type=Path, default=None,
+                    help="CSV d'étiquettes (défaut : <test-dir>/manifest.csv), ex. data/test_set/focus_manifest.csv")
+    ap.add_argument("--model-id", default=None, help="identifiant écrit dans le JSONL")
+    ap.add_argument("--predictions", type=Path, default=None, help="JSONL des prédictions par image")
     ap.add_argument("--out", type=Path, default=None)
     ap.add_argument("--mlflow", action="store_true")
     ap.add_argument("--tracking-uri", default=os.getenv("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db"))
@@ -178,8 +183,10 @@ def main() -> None:
     cmap = build_category_map(VOCABULARY if args.vocab == "detaille" else VOCABULARY_GENERIC)
     predictor = ClipZeroShotPredictor(args.model, args.cache_dir, cmap)
     res = evaluate_predictor(
-        predictor, lambda p, t: suggest(p, threshold=t, top_k=args.top_k, cmap=cmap), args.threshold, TEST_DIR
+        predictor, lambda p, t: suggest(p, threshold=t, top_k=args.top_k, cmap=cmap), args.threshold,
+        args.test_dir, manifest=args.manifest, model_id=args.model_id,
     )
+    predictions = res.pop("predictions", [])
     model_dir = f"*{args.model.split('/')[-1]}*/**/"
     weights = [w for pat in ("model.safetensors", "pytorch_model.bin")
                for w in sorted(Path(args.cache_dir).rglob(model_dir + pat))
@@ -192,6 +199,9 @@ def main() -> None:
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(res, ensure_ascii=False, indent=2), encoding="utf-8")
+    if args.predictions:
+        write_predictions(args.predictions, predictions)
+        print(f"Prédictions {len(predictions)} -> {args.predictions}")
     if args.mlflow:
         run_id = log_to_mlflow(res, args.tracking_uri, {"n_descriptions": len(cmap.classes),
                                                         "gabarits": len(TEMPLATES), "vocabulaire": args.vocab})

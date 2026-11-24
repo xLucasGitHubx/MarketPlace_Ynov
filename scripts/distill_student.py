@@ -49,9 +49,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 TEACHER_ID = "microsoft/resnet-50"
-# Pas un dépôt public (401 / identifiant inconnu sur le Hub). Ne pas lancer
-# la distillation tant que ce chargeur transformers n'a pas un id réel.
-STUDENT_ID = "facebook/mobilenet_v3_small"
+# Hub public ImageNet-1k. Le config.json n'a pas de model_type transformers :
+# AutoModel échoue. facebook/mobilenet_v3_small n'est pas public (401).
+STUDENT_ID = "timm/mobilenetv3_small_100.lamb_in1k"
+STUDENT_TIMM_NAME = "mobilenetv3_small_100.lamb_in1k"
 CALTECH_URL = "https://huggingface.co/datasets/ilee0022/Caltech-256/resolve/main/data/test-00000-of-00001.parquet"
 
 # Noms alignés sur app/registry.py (CATALOG student-kd-mobilenet-int8)
@@ -167,7 +168,8 @@ def kd_loss(
 
 
 def load_models(cache_dir: str | None, device: str):
-    import torch
+    """Teacher transformers gelé, student timm. Les deux sortent 1000 logits ImageNet-1k."""
+    import timm
     from transformers import AutoModelForImageClassification
 
     teacher = AutoModelForImageClassification.from_pretrained(
@@ -175,10 +177,20 @@ def load_models(cache_dir: str | None, device: str):
     ).to(device).eval()
     for p in teacher.parameters():
         p.requires_grad_(False)
+    n_teacher = int(getattr(teacher.config, "num_labels", 0))
+    if n_teacher != 1000:
+        raise RuntimeError(
+            f"{TEACHER_ID} a {n_teacher} classes, 1000 attendues pour la KL."
+        )
 
-    student = AutoModelForImageClassification.from_pretrained(
-        STUDENT_ID, cache_dir=cache_dir
-    ).to(device)
+    student = timm.create_model(STUDENT_TIMM_NAME, pretrained=True)
+    n_student = int(getattr(student, "num_classes", 0))
+    if n_student != n_teacher:
+        raise RuntimeError(
+            f"{STUDENT_TIMM_NAME} a {n_student} classes, {n_teacher} attendues "
+            f"(même espace de logits que {TEACHER_ID})."
+        )
+    student = student.to(device)
     student.train()
     return teacher, student
 
@@ -229,7 +241,8 @@ def export_student_onnx(
             self.m = m
 
         def forward(self, pixel_values):
-            return self.m(pixel_values=pixel_values).logits
+            # timm renvoie le tenseur de logits, pas un objet transformers.
+            return self.m(pixel_values)
 
     dummy = torch.randn(1, 3, 224, 224)
     torch.onnx.export(
@@ -328,6 +341,16 @@ def dry_run(args: argparse.Namespace, config: DistillConfig) -> None:
         "mode": "dry-run",
         "device_detecte": device,
         "config": asdict(config),
+        "chargement": {
+            "teacher_loader": "transformers",
+            "student_loader": "timm",
+            "student_timm_name": STUDENT_TIMM_NAME,
+            "logits": 1000,
+            "kl_valide": (
+                "ImageNet-1k, 1000 classes, même ordre que "
+                "microsoft/resnet-50 (id2label = descriptions timm)."
+            ),
+        },
         "artefacts_attendus": {
             "checkpoint_last": str(ckpt_dir / "last.pt"),
             "checkpoint_best": str(ckpt_dir / "best.pt"),
@@ -434,7 +457,7 @@ def train(args: argparse.Namespace, config: DistillConfig) -> Path:
             batch = batch.to(device)
             with torch.inference_mode():
                 t_logits = teacher(pixel_values=batch).logits
-            s_logits = student(pixel_values=batch).logits
+            s_logits = student(batch)
             loss, kl, ce = kd_loss(
                 s_logits,
                 t_logits,
@@ -529,7 +552,7 @@ def run_export(args: argparse.Namespace, checkpoint: Path | None) -> None:
         print(f"Poids student chargés depuis {checkpoint}")
     else:
         print(
-            "Attention : aucun checkpoint — export des poids HF pré-entraînés "
+            "Attention : aucun checkpoint — export des poids timm pré-entraînés "
             "(pas encore distillés)."
         )
 

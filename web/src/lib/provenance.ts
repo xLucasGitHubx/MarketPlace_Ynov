@@ -1,4 +1,4 @@
-export type MetricKind = "measured" | "estimated";
+export type MetricKind = "measured" | "estimated" | "excluded";
 
 export interface MetricProvenance {
   kind: MetricKind;
@@ -12,11 +12,11 @@ export interface MetricProvenance {
  * CLIP est mesuré, mais pas sur le même protocole que le ResNet de prod.
  */
 const KNOWN: Record<string, MetricProvenance> = {
-  "resnet50-onnx-int8": { kind: "measured" },
-  "efficientnet-b0-onnx-int8": { kind: "estimated" },
-  "mobilenet-v3-small-onnx-int8": { kind: "estimated" },
-  "student-kd-mobilenet-int8": { kind: "estimated" },
-  "clip-vit-b32": { kind: "measured", qualifier: "Space · zero-shot" },
+  "resnet50-onnx-int8": { kind: "measured", qualifier: "historique it. 4" },
+  "efficientnet-b0-onnx-int8": { kind: "measured", qualifier: "200 photos, ce run" },
+  "mobilenet-v3-small-onnx-int8": { kind: "excluded", qualifier: "pas un résultat" },
+  "student-kd-mobilenet-int8": { kind: "excluded", qualifier: "pas un résultat" },
+  "clip-vit-b32": { kind: "measured", qualifier: "zero-shot, vocab générique" },
 };
 
 export function metricProvenance(modelId: string): MetricProvenance {

@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "generated_at": "2026-11-13T00:00:00Z",
-  "source": "estimated",
+  "generated_at": "2026-11-24T08:57:00Z",
+  "source": "mixed",
   "schema": {
     "accuracy": "float 0–1, accuracy catégorie proxy (200 photos si measured)",
     "p50_ms": "latence inférence p50 (ms)",
@@ -28,13 +28,16 @@
       "notes": "Mesures it.4 (200 photos proxy) — prod référence"
     },
     "efficientnet-b0-onnx-int8": {
-      "accuracy": 0.66,
-      "p50_ms": 10.0,
-      "p95_ms": 13.0,
+      "accuracy": 0.635,
+      "p50_ms": 103.8,
+      "p95_ms": 120.7,
       "size_mb": 5.9,
-      "cout_estime_usd_par_million": 0.82,
-      "metric_source": "estimated",
-      "notes": "Accuracy et latence toujours estimées. Fichier int8 livré : 5,9 Mo. Pas une réévaluation du jeu de test."
+      "cout_estime_usd_par_million": 7.6,
+      "metric_source": "measured",
+      "n_images": 200,
+      "taux_auto": 0.445,
+      "precision_auto": 0.8876,
+      "notes": "Mesuré le 2026-11-24 par evaluate.py sur les 200 photos du manifest proxy (accuracy 63,5 %, seuil 0,6). p50 103,8 ms / p95 120,7 ms : CPU Windows local, session ONNX ORT_ENABLE_BASIC. Cette latence n'est pas le chiffre it. 4 (ResNet 21,5 ms sur 2 vCPU). Le $/M applique la formule catalogue à ce p95 local, donc il n'est pas comparable au 1,8 $ du ResNet Azure."
     },
     "mobilenet-v3-small-onnx-int8": {
       "accuracy": 0.6,

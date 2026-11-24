@@ -1,0 +1,723 @@
+{
+  "modele": "efficientnet-b0-int8-static",
+  "model_id": "efficientnet-b0-onnx-int8",
+  "n_images": 200,
+  "accuracy": 0.525,
+  "taux_auto": 0.445,
+  "precision_auto": 0.8427,
+  "seuil": 0.6,
+  "latence_p50_ms": 23.0,
+  "latence_p95_ms": 26.2,
+  "latence_moy_ms": 23.3,
+  "par_categorie": {
+    "Jeux et jouets": 0.17,
+    "Véhicules et pièces": 0.88
+  },
+  "balayage_seuil": [
+    {
+      "seuil": 0.3,
+      "taux_auto": 0.75,
+      "precision_auto": 0.66
+    },
+    {
+      "seuil": 0.4,
+      "taux_auto": 0.61,
+      "precision_auto": 0.7459
+    },
+    {
+      "seuil": 0.5,
+      "taux_auto": 0.555,
+      "precision_auto": 0.7748
+    },
+    {
+      "seuil": 0.6,
+      "taux_auto": 0.445,
+      "precision_auto": 0.8427
+    },
+    {
+      "seuil": 0.7,
+      "taux_auto": 0.365,
+      "precision_auto": 0.9041
+    },
+    {
+      "seuil": 0.8,
+      "taux_auto": 0.23,
+      "precision_auto": 0.9348
+    },
+    {
+      "seuil": 0.9,
+      "taux_auto": 0.09,
+      "precision_auto": 1.0
+    }
+  ],
+  "erreurs": [
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_747.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.5628,
+      "top1": "handkerchief"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_dice_1238.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.3959,
+      "top1": "Petri dish"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_playing-card_2330.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.7285,
+      "top1": "envelope"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_2921.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Sport et loisirs",
+      "confiance": 0.5481,
+      "top1": "puck"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_1451.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.2838,
+      "top1": "handkerchief"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_dice_790.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.6262,
+      "top1": "rubber eraser"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_playing-card_53.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.2399,
+      "top1": "packet"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_2346.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.1661,
+      "top1": "croquet ball"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_pez-dispenser_1172.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.098,
+      "top1": "paper towel"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_1634.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Bricolage et jardin",
+      "confiance": 0.1511,
+      "top1": "screw"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_playing-card_340.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.323,
+      "top1": "chest"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_2180.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.2083,
+      "top1": "necklace"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_pez-dispenser_1315.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.2983,
+      "top1": "lighter"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_teddy-bear_1977.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.3493,
+      "top1": "hen-of-the-woods"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_2161.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.0792,
+      "top1": "rubber eraser"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_playing-card_1725.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.4723,
+      "top1": "prayer rug"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_2019.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.3269,
+      "top1": "Petri dish"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_1514.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.1143,
+      "top1": "doormat"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_playing-card_2203.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.2228,
+      "top1": "thresher"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_1892.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.2282,
+      "top1": "bolo tie"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_2558.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.4775,
+      "top1": "tray"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_1660.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.2317,
+      "top1": "whiskey jug"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_1413.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.0747,
+      "top1": "bulletproof vest"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_1967.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Sport et loisirs",
+      "confiance": 0.353,
+      "top1": "magnetic compass"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_teddy-bear_600.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.2153,
+      "top1": "teddy"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_2617.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.2315,
+      "top1": "solar dish"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_2463.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.3072,
+      "top1": "face powder"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_teddy-bear_19.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.1934,
+      "top1": "teddy"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_2430.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.7023,
+      "top1": "doormat"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_1788.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.2783,
+      "top1": "gong"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_834.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.813,
+      "top1": "tray"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_yo-yo_2093.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Sport et loisirs",
+      "confiance": 0.538,
+      "top1": "magnetic compass"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_474.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.7937,
+      "top1": "doormat"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_2856.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.508,
+      "top1": "pedestal"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_test_chess-board_69.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.2753,
+      "top1": "abacus"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_dice_2549.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.6284,
+      "top1": "Windsor tie"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_playing-card_363.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.3258,
+      "top1": "binder"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_yo-yo_2720.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.1811,
+      "top1": "bottlecap"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_pez-dispenser_609.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.1316,
+      "top1": "scabbard"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_chess-board_1108.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.3706,
+      "top1": "window shade"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_dice_1266.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.3831,
+      "top1": "soap dispenser"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_playing-card_1159.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.2192,
+      "top1": "ocarina"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_yo-yo_2723.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Sport et loisirs",
+      "confiance": 0.511,
+      "top1": "puck"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_pez-dispenser_2398.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.5318,
+      "top1": "pajama"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_teddy-bear_1304.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.302,
+      "top1": "dalmatian"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_dice_534.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.2646,
+      "top1": "tray"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_playing-card_2252.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.551,
+      "top1": "comic book"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_yo-yo_2405.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Sport et loisirs",
+      "confiance": 0.3021,
+      "top1": "puck"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_pez-dispenser_140.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.3763,
+      "top1": "packet"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_chess-board_1350.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Bricolage et jardin",
+      "confiance": 0.3916,
+      "top1": "plane"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_dice_2713.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.2279,
+      "top1": "hair slide"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_playing-card_1097.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.1419,
+      "top1": "jack-o'-lantern"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_yo-yo_884.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.2324,
+      "top1": "hair slide"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_pez-dispenser_2594.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.3178,
+      "top1": "lighter"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_chess-board_892.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.2477,
+      "top1": "quilt"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_dice_2301.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.6164,
+      "top1": "rubber eraser"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_playing-card_1858.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.348,
+      "top1": "packet"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_yo-yo_769.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.1807,
+      "top1": "gong"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_pez-dispenser_2026.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.5235,
+      "top1": "goblet"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_playing-card_1074.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.2737,
+      "top1": "prayer rug"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_yo-yo_1375.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.5015,
+      "top1": "bottlecap"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_pez-dispenser_2214.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Bricolage et jardin",
+      "confiance": 0.2368,
+      "top1": "plunger"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_chess-board_1151.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.7023,
+      "top1": "doormat"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_playing-card_1941.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.4155,
+      "top1": "comic book"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_yo-yo_2574.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.3728,
+      "top1": "spindle"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_pez-dispenser_2390.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.6383,
+      "top1": "paper towel"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_chess-board_133.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.235,
+      "top1": "velvet"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_playing-card_603.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.3434,
+      "top1": "book jacket"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_yo-yo_2008.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Sport et loisirs",
+      "confiance": 0.6497,
+      "top1": "tennis ball"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_pez-dispenser_2396.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Sport et loisirs",
+      "confiance": 0.0681,
+      "top1": "whistle"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_chess-board_503.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.3917,
+      "top1": "doormat"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_playing-card_440.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.4478,
+      "top1": "binder"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_pez-dispenser_1681.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.2031,
+      "top1": "whistle"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_chess-board_907.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.2318,
+      "top1": "cradle"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_playing-card_888.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Électronique",
+      "confiance": 0.1365,
+      "top1": "monitor"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_pez-dispenser_1135.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Vêtements et accessoires",
+      "confiance": 0.285,
+      "top1": "safety pin"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_chess-board_1890.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.3881,
+      "top1": "tray"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_playing-card_715.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Autre",
+      "confiance": 0.1983,
+      "top1": "hotdog"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_pez-dispenser_553.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Livres et musique",
+      "confiance": 0.5071,
+      "top1": "ballpoint"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_validation_pez-dispenser_1546.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.2726,
+      "top1": "carton"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_train0_chess-board_3093.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.8964,
+      "top1": "chest"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_train1_dice_6619.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.4061,
+      "top1": "candle"
+    },
+    {
+      "fichier": "jeux-et-jouets/focus_caltech_train1_playing-card_5762.jpg",
+      "attendu": "Jeux et jouets",
+      "predit": "Maison et meubles",
+      "confiance": 0.3671,
+      "top1": "lighter"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_steering-wheel_2125.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Électroménager",
+      "confiance": 0.5318,
+      "top1": "electric fan"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_steering-wheel_2878.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Bricolage et jardin",
+      "confiance": 0.6,
+      "top1": "hook"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_steering-wheel_2375.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Autre",
+      "confiance": 0.2341,
+      "top1": "shield"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_snowmobile_2073.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Autre",
+      "confiance": 0.2586,
+      "top1": "goose"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_steering-wheel_538.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Électronique",
+      "confiance": 0.8416,
+      "top1": "cassette player"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_steering-wheel_1318.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Électroménager",
+      "confiance": 0.2112,
+      "top1": "electric fan"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_snowmobile_1403.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Autre",
+      "confiance": 0.1454,
+      "top1": "shower cap"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1268.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.6371,
+      "top1": "bicycle-built-for-two"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2797.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Maison et meubles",
+      "confiance": 0.0579,
+      "top1": "plastic bag"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_2223.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Sport et loisirs",
+      "confiance": 0.4051,
+      "top1": "moped"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1277.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Autre",
+      "confiance": 0.172,
+      "top1": "half track"
+    },
+    {
+      "fichier": "vehicules-et-pieces/focus_caltech_test_motorbikes-101_1760.jpg",
+      "attendu": "Véhicules et pièces",
+      "predit": "Autre",
+      "confiance": 0.2697,
+      "top1": "thresher"
+    }
+  ],
+  "backend": "onnx",
+  "top_k": 5,
+  "taille_modele_mo": 5.9
+}

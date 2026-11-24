@@ -15,7 +15,7 @@ Le runtime **prod Azure reste ONNX-only / CPU** ; le Space porte uniquement les 
 | Budget | **≈ 40 minutes GPU / jour** (quota Academia / PRO) |
 | Package repo | `spaces/marketplace-ynov/` |
 | Teacher | `microsoft/resnet-50` (logits ImageNet, gelé) |
-| Student | `facebook/mobilenet_v3_small` |
+| Student | `timm/mobilenetv3_small_100.lamb_in1k` (timm `mobilenetv3_small_100.lamb_in1k`, 1000 logits) |
 | Artefact catalogue | ID API `student-kd-mobilenet-int8` → `student-kd-mobilenet-int8-static.onnx` |
 
 Azure Container Apps ne charge **jamais** PyTorch / transformers pour la prod. Les poids distillés sont exportés en ONNX int8 puis embarqués dans l'image slim.

@@ -87,6 +87,7 @@ Interdit dans l'image Azure : PyTorch, transformers, CUDA, CLIP. Catalogue = COP
 | 2026-11-20 | Diagnostic du notebook formateur intégré à l’étape Mesure du parcours (parties guidées). Chiffres issus des preuves it. 4 / it. 5. Lots 1–16, p99 d’inférence, prétraitement seul, pic CUDA : non mesurés, affichés comme tels. | notebook diagnostiquer_performances |
 | 2026-11-20 | EfficientNet-B0 int8 statique dans `artifacts/onnx/` (ready). Session ONNX = `ORT_ENABLE_BASIC` : `ENABLE_ALL` écrase le QDQ en classe constante. MobileNet et student restent `building`. | catalogue ready |
 | 2026-11-20 | Étape Données : vignettes WebP (~0,5 Mo) des 200 lignes de `data/test_set/manifest.csv`. Les JPEG d’origine restent hors git et hors image. | galerie proxy |
+| 2026-11-24 | Deux protocoles distincts (proxy 200 et jeu focal 100+100). EfficientNet int8 mesuré. Student id timm, toujours `building`. CLIP reste `space_only`. | `docs/preuves/it-eval-jury.md` |
 
 ## Avancement des itérations
 
@@ -110,9 +111,13 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 | Date | Modèle | Accuracy | p50 / p95 CPU | Note |
 | --- | --- | --- | --- | --- |
 | 2026-10-30 | resnet50-onnx-int8-static (prod) | 68,5 % | 21,5 / 28,6 ms | 24,9 Mo, image Docker ≈ 551 Mo |
-| 2026-10-30 | clip-vit-b32 vocab générique | 76,5 % | 83 / 114 ms | Space / bench, pas ACA |
-| 2026-11-13 | catalogue EfficientNet / MobileNet | estimé | voir `catalog_metrics.json` | accuracy non remesurée |
-| 2026-11-20 | efficientnet-b0-int8-static | estimé (0,66) | non remesuré | fichier ~5,9 Mo dans l’image ; accord top-1 7/8 vs fp32 sur la sonde de calibration. MobileNet int8 non livré (0/8). |
+| 2026-10-30 | clip-vit-b32 vocab générique | 76,5 % | 83 / 114 ms | bench local, pas ACA. Relance du 24 nov. : même accuracy, p50 82,6 ms |
+| 2026-11-13 | catalogue EfficientNet / MobileNet / student | graines | voir `catalog_metrics.json` | EfficientNet mesuré le 24 nov. MobileNet (60 %) et student (64 %) restent estimés |
+| 2026-11-20 | efficientnet-b0-int8-static | graine 0,66 (périmée) | non mesurée ce jour-là | sonde top-1 7/8 vs fp32, non rejouée. MobileNet int8 non livré (0/8). Le 0,66 n’est plus le chiffre |
+| 2026-11-24 | efficientnet-b0-int8, proxy 200 | 63,5 % | 103,8 / 120,7 ms | mesuré, CPU Windows, `ORT_ENABLE_BASIC`. Autre banc que le 21,5 ms ResNet |
+| 2026-11-24 | clip-vit-b32 vocab générique, proxy 200 | 76,5 % | 82,6 / 90,0 ms | relance locale, 24 textes. Le catalogue garde le p50 historique 83,0 ms |
+| 2026-11-24 | efficientnet-b0-int8, jeu focal 100+100 | 52,5 % | 23,0 / 26,2 ms | Véhicules 88 %, Jeux 17 %. p50 non comparable au 103,8 ms |
+| 2026-11-24 | clip-vit-b32 générique, jeu focal 100+100 | 62,5 % | 53,3 / 82,6 ms | Véhicules 44 %, Jeux 81 %. Accord EfficientNet 30,5 %. ResNet absent. Le 82,6 ms est le p95 |
 
 ## Pièges connus
 
@@ -129,6 +134,7 @@ Ordre MVP : 1 → 2 → 3 → 6 → 4 → 8 → 5 → 7 → 9.
 - `.env` : pas de commentaire en fin de ligne.
 - PyTorch + `--read-only` → `--tmpfs /tmp` (cible `runtime-pytorch` seulement).
 - `AZURE_RUNTIME=true` : ne charge jamais `space_only` (CLIP).
+- Deux latences EfficientNet int8 : p50 103,8 ms sur les 200 (CPU Windows) et p50 23,0 ms sur le jeu focal. Ne pas les rapprocher du 21,5 ms ResNet (it. 4). CLIP générique : p50 82,6 ms sur les 200 ; sur le focal, p50 53,3 ms et p95 82,6 ms.
 - `python:3.11-slim` ne connaît pas `.webp` : `mimetypes.add_type("image/webp", ".webp")` dans `app/main.py`, sinon les vignettes partent en `text/plain`.
 
 ## Diagnostic à l’oral
@@ -151,7 +157,7 @@ Chemin : **Parcours** → rail it. 4 (ONNX) ou it. 5 (Charge) → étape **Mesur
 | Charge | `charge` | §6.1 | Mesure. Courbe HTTP 1 vCPU, pas les lots du cours |
 | Mémoire | `memoire` | §7, §7.1 | Mesure |
 | Chaîne | `chaine` | §8, §8.1 | Mesure, rappel à Préparation |
-| Référence | `reference` | §9 | Mesure. Lien depuis le Comparateur |
+| Référence | `reference` | §9 | Mesure. Lien vers `/comparateur#jury-eval`. Preuve `docs/preuves/it-eval-jury.md` |
 | Trace | `trace` | §9.1 | Mesure, puis Fiche |
 | À retenir | `retenir` | §10 | Mesure |
 | Questions | `questions` | §11 | Mesure |
@@ -162,9 +168,10 @@ Ne pas confondre p50 inférence 21,5 ms (it. 4, 2 vCPU, `predict_proba`) et p50 
 
 ## Points ouverts
 
-- CLIP ViT-B/32 reste `space_only` parce que l’inférence Space ne fonctionne toujours pas ; ne pas le passer à `ready` ; suivi dédié.
-- Student KD MobileNet reste `building` : `scripts/distill_student.py` cite `facebook/mobilenet_v3_small`, qui n’est pas un dépôt public, et aucune distillation n’a été lancée (pas de checkpoint, pas de faux fichier). Ne pas le passer à `ready` sans un int8 qui prédit vraiment.
-- MobileNetV3-Small reste `building` : le fp32 timm `mobilenetv3_small_100.lamb_in1k` est fidèle, mais l’int8 ORT (QDQ statique et dynamique) fait 0/8 top-1 face à ce fp32. Fichier écarté. Accuracy catalogue toujours estimée.
+- CLIP ViT-B/32 reste `space_only`. L’app du Space est une distillation ; CLIP n’y a jamais été un endpoint. L’entraînement n’a pas démarré (ancien id student en 401). Ne pas le passer à `ready`. Discours : `docs/preuves/it-eval-jury.md`.
+- Student KD : id corrigé `timm/mobilenetv3_small_100.lamb_in1k` (`scripts/distill_student.py` et la copie Space). Dry-run seulement. Pas de checkpoint, pas d’ONNX. Reste `building`. La graine 64 % n’est pas un résultat.
+- MobileNetV3-Small reste `building` : int8 ORT 0/8 top-1 (HardSwish), fichier écarté, pas d’accuracy int8. La graine 60 % n’est pas une mesure. Le fp32 timm fait 57,5 % (115/200) sur le proxy.
+- EfficientNet-B0 int8 est mesuré : 63,5 % sur les 200 (p50 103,8 ms, CPU Windows) et 52,5 % sur le jeu focal (Véhicules 88 %, Jeux 17 %, p50 23,0 ms, autre run). Manifeste `data/test_set/focus_manifest.csv`. Sonde top-1 7/8 du 20 nov. non rejouée. Preuve : `docs/preuves/it-eval-jury.md`.
 - Confirmer le student KD sur ~100 photos réelles (`data/test_set/real/`) avant d’en faire un modèle de prod. CLIP n’entre pas dans cette bascule tant que le point ci-dessus n’est pas clos.
 - Exporter encodeur CLIP ONNX int8 seulement si la mesure le justifie (reste Space sinon).
 - Mail formateur : ResNet pré-entraîné + CLIP en comparaison + KD légère.

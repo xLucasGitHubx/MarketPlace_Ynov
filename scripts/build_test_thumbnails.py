@@ -12,10 +12,12 @@ Sortie :
 - web/src/parcours/jeuPhotos.json
 
 Usage : python scripts/build_test_thumbnails.py
+         python scripts/build_test_thumbnails.py --focus
 """
 
 from __future__ import annotations
 
+import argparse
 import csv
 import io
 import json
@@ -81,7 +83,42 @@ def thumbnail(data: bytes) -> bytes:
     return out.getvalue()
 
 
+def write_focus_thumbnails() -> None:
+    """Vignettes du jeu focal. Ne supprime pas les WebP historiques et n'écrit pas le JSON de la SPA."""
+    manifest = ROOT / "data" / "test_set" / "focus_manifest.csv"
+    if not manifest.is_file():
+        raise SystemExit(f"Manifeste focal absent : {manifest}")
+    rows = list(csv.DictReader(manifest.open(encoding="utf-8")))
+    written = 0
+    missing = 0
+    for row in rows:
+        src = ROOT / "data" / "test_set" / row["fichier"]
+        name = Path(row["fichier"]).name
+        if not name.startswith("focus_"):
+            raise SystemExit(f"Nom inattendu dans le jeu focal : {row['fichier']}")
+        if not src.is_file():
+            missing += 1
+            print(f"JPEG absent : {row['fichier']}")
+            continue
+        rel = Path(row["fichier"]).with_suffix(".webp")
+        dest = PUBLIC / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(thumbnail(src.read_bytes()))
+        written += 1
+    size = sum(p.stat().st_size for p in PUBLIC.rglob("*.webp"))
+    print(f"Vignettes focales : {written} écrites, {missing} absentes, dossier {size / 1_048_576:.2f} Mo")
+    if missing:
+        raise SystemExit(1)
+
+
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--focus", action="store_true", help="vignettes de focus_manifest.csv, sans effacer les 200")
+    args = ap.parse_args()
+    if args.focus:
+        write_focus_thumbnails()
+        return
+
     rows = list(csv.DictReader(MANIFEST.open(encoding="utf-8")))
     caltech = caltech_frame()
     if PUBLIC.exists():
